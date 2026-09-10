@@ -282,7 +282,8 @@ const chapters = [
     position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(105deg, rgba(20, 38, 27, 0.96) 0%, rgba(20, 38, 27, 0.85) 42%, rgba(20, 38, 27, 0.5) 100%);
   }
-  .shop-band__inner { position: relative; z-index: 2; display: grid; gap: var(--sp-8); }
+  .shop-band__inner { position: relative; z-index: 2; display: grid; gap: var(--sp-8); min-width: 0; }
+  .shop-band__inner > :global(*) { min-width: 0; }
   .shop-band__inner h2 { max-width: 16ch; }
   .shop-band__inner .lead { margin-top: var(--sp-5); color: rgba(248, 245, 238, 0.82); }
   .shop-band__actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-6); }

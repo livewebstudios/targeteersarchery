@@ -36,7 +36,7 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
   </div>
   <div class="wrap-wide site-nav__inner">
     <a class="site-nav__logo" href="/" aria-label={`${business.shortName}, home`}>
-      <Image src={logoRGB} alt="Targeteers Archery" widths={[440, 880]} sizes="(max-width: 60rem) 168px, 210px" loading="eager" />
+      <Image src={logoRGB} alt="Targeteers Archery" widths={[440, 880, 1320]} sizes="(max-width: 48rem) 180px, (max-width: 64rem) 220px, 280px" loading="eager" />
     </a>
 
     <nav class="site-nav__links" aria-label="Main">
@@ -180,18 +180,16 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
   .site-nav__logo { display: flex; align-items: center; flex: none; }
   .site-nav__logo :global(img) {
     width: auto;
-    height: 2.5rem;
+    height: 3.25rem;
     transition: height var(--dur) var(--ease);
   }
-  @media (min-width: 64rem) { .site-nav__logo :global(img) { height: 3.5rem; } }
-  .site-nav[data-scrolled] .site-nav__logo :global(img) { height: 2.25rem; }
-  /* The lockup is navy and orange; on the hero it needs a soft plate to stay
-     legible over moving footage. */
-  .site-nav[data-over-hero]:not([data-scrolled]):not([data-menu-open]) .site-nav__logo {
-    background: color-mix(in srgb, var(--cream-50) 90%, transparent);
-    padding: 0.4rem 0.85rem;
-    border-radius: var(--radius);
-    box-shadow: 0 2px 20px rgba(20, 38, 27, 0.28);
+  @media (min-width: 48rem) { .site-nav__logo :global(img) { height: 4rem; } }
+  @media (min-width: 64rem) { .site-nav__logo :global(img) { height: 5rem; } }
+  .site-nav[data-scrolled] .site-nav__logo :global(img) { height: 3.25rem; }
+  /* The lockup carries its own white keylines, so it sits straight on the hero
+     footage. A soft shadow gives it separation without a plate behind it. */
+  .site-nav[data-over-hero]:not([data-scrolled]) .site-nav__logo :global(img) {
+    filter: drop-shadow(0 2px 14px rgba(20, 38, 27, 0.55));
   }
 
   .site-nav__links { display: none; margin-inline-start: auto; }
@@ -337,10 +335,8 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
   .site-nav[data-menu-open] .site-nav__logo {
     position: relative;
     z-index: calc(var(--z-menu) + 2);
-    background: none;
-    padding: 0;
-    box-shadow: none;
   }
+  .site-nav[data-menu-open] .site-nav__logo :global(img) { filter: none; }
   /* The overlay carries its own call and book links. */
   .site-nav[data-menu-open] .site-nav__cta,
   .site-nav[data-menu-open] .site-nav__phone { display: none; }

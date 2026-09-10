@@ -107,13 +107,23 @@ export function hoursLabel(h: Hour): string {
 
 export const addressLine = `${business.address.street}, ${business.address.city}, ${business.address.region} ${business.address.postal}`;
 
+/**
+ * Authorized dealer brands.
+ *
+ * `slug` is also the logo filename the dealer carousel looks for. Drop an
+ * official logo at `src/assets/brands/<slug>.{svg,png,webp}` and that tile
+ * switches from the wordmark to the real mark on the next build — no code
+ * change. Until then it renders as a cream wordmark, which is what the brief
+ * calls for when logo files are not on hand. Do not hotlink logos from the
+ * manufacturers' own sites.
+ */
 export const brands = [
-  { name: 'Hoyt', url: 'https://hoyt.com' },
-  { name: 'Mathews Archery', url: 'https://mathewsinc.com' },
-  { name: 'Bowtech', url: 'https://bowtecharchery.com' },
-  { name: 'TenPoint', url: 'https://tenpointcrossbows.com' },
-  { name: 'Ravin', url: 'https://ravincrossbows.com' },
-  { name: 'SITKA Gear', url: 'https://sitkagear.com' },
-  { name: 'Easton', url: 'https://eastonarchery.com' },
-  { name: 'Carbon Express', url: 'https://feradyne.com/carbon-express-arrows/' },
+  { name: 'Hoyt', slug: 'hoyt', url: 'https://hoyt.com' },
+  { name: 'Mathews Archery', slug: 'mathews', url: 'https://mathewsinc.com' },
+  { name: 'Bowtech', slug: 'bowtech', url: 'https://bowtecharchery.com' },
+  { name: 'TenPoint', slug: 'tenpoint', url: 'https://tenpointcrossbows.com' },
+  { name: 'Ravin', slug: 'ravin', url: 'https://ravincrossbows.com' },
+  { name: 'SITKA Gear', slug: 'sitka', url: 'https://sitkagear.com' },
+  { name: 'Easton', slug: 'easton', url: 'https://eastonarchery.com' },
+  { name: 'Carbon Express', slug: 'carbon-express', url: 'https://feradyne.com/carbon-express-arrows/' },
 ] as const;

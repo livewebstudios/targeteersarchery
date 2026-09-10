@@ -1,46 +1,272 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import { brands } from '~/data/business';
-interface Props { heading?: string; }
-const { heading = 'Authorized dealer' } = Astro.props;
+
+/**
+ * Authorized-dealer carousel.
+ *
+ * A slow, continuous marquee: two identical tracks sit side by side and the
+ * pair slides exactly half its width, so the loop has no seam and no
+ * JavaScript. It pauses on hover, on keyboard focus, and on the pause button —
+ * WCAG 2.2.2 wants a real control, not just a hover state. Under
+ * prefers-reduced-motion it stops being a carousel at all and renders as a
+ * plain wrapped row.
+ *
+ * Each tile shows the brand's real logo when one exists in src/assets/brands/,
+ * and a cream wordmark until then. See that folder's README.
+ */
+interface Props {
+  heading?: string;
+  /** Seconds for one full pass. Slower reads as confident. */
+  duration?: number;
+}
+const { heading = 'Authorized dealer', duration = 52 } = Astro.props;
+
+const logoFiles = import.meta.glob<{ default: ImageMetadata }>(
+  '~/assets/brands/*.{svg,png,webp,jpg,jpeg}',
+  { eager: true },
+);
+
+/** Match a logo file to a brand by filename, ignoring the extension. */
+function logoFor(slug: string): ImageMetadata | undefined {
+  const hit = Object.entries(logoFiles).find(([path]) => {
+    const file = path.split('/').pop() ?? '';
+    return file.replace(/\.[^.]+$/, '') === slug;
+  });
+  return hit?.[1].default;
+}
+
+const items = brands.map((b) => ({ ...b, logo: logoFor(b.slug) }));
+const hasAnyLogo = items.some((i) => i.logo);
+// Two passes make the loop seamless; a third keeps very wide screens full.
+const passes = [0, 1, 2];
 ---
-<div class="dealers" data-reveal>
-  <p class="dealers__heading">{heading}</p>
-  <ul class="dealers__list">
-    {brands.map((b) => (
-      <li><a href={b.url} target="_blank" rel="noopener">{b.name}</a></li>
-    ))}
-  </ul>
-</div>
+<section class="dealers" aria-labelledby="dealers-heading" data-reveal>
+  <div class="dealers__head">
+    <h2 class="dealers__heading" id="dealers-heading">{heading}</h2>
+    <button class="dealers__pause" type="button" data-marquee-pause aria-pressed="false">
+      <span class="dealers__pause-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Pause the dealer carousel</span>
+    </button>
+  </div>
+
+  <div class="dealers__viewport" data-marquee>
+    <div class="dealers__track" data-marquee-track>
+      {passes.map((pass) => (
+        <ul class="dealers__list" aria-hidden={pass === 0 ? undefined : 'true'}>
+          {items.map((b) => (
+            <li>
+              <a
+                href={b.url}
+                target="_blank"
+                rel="noopener"
+                tabindex={pass === 0 ? undefined : -1}
+                aria-label={pass === 0 ? `${b.name} (opens in a new tab)` : undefined}
+              >
+                {b.logo ? (
+                  <Image
+                    class="dealers__logo"
+                    src={b.logo}
+                    alt={pass === 0 ? b.name : ''}
+                    widths={[220, 440]}
+                    sizes="11rem"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span class="dealers__wordmark">{b.name}</span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>
+  {
+    !hasAnyLogo && (
+      /* Logo files are not in the repo yet. Drop them in src/assets/brands/
+         and these tiles switch from wordmarks to the real marks. */
+      <span hidden data-dealer-logos="pending" />
+    )
+  }
+</section>
 
 <style>
-  .dealers { border-top: 1px solid var(--rule); padding-top: var(--sp-5); }
+  .dealers {
+    /* The track is deliberately wider than the page. Without min-width:0 it
+       drags its grid/flex parent open with it. */
+    min-width: 0;
+    max-width: 100%;
+    border-top: 1px solid var(--rule);
+    padding-top: var(--sp-5);
+  }
+
+  .dealers__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-5);
+  }
   .dealers__heading {
+    font-family: var(--font-body);
     font-size: var(--fs-eyebrow);
     font-weight: 600;
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
     color: var(--accent);
-    margin: 0 0 var(--sp-5);
+    margin: 0;
   }
+
+  /* --------------------------------------------------------- pause control */
+  .dealers__pause {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0;
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  }
+  .dealers__pause:hover { opacity: 1; border-color: var(--accent); }
+  .dealers__pause-icon {
+    width: 0.5rem;
+    height: 0.6rem;
+    border-left: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+  }
+  /* Pressed means paused, so the button offers "play". */
+  .dealers__pause[aria-pressed='true'] .dealers__pause-icon {
+    width: 0;
+    height: 0;
+    border: 0;
+    border-left: 0.6rem solid currentColor;
+    border-top: 0.36rem solid transparent;
+    border-bottom: 0.36rem solid transparent;
+    margin-left: 0.15rem;
+  }
+
+  /* -------------------------------------------------------------- marquee */
+  .dealers__viewport {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    /* Feather both edges so tiles arrive and leave rather than popping. */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 5rem, #000 calc(100% - 5rem), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 5rem, #000 calc(100% - 5rem), transparent);
+  }
+
+  .dealers__track {
+    display: flex;
+    width: max-content;
+    animation: dealers-scroll var(--marquee-duration, 52s) linear infinite;
+  }
+  .dealers__viewport:hover .dealers__track,
+  .dealers__viewport:focus-within .dealers__track,
+  .dealers[data-paused] .dealers__track { animation-play-state: paused; }
+
+  @keyframes dealers-scroll {
+    /* Three identical passes; sliding by a third lands on an identical frame. */
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-33.3333%, 0, 0); }
+  }
+
   .dealers__list {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.75rem, 0.8rem + 3vw, 4rem);
     list-style: none;
     margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-4) var(--sp-6);
-    align-items: baseline;
+    padding: 0 clamp(0.875rem, 0.4rem + 1.5vw, 2rem) 0 0;
   }
+
   .dealers__list a {
-    font-family: var(--font-display);
-    font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 60;
-    font-size: clamp(1.125rem, 0.9rem + 0.9vw, 1.625rem);
-    font-weight: 380;
-    letter-spacing: -0.01em;
+    display: grid;
+    place-items: center;
+    min-width: 7rem;
+    height: 4.5rem;
     text-decoration: none;
     color: var(--fg);
     opacity: 0.68;
     transition: opacity var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
   }
-  .dealers__list a:hover { opacity: 1; color: var(--accent); }
+  .dealers__list a:hover,
+  .dealers__list a:focus-visible { opacity: 1; color: var(--accent); }
+
+  .dealers__wordmark {
+    font-family: var(--font-display);
+    font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 60;
+    font-size: clamp(1.125rem, 0.9rem + 0.9vw, 1.625rem);
+    font-weight: 380;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .dealers__logo {
+    width: auto;
+    max-width: 11rem;
+    max-height: 3.25rem;
+    object-fit: contain;
+  }
+  /* Real logos come in every colour there is. On the dark bands they get
+     knocked back to cream so the row still reads as one row. */
+  .tone-pine .dealers__logo,
+  .tone-bark .dealers__logo { filter: brightness(0) invert(1); opacity: 0.9; }
+  .tone-pine .dealers__list a:hover .dealers__logo,
+  .tone-bark .dealers__list a:hover .dealers__logo { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dealers__viewport {
+      overflow: visible;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .dealers__track { animation: none; width: 100%; }
+    /* One pass is enough when nothing is moving. */
+    .dealers__track > :global(ul:not(:first-child)) { display: none; }
+    .dealers__list { flex-wrap: wrap; gap: var(--sp-4) var(--sp-6); padding-right: 0; }
+    .dealers__pause { display: none; }
+  }
 </style>
+
+<script>
+  function wireMarquees() {
+    for (const root of document.querySelectorAll<HTMLElement>('.dealers')) {
+      const button = root.querySelector<HTMLButtonElement>('[data-marquee-pause]');
+      const track = root.querySelector<HTMLElement>('[data-marquee-track]');
+      if (!button || !track) continue;
+
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        button.hidden = true;
+        continue;
+      }
+
+      // Hold a constant speed whatever the row ends up measuring, so the
+      // carousel reads the same on a phone and on a wide desktop.
+      const setSpeed = () => {
+        const pass = track.scrollWidth / 3;
+        if (pass > 0) root.style.setProperty('--marquee-duration', `${(pass / 42).toFixed(1)}s`);
+      };
+      setSpeed();
+      addEventListener('resize', setSpeed, { passive: true });
+
+      button.addEventListener('click', () => {
+        const paused = root.toggleAttribute('data-paused');
+        button.setAttribute('aria-pressed', String(paused));
+        button.querySelector('.visually-hidden')!.textContent = paused
+          ? 'Play the dealer carousel'
+          : 'Pause the dealer carousel';
+      });
+    }
+  }
+
+  wireMarquees();
+  document.addEventListener('astro:after-swap', wireMarquees);
+</script>

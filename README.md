@@ -35,6 +35,8 @@ Node 20 or newer.
 | FAQ entries | `src/content/faq/` |
 | Staff cards on the About page | `src/content/team/` |
 | Mathews / Hoyt / SITKA landing-page copy | `src/content/brands/` |
+| Dealer carousel brands and links | `brands` in `src/data/business.ts` |
+| Dealer logo files | `src/assets/brands/` — see the README in there |
 | Old-URL redirects | `public/_redirects` |
 
 `business.ts` is the single source of truth. The footer, the JSON-LD, the
@@ -74,6 +76,45 @@ Categories generate their own index pages automatically, and the post appears in
 Same idea, in `src/content/events/` and `src/content/leagues/`. The field lists
 are in `src/content.config.ts`, and a bad value fails the build with a readable
 message rather than shipping broken.
+
+### The dealer carousel
+
+`src/components/DealerRow.astro` runs the authorized-dealer row on the home page
+and the pro shop page. It is a slow continuous marquee: three identical passes
+sit side by side and the strip slides by exactly a third, so the loop has no
+seam and needs no JavaScript to run. It pauses on hover, on keyboard focus, and
+on its own pause button, and under `prefers-reduced-motion` it stops being a
+carousel and renders as a plain wrapped row. Only the first pass is exposed to
+screen readers and the tab order.
+
+**It currently shows cream wordmarks, not logos.** Manufacturer logo files were
+not in the material handed over, and hotlinking them from the brands' own sites
+is off the table. The component already looks for a real logo per brand:
+
+```
+src/assets/brands/hoyt.svg
+src/assets/brands/mathews.svg
+src/assets/brands/bowtech.svg
+src/assets/brands/tenpoint.svg
+src/assets/brands/ravin.svg
+src/assets/brands/sitka.svg
+src/assets/brands/easton.svg
+src/assets/brands/carbon-express.svg
+```
+
+Drop those files in, rebuild, and each tile switches from the wordmark to the
+real mark. No code change. The filename has to match the brand's `slug` in
+`src/data/business.ts`. On the dark bands, logos are knocked back to cream so
+the row still reads as one row.
+
+Get the files from each manufacturer's dealer portal rather than off their
+public site: the portal versions are the approved lockups and come with the
+usage terms.
+
+Two logos did survive in the old site's media, if you want them wired sooner:
+Hoyt (clean, with transparency) and Bowtech (low resolution, and carrying an
+old tagline). Both are in the working folder at
+`assets/extracted-media/uploads/2020/11/`.
 
 ---
 

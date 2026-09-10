@@ -98,8 +98,8 @@
   --dur-slower: 1200ms;
 
   /* ------------------------------------------------------------------ chrome */
-  --nav-h: 5.25rem;
-  --nav-h-shrunk: 4rem;
+  --nav-h: 7rem;
+  --nav-h-shrunk: 5rem;
   --z-nav: 100;
   --z-menu: 200;
   --z-modal: 300;
