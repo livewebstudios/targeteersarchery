@@ -187,7 +187,7 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
   .site-nav[data-scrolled] .site-nav__logo :global(img) { height: 2.25rem; }
   /* The lockup is navy and orange; on the hero it needs a soft plate to stay
      legible over moving footage. */
-  .site-nav[data-over-hero]:not([data-scrolled]) .site-nav__logo {
+  .site-nav[data-over-hero]:not([data-scrolled]):not([data-menu-open]) .site-nav__logo {
     background: color-mix(in srgb, var(--cream-50) 90%, transparent);
     padding: 0.4rem 0.85rem;
     border-radius: var(--radius);
@@ -316,6 +316,36 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
   }
   @media (min-width: 48rem) { .site-nav__cta { display: inline-flex; } }
   .site-nav__cta:hover { background: var(--ember-hover); translate: 0 -1px; }
+
+  /* ------------------------------------------- header while the menu is open */
+  .site-nav[data-menu-open] {
+    z-index: calc(var(--z-menu) + 1);
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom-color: transparent;
+    box-shadow: none;
+    color: var(--bark-900);
+  }
+  .site-nav[data-menu-open]::before { opacity: 0; }
+  .site-nav[data-menu-open] .utility { display: none; }
+  /* The overlay is a descendant of the header, so lifting the bar has to happen
+     inside the header's own stacking context, not just against the page. */
+  .site-nav[data-menu-open] .site-nav__inner {
+    position: relative;
+    z-index: calc(var(--z-menu) + 1);
+  }
+  .site-nav[data-menu-open] .site-nav__logo {
+    position: relative;
+    z-index: calc(var(--z-menu) + 2);
+    background: none;
+    padding: 0;
+    box-shadow: none;
+  }
+  /* The overlay carries its own call and book links. */
+  .site-nav[data-menu-open] .site-nav__cta,
+  .site-nav[data-menu-open] .site-nav__phone { display: none; }
+  .site-nav[data-menu-open] .site-nav__progress { opacity: 0; }
+  .site-nav[data-menu-open] .site-nav__inner { height: var(--nav-h); }
 
   .site-nav__progress {
     position: absolute;

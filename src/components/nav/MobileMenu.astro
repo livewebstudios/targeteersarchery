@@ -72,6 +72,7 @@ const isCurrent = (href: string) => current === href;
     const bars = toggle?.querySelector<HTMLElement>('.menu-toggle__bars');
     if (!toggle || !panel) return;
 
+    const header = toggle.closest<HTMLElement>('.site-nav');
     let open = false;
     let restoreOverflow = '';
 
@@ -94,6 +95,9 @@ const isCurrent = (href: string) => current === href;
       panel!.toggleAttribute('data-open', open);
       panel!.toggleAttribute('inert', !open);
       bars?.toggleAttribute('data-open', open);
+      // Lift the header above the overlay so the toggle stays reachable and
+      // visibly becomes the close button.
+      header?.toggleAttribute('data-menu-open', open);
       if (label) label.textContent = open ? 'Close menu' : 'Open menu';
 
       if (open) {

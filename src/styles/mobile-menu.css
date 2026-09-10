@@ -3,6 +3,8 @@
    ========================================================================== */
 
 .menu-toggle {
+  position: relative;
+  z-index: calc(var(--z-menu) + 2);
   display: grid;
   place-items: center;
   width: 2.75rem;
