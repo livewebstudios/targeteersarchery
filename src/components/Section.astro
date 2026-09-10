@@ -1,0 +1,45 @@
+---
+interface Props {
+  tone?: 'cream' | 'linen' | 'pine' | 'bark';
+  id?: string;
+  class?: string;
+  width?: 'default' | 'narrow' | 'wide' | 'full';
+  /** Extra top/bottom air for the set-piece bands. */
+  size?: 'default' | 'tight' | 'tall';
+  as?: 'section' | 'div' | 'article' | 'aside';
+}
+const {
+  tone = 'cream',
+  id,
+  class: klass = '',
+  width = 'default',
+  size = 'default',
+  as: Tag = 'section',
+} = Astro.props;
+
+const WRAPPERS: Record<NonNullable<Props['width']>, string> = {
+  default: 'wrap',
+  narrow: 'wrap-narrow',
+  wide: 'wrap-wide',
+  full: '',
+};
+const wrapClass = WRAPPERS[width];
+---
+<Tag id={id} class={`section tone-${tone} size-${size} ${klass}`}>
+  {wrapClass ? <div class={wrapClass}><slot /></div> : <slot />}
+</Tag>
+
+<style>
+  .section {
+    position: relative;
+    background: var(--bg);
+    color: var(--fg);
+    padding-block: var(--section-y);
+    isolation: isolate;
+  }
+  .size-tight { padding-block: calc(var(--section-y) * 0.55); }
+  .size-tall { padding-block: calc(var(--section-y) * 1.35); }
+  .section :global(h2), .section :global(h3) { color: var(--fg); }
+  .section :global(p) { color: var(--fg-muted); }
+  .section :global(h1), .section :global(h2), .section :global(h3), .section :global(h4) { color: var(--fg); }
+</style>

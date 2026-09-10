@@ -1,0 +1,286 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Form from '~/components/Form.astro';
+import Field from '~/components/Field.astro';
+import GalleryBlock from '~/components/GalleryBlock.astro';
+import { business } from '~/data/business';
+
+import heroImg from '~/assets/leagues/adult-wide.jpg';
+import youthImg from '~/assets/leagues/youth-01.jpg';
+import adultImg from '~/assets/leagues/adult-01.jpg';
+import league1 from '~/assets/leagues/league-01.jpg';
+import league2 from '~/assets/leagues/league-02.jpg';
+import youth2 from '~/assets/leagues/youth-02.jpg';
+import youthTall from '~/assets/leagues/youth-tall.jpg';
+import adultTall from '~/assets/leagues/adult-tall.jpg';
+import adult2 from '~/assets/leagues/adult-02.jpg';
+
+const leagues = (await getCollection('leagues')).sort((a, b) => a.data.order - b.data.order);
+
+const statusLabel: Record<string, string> = {
+  forming: 'Forming now',
+  open: 'Spots open',
+  full: 'Full',
+  closed: 'Between seasons',
+};
+
+const galleryItems = [
+  { image: adultImg, alt: 'Adult league night on the range' },
+  { image: youthImg, alt: 'Youth league archers on the line' },
+  { image: league1, alt: 'League shooters at the range' },
+  { image: youthTall, alt: 'A young archer at full draw' },
+  { image: adult2, alt: 'Scoring at the end of a league night' },
+  { image: youth2, alt: 'Youth league group on the line' },
+  { image: adultTall, alt: 'An archer on the line during league' },
+  { image: league2, alt: 'League night at Targeteers' },
+];
+---
+<Base
+  title="Adult & Youth Archery Leagues | Targeteers Archery · Saddle Brook, NJ"
+  description="Adult and youth archery leagues in Saddle Brook, NJ. Eight weeks, one night a week, handicapped scoring, plus Friday Night Lights for kids from age seven."
+  keywords={['youth archery leagues NJ', 'adult archery league North Jersey', 'archery league Bergen County']}
+  ogImage="/og/leagues.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Leagues', path: '/leagues/' }]}
+>
+  <PageHero
+    eyebrow="Leagues"
+    title="Eight weeks, one night, the same lane and the same people."
+    lead="Handicapped scoring, which means you shoot against your own average, not against the best archer in the room."
+    image={heroImg}
+    imageAlt="Adult league night at the Targeteers range"
+  />
+
+  <Section tone="cream">
+    <div class="intro">
+      <Reveal class="intro__copy">
+        <p class="lead">
+          The most common reason people give for not joining a league is that they are not good
+          enough yet. Nobody who says that has ever been to one.
+        </p>
+        <p>
+          You show up, you warm up, you shoot your ends, you write down your score, and you go home.
+          About ninety minutes. The rest is people talking between ends, which is arguably the
+          actual event.
+        </p>
+        <p>
+          Your first nights set your average. From then on, somebody who shoots 240 and improves to
+          255 beats somebody who shoots 290 and stays there. The person who gets better wins, which
+          is why nobody is watching your arrows.
+        </p>
+        <ArrowLink href="/insights/joining-your-first-archery-league/">What your first league night is like</ArrowLink>
+      </Reveal>
+      <Reveal class="intro__media" delay={2}>
+        <Image src={youthImg} alt="Youth league archers on the line" widths={[520, 900]}
+          sizes="(max-width: 60rem) 90vw, 26rem" loading="lazy" />
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="linen" id="seasons">
+    <SectionHead
+      eyebrow="Seasons"
+      title="What is running."
+      lead="Seasons rotate through the year. Call the store for current dates and prices, or watch the calendar."
+    />
+    <ul class="leagues">
+      {leagues.map((l, i) => (
+        <li>
+          <Reveal delay={i}>
+            <article class="league">
+              <p class="league__status" data-status={l.data.status}>{statusLabel[l.data.status]}</p>
+              <h3>{l.data.name}</h3>
+              <dl class="league__facts">
+                <div><dt>Audience</dt><dd>{l.data.audience === 'youth' ? 'Youth, age 7+' : 'Adults'}</dd></div>
+                <div><dt>Night</dt><dd>{l.data.night}</dd></div>
+                <div><dt>Time</dt><dd>{l.data.time}</dd></div>
+                <div><dt>Length</dt><dd>{l.data.weeks} weeks</dd></div>
+              </dl>
+              {l.data.notes && <p class="league__notes">{l.data.notes}</p>}
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ul>
+    <!-- CONFIRM: current league schedule, start dates and pricing for the 2026-27 season. -->
+    <p class="leagues__note" data-reveal>
+      Dates move with the season and with what the range can hold. The
+      <a href="/calendar/">calendar</a> has the current picture, and
+      <a href={business.phoneHref}>{business.phone}</a> has the honest one.
+    </p>
+  </Section>
+
+  <section class="fnl tone-pine" aria-labelledby="fnl-title">
+    <div class="wrap fnl__inner">
+      <Reveal class="fnl__copy">
+        <Eyebrow>Youth</Eyebrow>
+        <h2 id="fnl-title">Friday Night Lights.</h2>
+        <p class="lead">
+          Two lines only, five o&rsquo;clock or six. Eight weeks. From age seven. Same structure as
+          the adult league, shorter attention span, considerably more noise.
+        </p>
+        <p class="fnl__note">
+          Parents sit on the bench. Parents do not coach from the bench. We will remind you about
+          this kindly, once, every season.
+        </p>
+      </Reveal>
+      <Reveal class="fnl__media" delay={2}>
+        <Image src={adultImg} alt="Archers on the line under the range lights" widths={[560, 1000]}
+          sizes="(max-width: 60rem) 90vw, 28rem" loading="lazy" />
+      </Reveal>
+    </div>
+  </section>
+
+  <Section tone="cream">
+    <div class="need">
+      <Reveal>
+        <SectionHead eyebrow="What you need" title="Less than you think." level={2} />
+      </Reveal>
+      <ul class="need__list">
+        <li><Reveal delay={0}><h3>Your own equipment</h3><p>League is the point where owning a bow starts to make sense. Talk to us first and we will fit you properly rather than have you borrow something that does not suit.</p></Reveal></li>
+        <li><Reveal delay={1}><h3>Enough arrows</h3><p>Six is comfortable. Enough that one bad end does not end your night.</p></Reveal></li>
+        <li><Reveal delay={2}><h3>Closed-toe shoes</h3><p>Range rule, every night, no exceptions.</p></Reveal></li>
+        <li><Reveal delay={3}><h3>Fifteen minutes early</h3><p>Enough to get a lane assignment, a scorecard, and the ninety-second explanation of how this particular league scores.</p></Reveal></li>
+      </ul>
+    </div>
+  </Section>
+
+  <Section tone="linen" id="join">
+    <div class="join">
+      <div class="join__copy flow">
+        <Reveal><Eyebrow>Join a league</Eyebrow></Reveal>
+        <Reveal delay={1}><h2>Tell us which one and we will find you a lane.</h2></Reveal>
+        <Reveal delay={2}>
+          <p>
+            Send this and we will get back to you with the current season dates, the price, and
+            whether there is room. If a season is full we will put you at the top of the next one.
+          </p>
+        </Reveal>
+      </div>
+      <Reveal class="join__form" delay={2}>
+        <Form
+          action={business.formspree.league}
+          subject="League signup interest · targeteersarchery.com"
+          name="league-signup"
+          submitLabel="Sign me up"
+          note="This is an expression of interest, not a booking. We will confirm before anything is held."
+        >
+          <Field label="Name" name="name" required autocomplete="name" />
+          <Field label="Email" name="email" type="email" required autocomplete="email" />
+          <Field label="Phone" name="phone" type="tel" required autocomplete="tel" />
+          <Field label="Which league" name="league" as="select" required
+            options={['Adult League', 'Friday Night Lights (Youth)', 'Youth Development Line', 'Not sure, advise me']} />
+          <Field label="Archer age, if under 18" name="age" type="number" hint="Leave blank for adults." />
+          <Field label="How long have you been shooting?" name="experience" as="select" required
+            options={['Brand new', 'Under a year', 'A few years', 'Longer than I care to admit']} />
+          <Field label="Anything else" name="notes" as="textarea" full
+            placeholder="Nights that do not work, whether you are signing up with a friend, equipment questions." />
+        </Form>
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="cream">
+    <SectionHead eyebrow="League nights" title="What it looks like." />
+    <GalleryBlock items={galleryItems} label="League night photographs" />
+  </Section>
+
+  <ContactBand
+    title="Not sure you are ready?"
+    body="Take a lesson or two first. Handicapped scoring means you will not embarrass yourself either way, but a couple of hours with an instructor makes the first night more fun."
+    primary={{ label: 'Book a lesson', href: '/lessons/#book' }}
+    secondary={{ label: 'Kids camp', href: '/kids/' }}
+  />
+</Base>
+
+<style>
+  .intro { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) { .intro { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .intro__copy p { max-width: 48ch; }
+  .intro__copy p + p { margin-top: var(--sp-4); }
+  .intro__copy :global(.arrow-link) { margin-top: var(--sp-5); }
+  .intro__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+
+  .leagues {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+  }
+  .league {
+    height: 100%;
+    background: var(--cream-50);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    display: grid;
+    gap: var(--sp-4);
+    align-content: start;
+  }
+  .league__status {
+    display: inline-flex;
+    align-self: start;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    margin: 0;
+    background: var(--cream-100);
+    color: var(--bark-500);
+  }
+  .league__status[data-status='forming'] { background: color-mix(in srgb, var(--ember) 15%, transparent); color: var(--ember-deep); }
+  .league__status[data-status='open'] { background: color-mix(in srgb, var(--pine-500) 15%, transparent); color: var(--pine-700); }
+  .league__status[data-status='full'] { background: color-mix(in srgb, var(--bullseye) 13%, transparent); color: var(--bullseye); }
+  .league h3 { font-size: var(--fs-h4); margin: 0; }
+  .league__facts { display: grid; gap: 0.5rem; margin: 0; }
+  .league__facts > div { display: flex; justify-content: space-between; gap: var(--sp-3); border-bottom: 1px solid var(--cream-200); padding-bottom: 0.5rem; }
+  .league__facts dt {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--stone-400);
+  }
+  .league__facts dd { margin: 0; font-size: var(--fs-small); color: var(--bark-700); text-align: right; }
+  .league__notes { margin: 0; font-size: var(--fs-small); line-height: 1.6; color: var(--bark-500); }
+  .leagues__note { margin-top: var(--sp-6); font-size: var(--fs-small); color: var(--stone-400); }
+  .leagues__note a { color: var(--ember); }
+
+  .fnl { background: var(--pine-900); color: var(--cream-50); padding-block: var(--section-y); --accent: var(--sage-300); }
+  .fnl__inner { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) { .fnl__inner { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .fnl h2 { color: var(--cream-50); }
+  .fnl .lead { margin-top: var(--sp-4); color: rgba(248, 245, 238, 0.84); }
+  .fnl__note { margin-top: var(--sp-5); font-size: var(--fs-small); color: rgba(248, 245, 238, 0.6); font-style: italic; max-width: 44ch; }
+  .fnl__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+
+  .need { display: grid; gap: var(--sp-6); }
+  .need__list {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--sp-6);
+  }
+  .need__list h3 { font-size: var(--fs-h4); margin: 0 0 var(--sp-2); }
+  .need__list p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+
+  .join { display: grid; gap: var(--sp-8); align-items: start; }
+  @media (min-width: 60rem) { .join { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.2fr); gap: var(--sp-9); } }
+  .join__copy p { max-width: 40ch; margin-top: var(--sp-4); }
+  .join__form {
+    background: var(--cream-50);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.25rem, 0.6rem + 2vw, 2.25rem);
+  }
+</style>

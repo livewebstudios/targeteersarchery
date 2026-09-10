@@ -1,0 +1,93 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+export interface StickyChapter {
+  eyebrow?: string;
+  title: string;
+  body: string[];
+  image: ImageMetadata;
+  imageAlt: string;
+}
+interface Props {
+  chapters: StickyChapter[];
+  frame?: boolean;
+  /** 2 when the chapters are the page's top-level structure under the h1. */
+  level?: 2 | 3;
+}
+const { chapters, frame = true, level = 3 } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
+---
+<!--
+  Each chapter owns its own photograph. On a wide screen the photograph sticks
+  while its chapter scrolls past, then hands off to the next one — the
+  scrollytelling effect, done with position: sticky rather than JavaScript, so
+  it degrades to a plain stacked article on narrow screens and needs no
+  reduced-motion special case.
+-->
+<ol class="rail">
+  {chapters.map((c) => (
+    <li class="rail__chapter">
+      <figure class={`rail__figure ${frame ? 'is-matted' : ''}`}>
+        <Image src={c.image} alt={c.imageAlt} widths={[400, 560, 780, 1040]}
+          sizes="(max-width: 60rem) 90vw, 30rem" loading="lazy" decoding="async" />
+      </figure>
+      <div class="rail__copy" data-reveal>
+        {c.eyebrow && <p class="rail__eyebrow">{c.eyebrow}</p>}
+        <Heading>{c.title}</Heading>
+        {c.body.map((p) => <p set:html={p} />)}
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .rail { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-8); }
+  @media (min-width: 60rem) { .rail { gap: 0; } }
+
+  .rail__chapter { display: grid; gap: var(--sp-5); align-items: start; }
+  @media (min-width: 60rem) {
+    .rail__chapter {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--sp-9);
+      padding-block: var(--sp-7);
+    }
+    /* Odd chapters put the photograph on the right, so the page does not read
+       as a single stripe of images down one side. */
+    .rail__chapter:nth-child(even) .rail__figure { order: 2; }
+  }
+
+  .rail__figure {
+    margin: 0;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+  }
+  .rail__figure.is-matted {
+    background: var(--cream-50);
+    padding: clamp(0.75rem, 0.3rem + 1.6vw, 1.75rem);
+    border: 1px solid var(--parchment);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .rail__figure :global(img) { width: 100%; height: auto; }
+  @media (min-width: 60rem) {
+    .rail__figure { position: sticky; top: calc(var(--nav-h) + 2.5rem); }
+  }
+
+  .rail__copy { align-self: center; }
+  @media (min-width: 60rem) {
+    .rail__copy { min-height: 60vh; display: grid; align-content: center; }
+  }
+  .rail__copy h2,
+  .rail__copy h3 { margin-bottom: var(--sp-4); font-size: var(--fs-h3); }
+  .rail__copy p { max-width: 46ch; }
+  .rail__copy p + p { margin-top: var(--sp-4); }
+  .rail__eyebrow {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 var(--sp-3);
+  }
+</style>

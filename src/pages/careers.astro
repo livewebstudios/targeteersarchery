@@ -1,0 +1,118 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Button from '~/components/Button.astro';
+import { business } from '~/data/business';
+
+const roles = [
+  {
+    title: 'Retail salesperson',
+    body: 'Seven or more years of archery experience. You will be fitting people to bows, answering the hard questions honestly, and occasionally telling somebody the cheaper one is the right one.',
+  },
+  {
+    title: 'Cashier',
+    body: 'Front desk, phones, range check-in, waivers and range cards. The first person most customers meet, which matters more than it sounds.',
+  },
+  {
+    title: 'Instructor, part-time',
+    body: 'Lessons for children, adults, groups, parties and corporate nights. Opportunity to become USA Archery certified if you are not already.',
+  },
+];
+
+const details = [
+  'Evening and weekend hours.',
+  'Valid unrestricted driver&rsquo;s licence.',
+  'Resumes by email only, please.',
+];
+---
+<Base
+  title="Careers | Targeteers Archery · Saddle Brook, NJ"
+  description="Work at Targeteers Archery Pro Shop in Saddle Brook, NJ. Retail salesperson, cashier and part-time instructor positions. Email your resume."
+  ogImage="/og/careers.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Careers', path: '/careers/' }]}
+>
+  <PageHero
+    eyebrow="Careers"
+    title="Work behind the counter."
+    lead="One of the East Coast leaders in the archery trade, and a family shop where the standards have not moved since 1957."
+    tone="cream"
+  />
+
+  <Section tone="cream">
+    <SectionHead
+      eyebrow="Open positions"
+      title="Three roles."
+      lead="If you know archery and you like people, we would rather hear from you than not."
+    />
+    <ul class="roles">
+      {roles.map((r, i) => (
+        <li>
+          <Reveal delay={i}>
+            <article>
+              <h3>{r.title}</h3>
+              <p>{r.body}</p>
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ul>
+
+    <div class="apply" data-reveal>
+      <div>
+        <h2>How to apply</h2>
+        <ul>{details.map((d) => <li set:html={d} />)}</ul>
+      </div>
+      <Button href={`mailto:${business.email}?subject=Careers%20enquiry`} variant="primary">
+        Email your resume
+      </Button>
+    </div>
+  </Section>
+
+  <ContactBand
+    title="Not sure you qualify?"
+    body="Enthusiasm for the sport counts for a lot, and we have trained people from scratch before. Send the email."
+    primary={{ label: 'Email us', href: `mailto:${business.email}` }}
+    secondary={{ label: 'About the shop', href: '/about/' }}
+  />
+</Base>
+
+<style>
+  .roles {
+    list-style: none; margin: 0 0 var(--sp-8); padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+  }
+  .roles article {
+    height: 100%;
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+  }
+  .roles h3 { font-size: var(--fs-h4); margin: 0 0 var(--sp-3); }
+  .roles p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+
+  .apply {
+    display: grid;
+    gap: var(--sp-5);
+    align-items: center;
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 48rem) { .apply { grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-7); } }
+  .apply h2 { font-size: var(--fs-h3); margin-bottom: var(--sp-4); }
+  .apply ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+  .apply li { position: relative; padding-left: 1.6rem; font-size: var(--fs-small); color: var(--bark-500); }
+  .apply li::before {
+    content: '';
+    position: absolute; left: 0; top: 0.45em;
+    width: 0.7rem; height: 0.7rem;
+    border: 1.5px solid var(--ember);
+    border-radius: 999px;
+  }
+</style>

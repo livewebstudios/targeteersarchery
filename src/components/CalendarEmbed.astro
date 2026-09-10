@@ -1,0 +1,79 @@
+---
+import { business } from '~/data/business';
+import CalendarRingIcon from './icons/CalendarRingIcon.astro';
+---
+<div class="cal" data-cal data-embed={business.calendar.embed}>
+  <div class="cal__frame">
+    <button class="cal__load" type="button" data-cal-load>
+      <CalendarRingIcon size={30} />
+      <span class="cal__title">The Targeteers calendar</span>
+      <span class="cal__sub">Leagues, camps, shoots and closures, straight from the store calendar.</span>
+      <span class="cal__cta">Load the calendar</span>
+    </button>
+  </div>
+  <p class="cal__links">
+    <a href={business.calendar.public} target="_blank" rel="noopener">Open in Google Calendar</a>
+    <span aria-hidden="true">·</span>
+    <a href={business.calendar.ics}>Subscribe (ICS)</a>
+  </p>
+</div>
+
+<style>
+  .cal { display: grid; gap: var(--sp-4); }
+  .cal__frame {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: var(--cream-50);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    padding: clamp(0.5rem, 0.2rem + 1vw, 1rem);
+  }
+  @media (min-width: 48rem) { .cal__frame { aspect-ratio: 16 / 11; } }
+  .cal__load {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.4rem;
+    text-align: center;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: var(--sp-6);
+    color: var(--bark-700);
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .cal__load:hover { background: var(--cream-100); }
+  .cal__load :global(svg) { color: var(--ember); margin-bottom: var(--sp-2); }
+  .cal__title { font-family: var(--font-display); font-size: var(--fs-h4); }
+  .cal__sub { font-size: var(--fs-small); color: var(--bark-500); max-width: 34ch; }
+  .cal__cta {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 0.2em;
+  }
+  .cal :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .cal__links { display: flex; gap: 0.75rem; font-size: var(--fs-small); margin: 0; color: var(--fg-faint); }
+  .cal__links a { color: var(--accent); }
+</style>
+
+<script>
+  for (const cal of document.querySelectorAll<HTMLElement>('[data-cal]')) {
+    const btn = cal.querySelector<HTMLButtonElement>('[data-cal-load]');
+    btn?.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = cal.dataset.embed ?? '';
+      frame.title = 'Targeteers Archery events calendar';
+      frame.loading = 'lazy';
+      cal.querySelector('.cal__frame')?.append(frame);
+      btn.remove();
+    }, { once: true });
+  }
+</script>

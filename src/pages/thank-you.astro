@@ -1,0 +1,57 @@
+---
+import Base from '~/layouts/Base.astro';
+import Section from '~/components/Section.astro';
+import Button from '~/components/Button.astro';
+import ArrowInTarget from '~/components/icons/ArrowInTarget.astro';
+import { business } from '~/data/business';
+---
+<Base
+  title="Thank You | Targeteers Archery · Saddle Brook, NJ"
+  description="Your message reached Targeteers Archery. Somebody will come back to you during store hours, usually within a day."
+  noindex
+>
+  <Section tone="cream" size="tall">
+    <div class="ty">
+      <ArrowInTarget size={64} strokeWidth={1} />
+      <p class="ty__eyebrow">Got it</p>
+      <h1>That landed.</h1>
+      <p class="lead">
+        Thanks for getting in touch. Somebody here will come back to you, usually within a day and
+        always during store hours.
+      </p>
+      <p class="ty__urgent">
+        If it is time-sensitive, call <a href={business.phoneHref}>{business.phone}</a> and skip the
+        queue entirely.
+      </p>
+      <div class="ty__actions">
+        <Button href="/" variant="primary">Back to the shop</Button>
+        <Button href="/insights/" variant="ghost">Read something</Button>
+      </div>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .ty {
+    max-width: 40rem;
+    margin-inline: auto;
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: var(--sp-4);
+  }
+  .ty :global(svg) { color: var(--ember); margin-bottom: var(--sp-3); }
+  .ty__eyebrow {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+    margin: 0;
+  }
+  .ty h1 { font-size: var(--fs-h2); }
+  .ty .lead { margin-inline: auto; }
+  .ty__urgent { font-size: var(--fs-small); color: var(--stone-400); }
+  .ty__urgent a { color: var(--ember); }
+  .ty__actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); justify-content: center; margin-top: var(--sp-4); }
+</style>

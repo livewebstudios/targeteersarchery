@@ -1,0 +1,36 @@
+---
+import { hours, hoursLabel } from '~/data/business';
+interface Props { class?: string; }
+const { class: klass = '' } = Astro.props;
+const isoToday = ((new Date().getDay() + 6) % 7) + 1;
+---
+<table class={`hours ${klass}`} data-hours-table>
+  <caption class="visually-hidden">Store hours</caption>
+  <tbody>
+    {hours.map((h) => (
+      <tr data-today={h.day === isoToday ? '' : undefined}>
+        <th scope="row">{h.label}</th>
+        <td>{hoursLabel(h)}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+<style>
+  .hours { width: 100%; border-collapse: collapse; }
+  .hours th, .hours td {
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--fs-small);
+    font-weight: 400;
+    text-align: left;
+    color: var(--fg-muted);
+  }
+  .hours td { text-align: right; font-variant-numeric: tabular-nums; }
+  .hours tr:last-child th, .hours tr:last-child td { border-bottom: 0; }
+  .hours tr[data-today] th, .hours tr[data-today] td { color: var(--fg); font-weight: 600; }
+</style>
+
+<script>
+  import '~/scripts/today';
+</script>

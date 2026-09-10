@@ -1,0 +1,93 @@
+---
+import Base from '~/layouts/Base.astro';
+import Section from '~/components/Section.astro';
+import Button from '~/components/Button.astro';
+import { primaryNav } from '~/data/nav';
+---
+<Base
+  title="Page Not Found | Targeteers Archery · Saddle Brook, NJ"
+  description="That page is not on the wall. Here is where everything on the Targeteers Archery site actually lives: pro shop, range, lessons, leagues, camp and contact."
+  noindex
+>
+  <Section tone="pine" size="tall">
+    <div class="nf">
+      <div class="nf__art" aria-hidden="true">
+        <svg viewBox="0 0 320 220" fill="none">
+          <!-- dirt line -->
+          <path d="M8 186h304" stroke="var(--sage-300)" stroke-width="1.5" opacity=".4" stroke-linecap="round" />
+          <path d="M42 186c14-5 26-4 38 1M228 187c16-6 30-5 44 1" stroke="var(--sage-300)" stroke-width="1.2" opacity=".25" stroke-linecap="round" />
+          <!-- target, leaning -->
+          <g transform="translate(96 40) rotate(-6 82 82)">
+            <circle cx="82" cy="82" r="78" stroke="var(--cream-50)" stroke-width="1.6" opacity=".5" />
+            <circle cx="82" cy="82" r="58" stroke="var(--cream-50)" stroke-width="1.6" opacity=".4" />
+            <circle cx="82" cy="82" r="38" stroke="var(--cream-50)" stroke-width="1.6" opacity=".35" />
+            <circle cx="82" cy="82" r="18" stroke="var(--bullseye)" stroke-width="2" opacity=".9" />
+          </g>
+          <!-- arrow, in the dirt, well wide -->
+          <g transform="rotate(52 46 186)">
+            <path d="M46 186v-62" stroke="var(--cream-50)" stroke-width="2.2" stroke-linecap="round" />
+            <path d="M46 124l-7 9M46 124l7 9" stroke="var(--cream-50)" stroke-width="2.2" stroke-linecap="round" />
+            <path d="M42 172l-8-3M42 164l-8-3M42 156l-8-3" stroke="var(--ember)" stroke-width="2" stroke-linecap="round" />
+          </g>
+        </svg>
+      </div>
+      <p class="nf__eyebrow">404</p>
+      <h1>Well wide.</h1>
+      <p class="lead">
+        That page is not on the wall. It may have moved when we rebuilt the site, or it may never
+        have existed. Either way, here is where everything actually is.
+      </p>
+      <nav class="nf__links" aria-label="Site sections">
+        {primaryNav.map((l) => <a href={l.href}>{l.label}</a>)}
+      </nav>
+      <div class="nf__actions">
+        <Button href="/" variant="primary">Back to the home page</Button>
+        <Button href="/contact/" variant="ghost">Ask a human</Button>
+      </div>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .nf {
+    max-width: 44rem;
+    margin-inline: auto;
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: var(--sp-4);
+  }
+  .nf__art { width: min(20rem, 70vw); margin-bottom: var(--sp-4); }
+  .nf__art svg { width: 100%; height: auto; }
+  .nf__eyebrow {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin: 0;
+  }
+  .nf h1 { font-size: var(--fs-h2); color: var(--cream-50); }
+  .nf .lead { margin-inline: auto; color: rgba(248, 245, 238, 0.78); }
+  .nf__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 0.5rem;
+    margin-top: var(--sp-4);
+  }
+  .nf__links a {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid rgba(248, 245, 238, 0.2);
+    border-radius: 999px;
+    color: rgba(248, 245, 238, 0.78);
+    transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  }
+  .nf__links a:hover { border-color: var(--ember); color: var(--ember); }
+  .nf__actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); justify-content: center; margin-top: var(--sp-5); }
+</style>

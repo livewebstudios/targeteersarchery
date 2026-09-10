@@ -1,0 +1,165 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import CalendarEmbed from '~/components/CalendarEmbed.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import CalendarRingIcon from '~/components/icons/CalendarRingIcon.astro';
+import { business } from '~/data/business';
+
+const events = (await getCollection('events')).sort(
+  (a, b) => a.data.start.valueOf() - b.data.start.valueOf(),
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+const eventSchema = events.map((e) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: e.data.title,
+  startDate: e.data.start.toISOString(),
+  ...(e.data.end ? { endDate: e.data.end.toISOString() } : {}),
+  description: e.data.summary,
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: business.name,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: business.address.street,
+      addressLocality: business.address.city,
+      addressRegion: business.address.region,
+      postalCode: business.address.postal,
+      addressCountry: business.address.country,
+    },
+  },
+  organizer: { '@type': 'Organization', name: business.name, url: 'https://targeteersarchery.com/' },
+}));
+---
+<Base
+  title="Calendar & Events | Targeteers Archery · Saddle Brook, NJ"
+  description="Leagues, camps, 3D specialty shoots, hunting clinics and speaker nights at Targeteers Archery in Saddle Brook, NJ. See the store calendar and what is coming up."
+  keywords={['archery events NJ', '3D archery shoot North Jersey', 'archery calendar Saddle Brook']}
+  ogImage="/og/calendar.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Calendar', path: '/calendar/' }]}
+  schema={eventSchema}
+>
+  <PageHero
+    eyebrow="Calendar"
+    title="What is happening, and what is open."
+    lead="The store calendar shows the general daily schedule, the events, and which parts of the building the public can use."
+    tone="cream"
+  />
+
+  <Section tone="cream">
+    <SectionHead eyebrow="Coming up" title="Highlights." />
+    <ol class="events">
+      {events.map((e, i) => (
+        <li data-featured={e.data.featured ? '' : undefined}>
+          <Reveal delay={Math.min(i, 5)}>
+            <article class="event">
+              <div class="event__date">
+                <CalendarRingIcon size={20} />
+                <time datetime={e.data.start.toISOString()}>{fmt(e.data.start)}</time>
+                {e.data.end && <span class="event__end">through {fmt(e.data.end)}</span>}
+              </div>
+              <div class="event__body">
+                <h3>{e.data.title}</h3>
+                <p>{e.data.summary}</p>
+                <p class="event__where">{e.data.location}</p>
+              </div>
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ol>
+    <p class="events__note" data-reveal>
+      Dates move. The live calendar below and a phone call to
+      <a href={business.phoneHref}>{business.phone}</a> are both more current than this list.
+    </p>
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead
+      eyebrow="The store calendar"
+      title="Straight from Google."
+      lead="Nothing loads from Google until you ask it to."
+    />
+    <CalendarEmbed />
+  </Section>
+
+  <Section tone="cream">
+    <div class="also">
+      <Reveal delay={0}>
+        <article>
+          <h3>Leagues</h3>
+          <p>Eight weeks, one night a week, adult and youth. Seasons rotate through the year.</p>
+          <ArrowLink href="/leagues/">See the leagues</ArrowLink>
+        </article>
+      </Reveal>
+      <Reveal delay={1}>
+        <article>
+          <h3>Kids camp</h3>
+          <p>Summer sessions fill early. About a hundred and thirty kids come through each summer.</p>
+          <ArrowLink href="/kids/">Camp and youth programs</ArrowLink>
+        </article>
+      </Reveal>
+      <Reveal delay={2}>
+        <article>
+          <h3>Group nights</h3>
+          <p>Troops, teams, parties and corporate evenings, booked around the public schedule.</p>
+          <ArrowLink href="/groups/">Plan a group</ArrowLink>
+        </article>
+      </Reveal>
+    </div>
+  </Section>
+
+  <ContactBand
+    title="Call before you drive."
+    body="Lanes get taken by lessons, leagues and events, and the schedule shifts week to week. One call saves a wasted trip."
+    primary={{ label: 'Call the shop', href: business.phoneHref }}
+    secondary={{ label: 'Facebook', href: business.socials.facebook }}
+  />
+</Base>
+
+<style>
+  .events { list-style: none; margin: 0; padding: 0; display: grid; }
+  .events li { border-top: 1px solid var(--rule); }
+  .events li:last-child { border-bottom: 1px solid var(--rule); }
+  .event { display: grid; gap: var(--sp-3); padding-block: var(--sp-5); }
+  @media (min-width: 48rem) { .event { grid-template-columns: 16rem minmax(0, 1fr); gap: var(--sp-6); } }
+  .event__date {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ember);
+  }
+  .event__date :global(svg) { flex: none; }
+  .event__end { color: var(--stone-400); }
+  .event__body h3 { font-size: var(--fs-h4); margin: 0 0 var(--sp-2); }
+  .event__body p { margin: 0; font-size: var(--fs-small); line-height: 1.65; max-width: 56ch; }
+  .event__where { margin-top: var(--sp-2) !important; color: var(--stone-400) !important; font-size: 0.75rem !important; }
+  .events li[data-featured] .event__body h3 { color: var(--bark-900); }
+  .events__note { margin-top: var(--sp-6); font-size: var(--fs-small); color: var(--stone-400); }
+  .events__note a { color: var(--ember); }
+
+  .also {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: var(--sp-6);
+  }
+  .also article { display: grid; gap: var(--sp-3); align-content: start; padding-top: var(--sp-4); border-top: 1px solid var(--rule); }
+  .also h3 { font-size: var(--fs-h4); margin: 0; }
+  .also p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+</style>

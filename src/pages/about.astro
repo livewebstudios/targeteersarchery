@@ -1,0 +1,438 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import SplitSticky from '~/components/SplitSticky.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import GalleryBlock from '~/components/GalleryBlock.astro';
+import TargetIcon from '~/components/icons/TargetIcon.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import { business } from '~/data/business';
+
+import heroImg from '~/assets/shop/showroom-wide.jpg';
+import counterMen from '~/assets/story/counter-three-men.jpg';
+import counterWoman from '~/assets/story/counter-at-the-register.jpg';
+import archiveRange from '~/assets/story/archive-outdoor-range.jpg';
+import archiveGroup from '~/assets/story/archive-group-target.jpg';
+import robHoyt from '~/assets/story/rob-hoyt.jpg';
+import robBench from '~/assets/story/rob-at-the-bench.jpg';
+import robBC from '~/assets/hunting/rob-bc.jpg';
+import yukon from '~/assets/hunting/yukon.jpg';
+
+import award2007 from '~/assets/awards/dealer-of-the-year-2007.jpg';
+import hoytTop50 from '~/assets/awards/hoyt-top-50.jpg';
+import dealer2007 from '~/assets/awards/dealer-2007-badge.jpg';
+import familyOwned from '~/assets/awards/family-owned-badge.jpg';
+
+import store1 from '~/assets/shop/showroom-02.jpg';
+import store2 from '~/assets/shop/showroom-03.jpg';
+import store3 from '~/assets/shop/showroom-04.jpg';
+import store4 from '~/assets/shop/showroom-05.jpg';
+
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+
+const chapters = [
+  {
+    eyebrow: '1957',
+    title: 'A bow shop opens on Route 46.',
+    image: counterMen,
+    imageAlt: 'Three men behind the counter of the original shop',
+    body: [
+      'Archery in New Jersey was a smaller world then. A shop that could sell equipment was one thing. A shop with a bench, and somebody at it who could read a badly flying arrow, was another.',
+      'What got built here was the second kind. That is the whole reason there is still a shop here sixty-nine years later.',
+    ],
+  },
+  {
+    eyebrow: 'The 1990s',
+    title: 'Rob buys the business from his father.',
+    image: counterWoman,
+    imageAlt: 'The shop counter and register in an early colour photograph',
+    body: [
+      'By then Rob had already been in archery for twenty-odd years. Buying a business from your father is not the same transaction as buying one from a stranger. The inventory changes hands and the standards do not.',
+      'The rule that no bow leaves this shop without being looked over twice was not Rob&rsquo;s invention. He inherited it, the way you inherit a way of holding a tool.',
+    ],
+  },
+  {
+    eyebrow: '2020',
+    title: 'Fifty years in the archery business.',
+    image: robHoyt,
+    imageAlt: 'Rob Cerone Jr. in the pro shop',
+    body: [
+      '2020 marked Rob&rsquo;s fiftieth year in the trade. Along the way: Hoyt Top 50 Dealer awards, Mathews Top 100 Dealer awards, and East Coast Dealer of the Year from Archery Business Magazine.',
+      'He is a USA Archery Level 3 NTS Certified instructor, and he has spent that half century helping people shoot better rather than spend more.',
+    ],
+  },
+  {
+    eyebrow: 'Today',
+    title: 'Eleven lanes, and a hundred and thirty kids a summer.',
+    image: robBench,
+    imageAlt: 'Working on a bow at the service bench',
+    body: [
+      'The range is indoors, air conditioned, and shoots out to twenty-seven yards. Leagues run all season. Camp fills up and turns families away at the door.',
+      'The equipment on the wall would be unrecognisable to the men in the first photograph. The bench, and what happens at it, would not.',
+    ],
+  },
+];
+
+const galleryItems = [
+  { image: counterMen, alt: 'Three men behind the counter of the original shop', caption: 'Behind the counter, Route 46.' },
+  { image: counterWoman, alt: 'The shop counter and register in an early colour photograph', caption: 'At the register.' },
+  { image: archiveRange, alt: 'An archer at an outdoor range, archival photograph', caption: 'Outdoors, before the lanes.' },
+  { image: archiveGroup, alt: 'A group photographed with a target, archival photograph', caption: 'A group, and a target.' },
+  { image: robBC, alt: 'Rob Cerone Jr. hunting in British Columbia', caption: 'British Columbia.' },
+  { image: yukon, alt: 'The Yukon backcountry on a hunting trip', caption: 'The Yukon.' },
+  { image: store1, alt: 'The Targeteers showroom', caption: 'The showroom.' },
+  { image: store2, alt: 'Bows and accessories on the showroom wall', caption: 'The wall.' },
+  { image: store3, alt: 'Inside the pro shop', caption: 'Inside.' },
+  { image: store4, alt: 'The pro shop from the front door', caption: 'From the door.' },
+];
+
+const awards = [
+  { image: award2007, alt: 'Archery Business Magazine East Coast Dealer of the Year, 2007', label: 'East Coast Dealer of the Year', note: 'Archery Business Magazine, 2007' },
+  { image: hoytTop50, alt: 'Hoyt Top 50 Dealer badge', label: 'Hoyt Top 50 Dealer', note: 'Multiple years' },
+  { image: dealer2007, alt: 'Dealer of the Year 2007 badge', label: 'Mathews Top 100 Dealer', note: 'Multiple years' },
+  { image: familyOwned, alt: 'Family owned and operated badge', label: 'Family owned', note: `Since ${business.founded}` },
+];
+---
+<Base
+  title="The Family Story | Targeteers Archery · Saddle Brook, NJ"
+  description="Family owned on Route 46 in Saddle Brook since 1957. Three generations, one counter, and the rule that every bow gets looked over twice before it leaves."
+  keywords={['Targeteers Archery history', 'family owned bow shop NJ', 'archery pro shop Saddle Brook']}
+  ogImage="/og/about.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}
+>
+  <PageHero
+    eyebrow="The family story"
+    title="Three generations. One counter."
+    lead={`Targeteers has been family owned and operated on Route 46 since ${business.founded}.`}
+    image={heroImg}
+    imageAlt="The Targeteers showroom on Route 46"
+    focus="50% 55%"
+  />
+
+  <Section tone="cream">
+    <SplitSticky chapters={chapters} level={2} />
+  </Section>
+
+  <!-- ------------------------------------------------------------ meet Rob -->
+  <Section tone="linen" id="rob">
+    <div class="rob">
+      <Reveal class="rob__media">
+        <figure class="rob__frame">
+          <Image src={robHoyt} alt="Rob Cerone Jr. in the pro shop" widths={[540, 900]}
+            sizes="(max-width: 60rem) 90vw, 26rem" loading="lazy" />
+        </figure>
+      </Reveal>
+      <div class="rob__copy flow">
+        <Reveal><Eyebrow>Meet Rob</Eyebrow></Reveal>
+        <Reveal delay={1}><h2>Rob Cerone Jr.</h2></Reveal>
+        <Reveal delay={2}>
+          <p class="lead">
+            Third generation behind this counter, and in the archery business since 1970.
+          </p>
+        </Reveal>
+        <Reveal delay={3}>
+          <p>
+            Rob is a USA Archery Level 3 NTS Certified instructor. He has helped thousands of
+            people follow their archery dreams, on the range and in the woods, and he collected a
+            good number of awards of his own before he ever ran the shop.
+          </p>
+        </Reveal>
+        <Reveal delay={4}>
+          <p>
+            Sixty-five years of family hunting experience sits behind the counter with him, most of
+            it after North American big game. British Columbia, the Yukon, and a lot of ground
+            in between. If you are planning a trip, he is the conversation you want.
+          </p>
+        </Reveal>
+        <Reveal delay={5}>
+          <ul class="rob__creds">
+            <li>USA Archery Level 3 NTS Certified</li>
+            <li>Hoyt Top 50 Dealer, multiple years</li>
+            <li>Mathews Top 100 Dealer, multiple years</li>
+            <li>Archery Business East Coast Dealer of the Year</li>
+          </ul>
+        </Reveal>
+        <Reveal delay={6}><ArrowLink href="/hunting/">Planning a hunting trip</ArrowLink></Reveal>
+      </div>
+    </div>
+  </Section>
+
+  <!-- --------------------------------------------------------------- "The Wall" -->
+  <section class="wall tone-pine" aria-labelledby="wall-title">
+    <div class="wall__rings" aria-hidden="true"><TargetIcon size={520} strokeWidth={0.4} /></div>
+    <div class="wrap wall__inner">
+      <Reveal class="wall__copy">
+        <h2 id="wall-title">For the ones who taught us to aim true.</h2>
+        <p>
+          Every bow that leaves this shop is looked over twice. That habit didn&rsquo;t start with us.
+          It started with a grandfather who opened the doors in 1957 and a father who kept them
+          open for the next forty years, and who taught a kid named Rob that the
+          customer&rsquo;s shot matters more than the sale.
+        </p>
+        <p>We still work under their photographs. We still do it their way.</p>
+      </Reveal>
+
+      <Reveal class="wall__photos" delay={2}>
+        <figure class="wall__frame">
+          <Image src={counterMen} alt="Three men behind the counter of the original shop"
+            widths={[480, 900]} sizes="(max-width: 48rem) 84vw, 24rem" loading="lazy" />
+        </figure>
+        <figure class="wall__frame">
+          <Image src={counterWoman} alt="The shop counter and register in an early colour photograph"
+            widths={[420, 760]} sizes="(max-width: 48rem) 84vw, 20rem" loading="lazy" />
+        </figure>
+      </Reveal>
+
+      <Reveal class="wall__mark" delay={4}>
+        <TargetIcon size={30} strokeWidth={1.2} />
+        <!-- CONFIRM: founder's and father's names and years for the tribute line.
+             Until Rob supplies them this stays as "Est. 1957" — see handoff §5.2. -->
+        <p>Est. 1957</p>
+      </Reveal>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------------------- awards -->
+  <Section tone="cream">
+    <SectionHead eyebrow="Awards & recognition" title="What is on the wall." align="center" />
+    <ul class="awards">
+      {awards.map((a, i) => (
+        <li>
+          <Reveal delay={i}>
+            <figure>
+              <Image src={a.image} alt={a.alt} widths={[212, 424]} sizes="9rem" loading="lazy" />
+              <figcaption>
+                <span class="awards__label">{a.label}</span>
+                <span class="awards__note">{a.note}</span>
+              </figcaption>
+            </figure>
+          </Reveal>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <!-- ------------------------------------------------------------------ team -->
+  <Section tone="linen">
+    <SectionHead
+      eyebrow="The team"
+      title="Our pros."
+      lead="Every one of them would rather see you shoot well than sell you something."
+    />
+    <ul class="team">
+      {team.map((member, i) => (
+        <li>
+          <Reveal delay={i}>
+            <article class="team__card">
+              <div class="team__avatar" aria-hidden="true"><TargetIcon size={40} strokeWidth={1.1} /></div>
+              <h3>{member.data.name}</h3>
+              <p class="team__role">{member.data.role}</p>
+              <p class="team__bio">{member.data.bio.replace(/<!--[\s\S]*?-->/g, '').trim()}</p>
+              {member.data.certifications.length > 0 && (
+                <ul class="team__certs">
+                  {member.data.certifications.map((c) => <li>{c}</li>)}
+                </ul>
+              )}
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <!-- --------------------------------------------------------------- gallery -->
+  <Section tone="cream" id="gallery">
+    <SectionHead
+      eyebrow="Back in the days"
+      title="Photographs off the office walls."
+      lead="Some of these are older than the building&rsquo;s current front door."
+    />
+    <GalleryBlock items={galleryItems} layout="masonry" label="Archive photographs" />
+  </Section>
+
+  <ContactBand
+    title="Come stand in the room."
+    body="Sixty-nine years of it is hard to explain on a screen. The door is open six days a week."
+    primary={{ label: 'Get directions', href: business.directionsUrl }}
+    secondary={{ label: 'See the trophy room', href: '/trophy-room/' }}
+  />
+</Base>
+
+<style>
+  /* --------------------------------------------------------------- meet Rob */
+  .rob { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) { .rob { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .rob__frame {
+    margin: 0;
+    background: var(--cream-50);
+    padding: clamp(0.75rem, 0.3rem + 1.4vw, 1.5rem);
+    border: 1px solid var(--parchment);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .rob__copy p { max-width: 46ch; }
+  .rob__copy h2, .rob__copy p + p { margin-top: var(--sp-4); }
+  .rob__creds {
+    list-style: none;
+    margin: var(--sp-6) 0 var(--sp-5);
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .rob__creds li {
+    position: relative;
+    padding-left: 1.75rem;
+    font-size: var(--fs-small);
+    color: var(--bark-500);
+  }
+  .rob__creds li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0.45em;
+    width: 0.7rem; height: 0.7rem;
+    border: 1.5px solid var(--ember);
+    border-radius: 999px;
+  }
+
+  /* --------------------------------------------------------------- the wall */
+  .wall {
+    position: relative;
+    background: var(--pine-900);
+    color: var(--cream-50);
+    padding-block: calc(var(--section-y) * 1.4);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .wall__rings {
+    position: absolute;
+    top: 50%; left: 50%;
+    translate: -50% -50%;
+    color: var(--sage-300);
+    opacity: 0.05;
+    pointer-events: none;
+  }
+  .wall__inner {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: var(--sp-8);
+  }
+  .wall__copy { max-width: 44rem; }
+  .wall__copy h2 {
+    color: var(--cream-50);
+    font-size: clamp(1.75rem, 1.2rem + 2.4vw, 3rem);
+    font-weight: 300;
+    margin-bottom: var(--sp-6);
+  }
+  .wall__copy p {
+    color: rgba(248, 245, 238, 0.8);
+    font-size: var(--fs-lead);
+    line-height: 1.6;
+    max-width: 58ch;
+    margin-inline: auto;
+  }
+  .wall__copy p + p { margin-top: var(--sp-4); }
+
+  .wall__photos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sp-5);
+  }
+  .wall__frame {
+    margin: 0;
+    background: var(--cream-50);
+    padding: clamp(0.6rem, 0.3rem + 1vw, 1.1rem);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    max-width: 22rem;
+    flex: 1 1 16rem;
+  }
+  .wall__frame :global(img) { width: 100%; height: auto; }
+
+  .wall__mark { display: grid; justify-items: center; gap: var(--sp-3); color: var(--ember); }
+  .wall__mark p {
+    margin: 0;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(248, 245, 238, 0.62);
+  }
+
+  /* ----------------------------------------------------------------- awards */
+  .awards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: var(--sp-6);
+    justify-items: center;
+    text-align: center;
+  }
+  .awards figure { margin: 0; display: grid; gap: var(--sp-4); justify-items: center; }
+  .awards :global(img) {
+    width: 7.5rem; height: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--cream-200);
+    background: var(--cream-50);
+  }
+  .awards figcaption { display: grid; gap: 0.25rem; }
+  .awards__label {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--bark-700);
+  }
+  .awards__note { font-size: 0.8125rem; color: var(--stone-400); }
+
+  /* ------------------------------------------------------------------- team */
+  .team {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+  }
+  .team__card {
+    height: 100%;
+    background: var(--cream-50);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    display: grid;
+    gap: var(--sp-3);
+    align-content: start;
+  }
+  .team__avatar {
+    width: 4rem; height: 4rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--cream-100);
+    color: var(--ember);
+    margin-bottom: var(--sp-2);
+  }
+  .team__card h3 { font-size: var(--fs-h4); margin: 0; }
+  .team__role {
+    margin: 0;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+  }
+  .team__bio { margin: 0; font-size: var(--fs-small); line-height: 1.6; color: var(--bark-500); }
+  .team__certs { list-style: none; margin: var(--sp-2) 0 0; padding: 0; display: grid; gap: 0.35rem; }
+  .team__certs li { font-size: 0.75rem; color: var(--stone-400); }
+</style>

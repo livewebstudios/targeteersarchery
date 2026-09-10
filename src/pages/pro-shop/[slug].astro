@@ -1,0 +1,157 @@
+---
+import type { ImageMetadata } from 'astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import Prose from '~/components/Prose.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Faq from '~/components/Faq.astro';
+import { faqSchema } from '~/components/seo/localBusiness';
+import ShieldRingIcon from '~/components/icons/ShieldRingIcon.astro';
+
+import mathewsHero from '~/assets/shop/bows-02.jpg';
+import hoytHero from '~/assets/shop/bows-04.jpg';
+import sitkaHero from '~/assets/hunting/deer-wide.jpg';
+
+export async function getStaticPaths() {
+  const brands = await getCollection('brands');
+  return brands.map((brand) => ({ params: { slug: brand.data.slug }, props: { brand } }));
+}
+
+interface Props { brand: CollectionEntry<'brands'>; }
+const { brand } = Astro.props;
+const { Content } = await render(brand);
+
+const heroes: Record<string, { image: ImageMetadata; alt: string }> = {
+  mathews: { image: mathewsHero, alt: 'Compound bows on the Targeteers wall' },
+  hoyt: { image: hoytHero, alt: 'Bows in the Targeteers showroom' },
+  sitka: { image: sitkaHero, alt: 'Whitetail country at first light' },
+};
+const hero = heroes[brand.data.slug] ?? heroes.mathews;
+
+const faqsByBrand: Record<string, { question: string; answer: string }[]> = {
+  mathews: [
+    { question: 'Are you an authorized Mathews dealer?', answer: 'Yes. We are an authorized Mathews dealer in North Jersey and a Mathews Top 100 Dealer award winner for multiple years.' },
+    { question: 'Can I shoot a Mathews before I buy it?', answer: 'Yes. The eleven-lane indoor range is in the same building as the showroom. We will set a bow to your draw and you can put arrows through it the same visit.' },
+    { question: 'Do you stock Mathews modules and parts?', answer: 'We stock the common modules and service parts, and we can order anything we do not have on the shelf. Call (201) 843-7788 and tell us the bow and the year.' },
+    { question: 'Will you set up a Mathews I bought elsewhere?', answer: 'Yes, gladly, and without a lecture. Fit, paper tune, cam timing, center shot, peep: the same bench work any bow gets here.' },
+  ],
+  hoyt: [
+    { question: 'Are you an authorized Hoyt dealer?', answer: 'Yes. We are an authorized North Jersey Hoyt dealer and have been named a Hoyt Top 50 Dealer for multiple years.' },
+    { question: 'Do you carry Hoyt target bows as well as hunting bows?', answer: 'We carry both. They want different setups, so tell us which one you are and the conversation gets a lot shorter.' },
+    { question: 'Can you service an older Hoyt?', answer: 'Usually. Bring it in and we will tell you honestly what it needs and whether the parts are still available.' },
+    { question: 'What comes with a bow bought here?', answer: 'A fit to your measurements, a full tune, a shot check on our own range, a second look before it leaves, and a discount range card honored for a year from the purchase date.' },
+  ],
+  sitka: [
+    { question: 'Do you stock SITKA in the shop?', answer: 'Yes, we are an authorized SITKA Gear dealer, stocked for New Jersey and northeast seasons. Come in and try it on rather than guessing at a size chart.' },
+    { question: 'Which SITKA system do I need for New Jersey?', answer: 'It depends on whether you are stand hunting or moving, and how late in the season you go. Damp cold and long motionless sits are the northeast problem, and the layering answer is different from a western hunt.' },
+    { question: 'Can I draw my bow in the jacket before I buy it?', answer: 'Please do. A layer that binds at full draw is worse than no layer at all, and you will not find that out from a chart. Bring your bow.' },
+    { question: 'Do you carry SITKA in youth or smaller sizes?', answer: 'Stock varies through the season. Call ahead at (201) 843-7788 and we will check before you drive over.' },
+  ],
+};
+const faqs = faqsByBrand[brand.data.slug] ?? [];
+---
+<Base
+  title={`${brand.data.seoTitle} | Targeteers Archery · Saddle Brook, NJ`}
+  description={brand.data.seoDescription}
+  keywords={brand.data.keywords}
+  ogImage={`/og/${brand.data.slug}.jpg`}
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Pro Shop', path: '/pro-shop/' },
+    { name: brand.data.name, path: `/pro-shop/${brand.data.slug}/` },
+  ]}
+  schema={faqs.length ? faqSchema(faqs) : undefined}
+>
+  <PageHero
+    eyebrow={brand.data.name}
+    title={brand.data.seoTitle}
+    lead={brand.data.tagline}
+    image={hero.image}
+    imageAlt={hero.alt}
+  />
+
+  <Section tone="cream">
+    <div class="brand">
+      <Reveal class="brand__body"><Prose><Content /></Prose></Reveal>
+      <aside class="brand__aside">
+        <Reveal delay={2}>
+          <div class="claim">
+            <ShieldRingIcon size={30} />
+            <p class="claim__label">Dealer status</p>
+            <p class="claim__text">{brand.data.dealerClaim}</p>
+            <!-- CONFIRM: the old site described Targeteers as North Jersey's only
+                 authorized Mathews dealer. That wording is deliberately not used
+                 here until Rob confirms it is still accurate. -->
+          </div>
+        </Reveal>
+        <Reveal delay={3}>
+          <div class="see-it">
+            <p class="claim__label">See it, draw it, tune it here</p>
+            <ul>
+              <li>Fitted to your draw length and weight</li>
+              <li>Paper tuned, timed, center shot set</li>
+              <li>Shot on our own 27-yard indoor range</li>
+              <li>Looked over a second time before it leaves</li>
+            </ul>
+            <ArrowLink href="/services/bow-tuning/">How we tune a bow</ArrowLink>
+          </div>
+        </Reveal>
+      </aside>
+    </div>
+  </Section>
+
+  {faqs.length > 0 && (
+    <Section tone="linen">
+      <div class="faq-head"><Eyebrow>Questions</Eyebrow><h2>{brand.data.name}, answered.</h2></div>
+      <Faq items={faqs} />
+    </Section>
+  )}
+
+  <ContactBand
+    title={`Come shoot a ${brand.data.name.split(' ')[0]}.`}
+    body="Call ahead if you want a specific model in your hands, and we will have it on the rack when you get here."
+    primary={{ label: 'Call the shop', href: 'tel:+12018437788' }}
+    secondary={{ label: 'Back to the pro shop', href: '/pro-shop/' }}
+  />
+</Base>
+
+<style>
+  .brand { display: grid; gap: var(--sp-7); align-items: start; }
+  @media (min-width: 60rem) { .brand { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .brand__aside { display: grid; gap: var(--sp-5); }
+  @media (min-width: 60rem) { .brand__aside { position: sticky; top: calc(var(--nav-h) + 3rem); } }
+
+  .claim, .see-it {
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    display: grid;
+    gap: var(--sp-3);
+  }
+  .claim :global(svg) { color: var(--ember); }
+  .claim__label {
+    margin: 0;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+  }
+  .claim__text { margin: 0; font-size: var(--fs-small); line-height: 1.65; color: var(--bark-500); }
+  .see-it ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+  .see-it li { position: relative; padding-left: 1.5rem; font-size: var(--fs-small); color: var(--bark-500); }
+  .see-it li::before {
+    content: '';
+    position: absolute; left: 0; top: 0.45em;
+    width: 0.65rem; height: 0.65rem;
+    border: 1.5px solid var(--ember);
+    border-radius: 999px;
+  }
+  .faq-head { margin-bottom: var(--sp-6); }
+</style>

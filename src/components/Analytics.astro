@@ -1,0 +1,25 @@
+---
+import { business } from '~/data/business';
+const id = business.analytics.ga4;
+const enabled = import.meta.env.PROD && !id.includes('XXXX');
+---
+{
+  enabled && (
+    <>
+      <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${id}`} />
+      <script is:inline define:vars={{ id }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { window.dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', id, { anonymize_ip: true });
+      </script>
+    </>
+  )
+}
+{
+  !enabled && (
+    /* GA4 placeholder — swap business.analytics.ga4 for the real measurement
+       ID and this block starts emitting the gtag snippet on production builds. */
+    <meta name="x-analytics" content="ga4-pending" />
+  )
+}

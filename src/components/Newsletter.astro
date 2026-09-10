@@ -1,0 +1,74 @@
+---
+import { business } from '~/data/business';
+import MailIcon from './icons/MailIcon.astro';
+const pending = business.mailchimpAction === 'MAILCHIMP_ACTION_URL';
+---
+<div class="news">
+  <h3 class="news__title"><MailIcon size={18} /> The Targeteers list</h3>
+  <p class="news__body">
+    League nights, camp dates, new bows on the wall, and the odd note from Rob. A few emails a
+    month, never more.
+  </p>
+  <!-- Mailchimp embed. Swap business.mailchimpAction for Lisa's current action URL. -->
+  <form
+    class="news__form"
+    action={business.mailchimpAction}
+    method="post"
+    target="_blank"
+    novalidate
+  >
+    <label class="visually-hidden" for="news-email">Email address</label>
+    <input id="news-email" type="email" name="EMAIL" required placeholder="you@example.com" autocomplete="email" />
+    <!-- Mailchimp's bot trap; the field name is list-specific. -->
+    <div aria-hidden="true" style="position:absolute;left:-5000px">
+      <input type="text" name="b_MAILCHIMP_BOT_FIELD" tabindex="-1" value="" />
+    </div>
+    <button type="submit">Sign up</button>
+  </form>
+  {pending && <p class="news__pending">Newsletter signup goes live once the Mailchimp embed URL is in.</p>}
+</div>
+
+<style>
+  .news { display: grid; gap: var(--sp-3); }
+  .news__title {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    font-family: var(--font-body);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .news__body { font-size: var(--fs-small); color: var(--fg-muted); max-width: 40ch; margin: 0; }
+  .news__form { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-2); }
+  .news__form input {
+    flex: 1 1 12rem;
+    background: var(--cream-50);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius);
+    padding: 0.85rem 1rem;
+    color: var(--bark-900);
+  }
+  .news__form input:focus {
+    outline: 0;
+    border-color: var(--ember);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ember) 18%, transparent);
+  }
+  .news__form button {
+    background: var(--pine-700);
+    color: var(--cream-50);
+    border: 0;
+    border-radius: var(--radius);
+    padding: 0.85rem 1.4rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .news__form button:hover { background: var(--pine-900); }
+  .news__pending { font-size: 0.75rem; color: var(--fg-faint); margin: 0; }
+</style>

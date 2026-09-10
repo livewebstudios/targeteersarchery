@@ -1,0 +1,227 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Faq from '~/components/Faq.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import { Image } from 'astro:assets';
+import { faqSchema } from '~/components/seo/localBusiness';
+import WrenchRingIcon from '~/components/icons/WrenchRingIcon.astro';
+import StringIcon from '~/components/icons/StringIcon.astro';
+import ArrowIcon from '~/components/icons/ArrowIcon.astro';
+
+import heroImg from '~/assets/shop/services-wide.jpg';
+import stringsImg from '~/assets/shop/strings-header.jpg';
+import arrowsImg from '~/assets/shop/arrows-wide.jpg';
+
+const pillars = [
+  {
+    icon: 'wrench',
+    title: 'Bow tuning & fitting',
+    body: 'Draw length and draw weight set to your body rather than the box. Paper tune, cam timing, center shot, nock height, rest and peep. Then it gets shot on our range, because a bow that tunes clean on paper and shoots badly at twenty yards has not been tuned.',
+    link: { href: '/services/bow-tuning/', label: 'The full tuning process' },
+  },
+  {
+    icon: 'string',
+    title: 'Custom strings & arrows',
+    body: 'Custom strings are what this shop has always specialized in. Built to your bow and your draw, pre-stretched, served properly, peep tied in and shot in. Arrows cut, squared, fletched and spined to the setup you are actually shooting.',
+    link: { href: '/insights/custom-strings-what-changes/', label: 'What changes with custom strings' },
+  },
+  {
+    icon: 'arrow',
+    title: 'Repairs',
+    body: 'Cams, cables, rests, sights, crossbow strings and cocking devices. Not satisfied with the factory parts? We have the tools and the materials to build you something that is yours. If it can be fixed, it gets fixed here.',
+    link: { href: '/faq/', label: 'Common service questions' },
+  },
+];
+
+const steps = [
+  { n: '01', title: 'Drop it off', body: 'No appointment needed. Tell us what it is doing in whatever words you have. We will translate.' },
+  { n: '02', title: 'Inspect', body: 'Measured before anything is touched: draw length, weight, axle to axle, brace height, cam timing, string and serving condition.' },
+  { n: '03', title: 'Tune', body: 'Paper tune, center shot, nock height, timing. Small moves, one variable at a time, shot after every change.' },
+  { n: '04', title: 'Test on the range', body: 'Out on our own lanes, at distance. Paper tells you a lot. Twenty yards tells you the truth.' },
+  { n: '05', title: 'Second look, then pick up', body: 'Every bow gets looked over twice before it goes back out the door. That rule started in 1957.' },
+];
+
+const allFaqs = await getCollection('faq');
+const serviceFaqs = allFaqs
+  .filter((f) => f.data.group === 'Tuning & Repairs')
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((f) => ({ question: f.data.question, answer: f.data.answer }));
+const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--[\s\S]*?-->/g, '').trim() }));
+---
+<Base
+  title="Services: Tuning, Custom Strings & Repairs | Targeteers Archery · Saddle Brook, NJ"
+  description="Bow tuning and fitting, custom strings and arrows, and repairs in Saddle Brook, NJ. Every bow paper tuned, shot on our own range, and looked over twice before it leaves."
+  keywords={['bow repair services', 'compound bow tuning services', 'custom bow strings NJ', 'archery repairs North Jersey']}
+  ogImage="/og/services.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }]}
+  schema={faqSchema(cleanFaqs)}
+>
+  <PageHero
+    eyebrow="Services"
+    title="The bench is the reason this shop is still here."
+    lead="Tuning, custom strings and arrows, and repairs. Done by people who shoot what they work on."
+    image={heroImg}
+    imageAlt="Working on a bow at the Targeteers service bench"
+  />
+
+  <Section tone="cream">
+    <ul class="pillars">
+      {pillars.map((p, i) => (
+        <li>
+          <Reveal delay={i}>
+            <article>
+              <span class="pillars__icon">
+                {p.icon === 'wrench' && <WrenchRingIcon size={32} />}
+                {p.icon === 'string' && <StringIcon size={32} />}
+                {p.icon === 'arrow' && <ArrowIcon size={32} />}
+              </span>
+              <h2>{p.title}</h2>
+              <p>{p.body}</p>
+              <ArrowLink href={p.link.href}>{p.link.label}</ArrowLink>
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <section class="process tone-pine" aria-labelledby="process-title">
+    <div class="wrap">
+      <div class="process__head" data-reveal>
+        <Eyebrow>How it goes</Eyebrow>
+        <h2 id="process-title">Five steps, every time.</h2>
+      </div>
+      <ol class="process__steps">
+        {steps.map((s, i) => (
+          <li>
+            <Reveal delay={i}>
+              <span class="process__n num">{s.n}</span>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </Reveal>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <Section tone="cream">
+    <div class="detail">
+      <Reveal class="detail__media">
+        <Image src={stringsImg} alt="String material in the shop" widths={[600, 1000, 1600]}
+          sizes="(max-width: 60rem) 92vw, 32rem" loading="lazy" />
+      </Reveal>
+      <div class="detail__copy">
+        <Reveal><Eyebrow>We specialize in this</Eyebrow></Reveal>
+        <Reveal delay={1}><h2>Custom strings, built for your bow.</h2></Reveal>
+        <Reveal delay={2}>
+          <p>
+            A string is the most replaced and least understood part of a bow. As it stretches, draw
+            length creeps, peep rotation shifts, and cam timing drifts, slowly enough that you
+            adapt to it without noticing.
+          </p>
+        </Reveal>
+        <Reveal delay={3}>
+          <p>
+            A set built properly is pre-stretched under tension, made to your bow&rsquo;s spec and
+            strand count, served where the wear actually happens, and finished with the peep tied
+            in at your anchor and shot in until it holds.
+          </p>
+        </Reveal>
+        <Reveal delay={4}>
+          <p>And yes, you pick the colors. Half the fun is that they are yours.</p>
+        </Reveal>
+        <Reveal delay={5}><ArrowLink href="/insights/custom-strings-what-changes/">What actually changes</ArrowLink></Reveal>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <div class="detail detail--flip">
+      <Reveal class="detail__media">
+        <Image src={arrowsImg} alt="Custom arrows built in the shop" widths={[600, 1000, 1600]}
+          sizes="(max-width: 60rem) 92vw, 32rem" loading="lazy" />
+      </Reveal>
+      <div class="detail__copy">
+        <Reveal><Eyebrow>Arrows</Eyebrow></Reveal>
+        <Reveal delay={1}><h2>Cut, squared and matched to what you shoot.</h2></Reveal>
+        <Reveal delay={2}>
+          <p>
+            Bring the bow. Arrow spine is a function of draw weight and draw length, and guessing at
+            it from a chart is how people end up with a dozen shafts that will never group.
+          </p>
+        </Reveal>
+        <Reveal delay={3}>
+          <p>
+            Easton and Carbon Express shafts, cut to length, squared at both ends, fletched to your
+            preference, and spin-tested before they go in your quiver.
+          </p>
+        </Reveal>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="cream">
+    <SectionHead eyebrow="Questions" title="What people ask at the counter." />
+    <Faq items={cleanFaqs} />
+    <p class="faq-more"><ArrowLink href="/faq/">All frequently asked questions</ArrowLink></p>
+  </Section>
+
+  <ContactBand
+    title="Bring it in."
+    body="Describe what it is doing over the phone and half the time we can tell you what it is before you get here."
+    primary={{ label: 'Call the shop', href: 'tel:+12018437788' }}
+    secondary={{ label: 'How we tune a bow', href: '/services/bow-tuning/' }}
+  />
+</Base>
+
+<style>
+  .pillars {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: var(--sp-7);
+  }
+  .pillars article { display: grid; gap: var(--sp-4); align-content: start; }
+  .pillars__icon { color: var(--ember); }
+  .pillars h2 { font-size: var(--fs-h3); margin: 0; }
+  .pillars p { margin: 0; line-height: 1.7; }
+
+  .process {
+    background: var(--pine-900);
+    color: var(--cream-50);
+    padding-block: var(--section-y);
+    --accent: var(--sage-300);
+  }
+  .process__head { margin-bottom: var(--sp-7); }
+  .process__head h2 { color: var(--cream-50); }
+  .process__steps {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--sp-6);
+  }
+  .process__steps li { border-top: 1px solid rgba(248, 245, 238, 0.18); padding-top: var(--sp-4); }
+  .process__n { display: block; font-size: 2.5rem; color: var(--ember); margin-bottom: var(--sp-3); }
+  .process__steps h3 { font-size: var(--fs-h4); color: var(--cream-50); margin-bottom: var(--sp-2); }
+  .process__steps p { font-size: var(--fs-small); line-height: 1.65; color: rgba(248, 245, 238, 0.72); margin: 0; }
+
+  .detail { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) {
+    .detail { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-9); }
+    .detail--flip .detail__media { order: 2; }
+  }
+  .detail__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+  .detail__copy p { max-width: 46ch; }
+  .detail__copy h2, .detail__copy p + p { margin-top: var(--sp-4); }
+  .detail__copy :global(.arrow-link) { margin-top: var(--sp-5); }
+
+  .faq-more { margin-top: var(--sp-7); }
+</style>

@@ -1,0 +1,84 @@
+---
+import { hours, hoursLabel } from '~/data/business';
+import ClockRingIcon from './icons/ClockRingIcon.astro';
+
+interface Props { class?: string; compact?: boolean; }
+const { class: klass = '', compact = false } = Astro.props;
+
+// Rendered at build time from the hours table, then corrected client-side for
+// the visitor's actual day and America/New_York time.
+const isoToday = ((new Date().getDay() + 6) % 7) + 1;
+const today = hours.find((h) => h.day === isoToday)!;
+const initial = today.closed ? 'Closed today' : `Open today ${hoursLabel(today)}`;
+const serialised = JSON.stringify(
+  hours.map((h) => ({ day: h.day, closed: !!h.closed, label: hoursLabel(h) })),
+);
+---
+<span class={`open-pill ${compact ? 'is-compact' : ''} ${klass}`} data-open-pill data-hours={serialised}>
+  <ClockRingIcon size={compact ? 14 : 16} />
+  <span data-open-pill-text>{initial}</span>
+</span>
+
+<style>
+  .open-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-muted, var(--bark-500));
+    border: 1px solid var(--rule, var(--cream-200));
+    border-radius: 999px;
+    padding: 0.45em 0.9em 0.45em 0.75em;
+    background: color-mix(in srgb, var(--bg, var(--cream-50)) 70%, transparent);
+    backdrop-filter: blur(6px);
+    white-space: nowrap;
+  }
+  .open-pill.is-compact { border: 0; padding: 0; background: none; backdrop-filter: none; }
+  .open-pill :global(svg) { flex: none; color: var(--accent, var(--ember)); }
+  .open-pill[data-state='open'] :global(svg) { color: var(--pine-500); }
+  .tone-pine .open-pill[data-state='open'] :global(svg) { color: var(--sage-300); }
+  .open-pill[data-state='closed'] :global(svg) { color: var(--stone-400); }
+</style>
+
+<script>
+  // Store hours are New Jersey hours regardless of where the visitor is.
+  const NY = 'America/New_York';
+  for (const el of document.querySelectorAll<HTMLElement>('[data-open-pill]')) {
+    const rows = JSON.parse(el.dataset.hours ?? '[]') as {
+      day: number; closed: boolean; label: string;
+    }[];
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: NY, weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false,
+    }).formatToParts(now);
+    const wd = parts.find((p) => p.type === 'weekday')?.value ?? 'Mon';
+    const hour = Number(parts.find((p) => p.type === 'hour')?.value ?? 0);
+    const minute = Number(parts.find((p) => p.type === 'minute')?.value ?? 0);
+    const order = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const iso = order.indexOf(wd) + 1;
+    const row = rows.find((r) => r.day === iso);
+    const text = el.querySelector('[data-open-pill-text]');
+    if (!row || !text) continue;
+
+    if (row.closed) {
+      text.textContent = 'Closed today';
+      el.dataset.state = 'closed';
+      continue;
+    }
+    const [openStr, closeStr] = row.label.split(' – ');
+    const to24 = (s: string) => {
+      const m = s.match(/(\d+)(?::(\d+))?\s*(am|pm)/i);
+      if (!m) return 0;
+      let h = Number(m[1]) % 12;
+      if (/pm/i.test(m[3])) h += 12;
+      return h * 60 + Number(m[2] ?? 0);
+    };
+    const mins = hour * 60 + minute;
+    const isOpen = mins >= to24(openStr) && mins < to24(closeStr);
+    text.textContent = isOpen ? `Open today until ${closeStr}` : `Open today ${row.label}`;
+    el.dataset.state = isOpen ? 'open' : 'closed';
+  }
+</script>

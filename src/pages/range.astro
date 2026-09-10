@@ -1,0 +1,243 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Faq from '~/components/Faq.astro';
+import HoursTable from '~/components/HoursTable.astro';
+import GalleryBlock from '~/components/GalleryBlock.astro';
+import Button from '~/components/Button.astro';
+import StatRing from '~/components/StatRing.astro';
+import ShieldRingIcon from '~/components/icons/ShieldRingIcon.astro';
+import { faqSchema } from '~/components/seo/localBusiness';
+import { business } from '~/data/business';
+
+import heroImg from '~/assets/range/range-wide.jpg';
+import lanes1 from '~/assets/range/lanes-01.jpg';
+import lanes2 from '~/assets/range/lanes-02.jpg';
+import lanes3 from '~/assets/range/lanes-03.jpg';
+import lanes4 from '~/assets/range/lanes-04.jpg';
+import lanes5 from '~/assets/range/lanes-05.jpg';
+import lanes6 from '~/assets/range/lanes-06.jpg';
+import lanesTall from '~/assets/range/lanes-tall.jpg';
+import onTheLine from '~/assets/range/on-the-line.jpg';
+
+const rules = [
+  'Lanes are subject to availability. Lessons, leagues and events take lanes, so call ahead or check the calendar and Facebook for the current schedule.',
+  'We do not provide equipment unless you are taking a lesson.',
+  'Any equipment brought from outside will be checked and must meet our safety standards.',
+  'Targets are available for sale at the front desk.',
+  'It may be required that two shooters share one bale.',
+  'Closed-toe footwear must be worn on the shooting line.',
+  'First-time shooters must have prior instruction or be approved by management.',
+  'All children must be accompanied by an adult or guardian.',
+  'Children must be seven years old to shoot in the range and to take a lesson.',
+  'Management reserves the right to remove shooters and make decisions about the range accordingly. Anyone not following safety rules will be removed without a refund. We have the final decision about equipment.',
+];
+
+const allFaqs = await getCollection('faq');
+const rangeFaqs = allFaqs
+  .filter((f) => f.data.group === 'The Range')
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((f) => ({ question: f.data.question, answer: f.data.answer.replace(/<!--[\s\S]*?-->/g, '').trim() }));
+
+const galleryItems = [
+  { image: lanes1, alt: 'The indoor shooting lanes' },
+  { image: lanesTall, alt: 'An archer at full draw on the line' },
+  { image: lanes2, alt: 'Looking down the range toward the targets' },
+  { image: lanes4, alt: 'The shooting line in use' },
+  { image: lanes5, alt: 'The range from the back wall' },
+  { image: lanes3, alt: 'Targets at the end of the lanes' },
+  { image: onTheLine, alt: 'An archer on the shooting line' },
+  { image: lanes6, alt: 'Arrows in a target bale' },
+];
+---
+<Base
+  title="The Range: 11 Indoor Lanes | Targeteers Archery · Saddle Brook, NJ"
+  description="Eleven indoor archery lanes in Saddle Brook, NJ. Air conditioned, out to 27 yards, open to the public. Range rules, range cards, memberships and the online waiver."
+  keywords={['indoor archery range NJ', 'archery range North Jersey', 'indoor archery Bergen County']}
+  ogImage="/og/range.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'The Range', path: '/range/' }]}
+  schema={faqSchema(rangeFaqs)}
+>
+  <PageHero
+    eyebrow="The range"
+    title="Eleven lanes. Air conditioned. Twenty-seven yards."
+    lead="Indoors, open to the public, and attached to the shop, so you can shoot a bow before you decide anything about it."
+    image={heroImg}
+    imageAlt="The indoor range at Targeteers Archery"
+  />
+
+  <Section tone="cream">
+    <div class="stats">
+      <StatRing value="11" label="Indoor lanes" note="Enough that a league night does not shut the place down." />
+      <StatRing value="27" label="Yards" note="Long enough for serious practice, short enough to stay honest." />
+      <StatRing value="7+" label="Minimum age" note="With an adult, and with prior instruction for first timers." />
+    </div>
+    <!-- CONFIRM: exact yardage — the old site said 27 in one place and 28 in another. -->
+  </Section>
+
+  <section class="promise tone-pine" aria-labelledby="promise-title">
+    <div class="wrap promise__inner">
+      <Reveal class="promise__copy">
+        <ShieldRingIcon size={34} />
+        <Eyebrow>Our promise</Eyebrow>
+        <h2 id="promise-title">Safety is the highest priority.</h2>
+        <p class="lead">
+          Everything below exists so that everybody on the line goes home in the same condition
+          they arrived. Nobody here enjoys enforcing rules, and everybody here will.
+        </p>
+      </Reveal>
+      <Reveal class="promise__card" delay={2}>
+        <p class="promise__label">Discount range cards</p>
+        <p>
+          Buy a bow from our pro shop and you get a discount range card, honored for one year from
+          the date of purchase. Ask at the front desk about range cards, memberships and gift
+          certificates.
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <Section tone="cream" id="rules">
+    <SectionHead
+      eyebrow="Range rules"
+      title="Read these once. They do not change."
+      lead="Most of them are obvious. All of them are enforced."
+    />
+    <ol class="rules">
+      {rules.map((rule, i) => (
+        <li><Reveal delay={Math.min(i, 6)}><span class="rules__mark" aria-hidden="true"></span><p>{rule}</p></Reveal></li>
+      ))}
+    </ol>
+  </Section>
+
+  <Section tone="linen">
+    <div class="side-by-side">
+      <Reveal>
+        <div class="panel">
+          <h2>Before you shoot</h2>
+          <p>
+            Everybody on the line signs a waiver. You can do it at the front desk when you arrive,
+            or fill it in here first and save yourself the clipboard.
+          </p>
+          <Button href="/waiver/" variant="primary">Sign the waiver</Button>
+        </div>
+      </Reveal>
+      <Reveal delay={1}>
+        <div class="panel">
+          <h2>Lane availability</h2>
+          <p>
+            Lanes get taken by lessons, leagues and events, and the schedule moves week to week.
+            One call saves a wasted drive.
+          </p>
+          <Button href={business.phoneHref} variant="ghost">{business.phone}</Button>
+        </div>
+      </Reveal>
+      <Reveal delay={2}>
+        <div class="panel">
+          <h2>Hours</h2>
+          <HoursTable />
+          <p class="panel__link"><ArrowLink href="/calendar/">See the calendar</ArrowLink></p>
+        </div>
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="cream">
+    <SectionHead eyebrow="Questions" title="The range, answered." />
+    <Faq items={rangeFaqs} />
+    <p class="faq-more"><ArrowLink href="/faq/">All frequently asked questions</ArrowLink></p>
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead eyebrow="The lanes" title="What you are walking into." />
+    <GalleryBlock items={galleryItems} label="Range photographs" />
+  </Section>
+
+  <ContactBand
+    title="Never shot before?"
+    body="First-time shooters need prior instruction or management approval. The simplest route is a half-hour lesson: equipment, range time and an instructor, all included."
+    primary={{ label: 'Book a lesson', href: '/lessons/#book' }}
+    secondary={{ label: 'Sign the waiver', href: '/waiver/' }}
+  />
+</Base>
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--sp-7);
+  }
+
+  .promise { background: var(--pine-900); color: var(--cream-50); padding-block: var(--section-y); --accent: var(--sage-300); }
+  .promise__inner { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) { .promise__inner { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .promise__copy :global(svg) { color: var(--ember); margin-bottom: var(--sp-5); }
+  .promise h2 { color: var(--cream-50); }
+  .promise .lead { margin-top: var(--sp-4); color: rgba(248, 245, 238, 0.82); }
+  .promise__card {
+    border: 1px solid rgba(248, 245, 238, 0.18);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+  }
+  .promise__label {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+    margin: 0 0 var(--sp-3);
+  }
+  .promise__card p { color: rgba(248, 245, 238, 0.78); font-size: var(--fs-small); line-height: 1.7; margin: 0; }
+
+  .rules { list-style: none; margin: 0; padding: 0; counter-reset: rule; display: grid; gap: 0; max-width: 58rem; }
+  .rules li { counter-increment: rule; border-bottom: 1px solid var(--rule); }
+  .rules li > :global(div) { display: flex; gap: var(--sp-4); align-items: start; padding-block: var(--sp-4); }
+  .rules__mark {
+    flex: none;
+    position: relative;
+    width: 1.5rem; height: 1.5rem;
+    border: 1.5px solid var(--ember);
+    border-radius: 999px;
+    margin-top: 0.15rem;
+    display: grid;
+    place-items: center;
+  }
+  .rules__mark::after {
+    content: counter(rule);
+    font-family: var(--font-body);
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--ember);
+  }
+  .rules p { margin: 0; line-height: 1.7; }
+
+  .side-by-side {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+    align-items: start;
+  }
+  .panel {
+    height: 100%;
+    background: var(--cream-50);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    display: grid;
+    gap: var(--sp-4);
+    align-content: start;
+  }
+  .panel h2 { font-size: var(--fs-h4); margin: 0; }
+  .panel p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+  .panel :global(.btn) { justify-self: start; }
+  .panel__link { margin-top: var(--sp-2) !important; }
+
+  .faq-more { margin-top: var(--sp-7); }
+</style>

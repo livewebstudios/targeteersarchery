@@ -1,0 +1,20 @@
+---
+import type { IconProps } from './icon';
+const { size = 24, class: klass = '', title, strokeWidth = 1.5 } = Astro.props as IconProps;
+const labelled = Boolean(title);
+---
+<svg
+  class={`icon ${klass}`}
+  width={size} height={size} viewBox="0 0 24 24" fill="none"
+  stroke="currentColor" stroke-width={strokeWidth}
+  stroke-linecap="round" stroke-linejoin="round"
+  role={labelled ? 'img' : undefined}
+  aria-hidden={labelled ? undefined : 'true'}
+  aria-label={title}
+>
+  <circle cx="12" cy="12" r="8.6" />
+  <circle cx="12" cy="12" r="5" />
+  <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none" />
+  <path d="M12 12 22 2" />
+  <path d="M22 2h-3.6M22 2v3.6" />
+</svg>

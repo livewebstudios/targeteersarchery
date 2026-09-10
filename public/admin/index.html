@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Insights editor · Targeteers Archery</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  </head>
+  <body>
+    <!-- Decap 3.1.2 is pinned deliberately. Later builds have shipped regressions
+         in the editorial-workflow UI; do not float this to @latest. -->
+    <script src="https://unpkg.com/decap-cms@3.1.2/dist/decap-cms.js"></script>
+    <script>
+      // After an invite or a password reset, land the user back in the editor.
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('init', (user) => {
+          if (!user) {
+            window.netlifyIdentity.on('login', () => {
+              document.location.href = '/admin/';
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,242 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import Prose from '~/components/Prose.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Faq from '~/components/Faq.astro';
+import { faqSchema } from '~/components/seo/localBusiness';
+import ClockRingIcon from '~/components/icons/ClockRingIcon.astro';
+
+import heroImg from '~/assets/shop/notched-arrow.jpg';
+
+const faqs = [
+  { question: 'How long does a tune-up take?', answer: 'Same day or next day when the shop is quiet. In the four weeks before bow season, plan on longer. That is our busiest stretch of the year. Come in early and you will not be waiting behind eleven other people with the same idea.' },
+  { question: 'Do I need an appointment?', answer: 'No appointment to drop off. Call ahead if you need it back on a particular day and we will tell you honestly whether that is doable.' },
+  { question: 'Do you work on crossbows?', answer: 'Yes. Strings, cables, cocking devices, scope mounting and sighting in. Crossbows get the same bench time as everything else.' },
+  { question: 'Can you tune a bow I bought online?', answer: 'Yes, and without a lecture. What we will say is that a bow fitted and tuned to you from the start shoots better than one that arrived in a box, and that is exactly the part we are good at. Bring it in.' },
+  { question: 'How often should a bow be tuned?', answer: 'Once a year if you shoot leagues or hunt every season. Sooner if your groups have opened up, your arrows are fishtailing, something got loud, or your broadheads stopped agreeing with your field points.' },
+  { question: 'Will you tune with my broadheads?', answer: 'Yes, and you should. Bring the actual heads and the actual arrows you will hunt with, not a spare from the box. Three weeks before your season rather than the week of.' },
+];
+---
+<Base
+  title="Compound Bow Tuning Services | Targeteers Archery · Saddle Brook, NJ"
+  description="Compound bow tuning in Saddle Brook, NJ: paper tuning, draw length and weight, cam timing, center shot and broadhead tuning, tested on our indoor range."
+  keywords={['compound bow tuning services', 'bow tuning NJ', 'paper tuning North Jersey', 'broadhead tuning NJ']}
+  ogImage="/og/bow-tuning.jpg"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Services', path: '/services/' },
+    { name: 'Bow Tuning', path: '/services/bow-tuning/' },
+  ]}
+  schema={faqSchema(faqs)}
+>
+  <PageHero
+    eyebrow="Bow tuning"
+    title="What actually happens when we tune your bow."
+    lead="Not a mystery, and not a five-minute job. Here is the whole sequence, step by step."
+    image={heroImg}
+    imageAlt="An arrow nocked on a bowstring"
+  />
+
+  <Section tone="cream">
+    <div class="layout">
+      <Reveal class="layout__body">
+        <Prose>
+          <p class="lead">
+            A tuned bow is one that sends the arrow away straight. That is the entire goal. Every
+            step below exists to remove one specific reason an arrow leaves crooked.
+          </p>
+
+          <h2>1. Measure before touching anything</h2>
+          <p>
+            The bow gets measured as it arrives: draw length, draw weight, axle to axle, brace
+            height, cam timing, string and serving condition, nock fit, rest position, peep height.
+          </p>
+          <p>
+            This matters more than it sounds. Half of what people call a tuning problem is a
+            mechanical change that already happened: a serving that separated, a rest that crept,
+            a peep that rotated. Finding that first saves an hour of chasing.
+          </p>
+
+          <h2>2. Draw length and draw weight, set to you</h2>
+          <p>
+            Draw length comes off your actual anchor, not a wingspan chart. Too long and you cannot
+            get to a repeatable anchor; too short and you lose the back tension that makes a
+            release clean instead of a flinch.
+          </p>
+          <p>
+            Draw weight is a weight you can hold at the end of a long sit and on arrow forty of a
+            league night. Almost everybody wants more than they should have, and it is the fastest
+            way to build a habit that takes a year to unlearn.
+          </p>
+
+          <h2>3. Cam timing</h2>
+          <p>
+            On a two-cam bow, both cams need to roll over together. When they drift apart, the
+            string leaves the bow at a slightly different angle each shot, and no amount of sight
+            adjustment will fix that. Timing gets checked against the manufacturer&rsquo;s marks and
+            corrected by twisting the cables.
+          </p>
+
+          <h2>4. Center shot and nock height</h2>
+          <p>
+            Center shot is the arrow&rsquo;s left-to-right position relative to the string. Nock
+            height is its up-and-down position. Get either wrong and the arrow leaves at an angle,
+            which is the root cause of nearly every flight problem people describe.
+          </p>
+          <p>
+            Both start from a measured baseline and then get refined by what the bow actually does,
+            not what the manual says it should.
+          </p>
+
+          <h2>5. Paper tuning</h2>
+          <p>
+            Shooting through a sheet of paper at close range makes arrow flight visible. A clean
+            round hole with three fletching slits means the arrow went through straight. A tear
+            tells you the direction and the amount.
+          </p>
+          <ul>
+            <li><strong>Tear left or right.</strong> Usually center shot, sometimes arrow spine.</li>
+            <li><strong>Tear high or low.</strong> Usually nock height or rest timing.</li>
+            <li><strong>Diagonal tear.</strong> Both, and they get fixed one at a time.</li>
+          </ul>
+          <p>
+            Adjustments are small and one variable at a time, with a shot after every change.
+            Changing two things at once means you learn nothing from either.
+          </p>
+
+          <h2>6. Broadhead tuning, for hunters</h2>
+          <p>
+            A field point is a smooth cone with nothing to steer with, so it will fly acceptably off
+            a bow that is slightly out. A broadhead has blades, and blades are wings. Put one on the
+            front of an arrow leaving at a small angle and it steers. Four to eight inches at
+            twenty yards.
+          </p>
+          <p>
+            Broadhead tuning fixes the bow, using the broadhead as the indicator. Nothing is done to
+            the head itself. We shoot field points and broadheads at the same spot and walk the rest
+            until the two groups converge.
+          </p>
+          <p>
+            Bring the actual heads and shafts you will hunt with, and come three weeks before your
+            season rather than the week of.
+          </p>
+
+          <h2>7. Out on the range</h2>
+          <p>
+            Then it gets shot at distance, on our own lanes. A bow that tunes clean on paper and
+            shoots badly at twenty yards has not been tuned, it has been adjusted. Paper is
+            diagnostic. Twenty yards is the verdict.
+          </p>
+
+          <h2>8. The second look</h2>
+          <p>
+            Every bow gets looked over twice before it goes back out the door. Bolts, cables,
+            serving, rest, sight, peep, nock fit.
+          </p>
+          <p>
+            That rule did not start with us. It started with the man who opened this shop in 1957,
+            and it is the reason a lot of people have been bringing bows here for thirty years.
+          </p>
+
+          <h2>What it costs</h2>
+          <p>
+            It depends on what the bow needs, and we will tell you before we do it. Nobody here is
+            going to add work you did not ask about and put it on the ticket.
+          </p>
+        </Prose>
+      </Reveal>
+
+      <aside class="layout__aside">
+        <Reveal delay={2}>
+          <div class="panel">
+            <ClockRingIcon size={30} />
+            <p class="panel__label">Timing</p>
+            <p class="panel__text">
+              Same day or next day when it is quiet. Three to four weeks before bow season, come in
+              early. The bench fills up and everybody waits until the last minute.
+            </p>
+          </div>
+        </Reveal>
+        <Reveal delay={3}>
+          <div class="panel">
+            <p class="panel__label">Bring with you</p>
+            <ul>
+              <li>The bow, obviously</li>
+              <li>The arrows you actually shoot</li>
+              <li>Your broadheads, if you are hunting</li>
+              <li>Your release aid</li>
+            </ul>
+          </div>
+        </Reveal>
+        <Reveal delay={4}>
+          <div class="panel panel--links">
+            <p class="panel__label">Related</p>
+            <ul class="panel__links">
+              <li><ArrowLink href="/insights/how-to-know-when-your-bow-needs-tuning/">Signs your bow needs tuning</ArrowLink></li>
+              <li><ArrowLink href="/insights/broadhead-tuning-why-field-points-lie/">Broadhead tuning explained</ArrowLink></li>
+              <li><ArrowLink href="/pro-shop/mathews/">Mathews dealer</ArrowLink></li>
+              <li><ArrowLink href="/pro-shop/hoyt/">Hoyt dealer</ArrowLink></li>
+            </ul>
+          </div>
+        </Reveal>
+      </aside>
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <div class="faq-head" data-reveal><Eyebrow>Questions</Eyebrow><h2>Tuning, answered.</h2></div>
+    <Faq items={faqs} />
+  </Section>
+
+  <ContactBand
+    title="Get it on the bench."
+    body="Tell us what the bow is doing and we will tell you what it probably is. Most of the time, over the phone, before you drive over."
+    primary={{ label: 'Call the shop', href: 'tel:+12018437788' }}
+    secondary={{ label: 'All services', href: '/services/' }}
+  />
+</Base>
+
+<style>
+  .layout { display: grid; gap: var(--sp-7); align-items: start; }
+  @media (min-width: 64rem) { .layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .layout__aside { display: grid; gap: var(--sp-5); }
+  @media (min-width: 64rem) { .layout__aside { position: sticky; top: calc(var(--nav-h) + 3rem); } }
+
+  .panel {
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    display: grid;
+    gap: var(--sp-3);
+  }
+  .panel :global(svg) { color: var(--ember); }
+  .panel__label {
+    margin: 0;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+  }
+  .panel__text { margin: 0; font-size: var(--fs-small); line-height: 1.65; color: var(--bark-500); }
+  .panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+  .panel li { font-size: var(--fs-small); color: var(--bark-500); position: relative; padding-left: 1.5rem; }
+  .panel li::before {
+    content: '';
+    position: absolute; left: 0; top: 0.45em;
+    width: 0.65rem; height: 0.65rem;
+    border: 1.5px solid var(--ember);
+    border-radius: 999px;
+  }
+  .panel--links li { padding-left: 0; }
+  .panel--links li::before { display: none; }
+  .panel__links { gap: 0.75rem; }
+
+  .faq-head { margin-bottom: var(--sp-6); }
+</style>

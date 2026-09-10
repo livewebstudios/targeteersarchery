@@ -1,0 +1,388 @@
+---
+import { Image } from 'astro:assets';
+import logoRGB from '~/assets/brand/logoRGB.png';
+import { primaryNav, moreNav } from '~/data/nav';
+import { business, addressLine } from '~/data/business';
+import MobileMenu from './MobileMenu.astro';
+import OpenNowPill from '../OpenNowPill.astro';
+import PhoneIcon from '../icons/PhoneIcon.astro';
+import ChevronDownIcon from '../icons/ChevronDownIcon.astro';
+import SocialIcon from '../icons/SocialIcon.astro';
+
+interface Props { overHero?: boolean; }
+const { overHero = false } = Astro.props;
+const current = Astro.url.pathname;
+const isCurrent = (href: string) =>
+  href === '/' ? current === '/' : current.startsWith(href);
+const moreActive = moreNav.some((l) => isCurrent(l.href));
+---
+
+<header class="site-nav" data-nav data-over-hero={overHero ? '' : undefined}>
+  <div class="utility tone-pine" aria-label="Store details">
+    <div class="wrap-wide utility__inner">
+      <p class="utility__facts">
+        <a href={business.phoneHref}>{business.phone}</a>
+        <span aria-hidden="true">·</span>
+        <a href={business.mapsUrl} target="_blank" rel="noopener">{addressLine}</a>
+        <span aria-hidden="true">·</span>
+        <OpenNowPill compact />
+      </p>
+      <ul class="utility__social">
+        <li><a href={business.socials.facebook} target="_blank" rel="noopener"><SocialIcon network="facebook" size={16} /></a></li>
+        <li><a href={business.socials.instagram} target="_blank" rel="noopener"><SocialIcon network="instagram" size={16} /></a></li>
+        <li><a href={business.socials.twitter} target="_blank" rel="noopener"><SocialIcon network="twitter" size={16} /></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap-wide site-nav__inner">
+    <a class="site-nav__logo" href="/" aria-label={`${business.shortName}, home`}>
+      <Image src={logoRGB} alt="Targeteers Archery" widths={[440, 880]} sizes="(max-width: 60rem) 168px, 210px" loading="eager" />
+    </a>
+
+    <nav class="site-nav__links" aria-label="Main">
+      <ul>
+        {primaryNav.map((link) => (
+          <li>
+            <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>{link.label}</a>
+          </li>
+        ))}
+        <li class="site-nav__more">
+          <button type="button" aria-expanded="false" aria-controls="more-menu" data-more-toggle data-active={moreActive ? '' : undefined}>
+            More <ChevronDownIcon size={14} />
+          </button>
+          <div class="more-menu" id="more-menu" hidden>
+            <ul>
+              {moreNav.map((link) => (
+                <li>
+                  <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>
+                    <span class="more-menu__label">{link.label}</span>
+                    <span class="more-menu__blurb">{link.blurb}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="site-nav__actions">
+      <a class="site-nav__phone" href={business.phoneHref} aria-label={`Call ${business.phone}`}>
+        <PhoneIcon size={18} />
+      </a>
+      <a class="site-nav__cta" href="/lessons/#book">Book a Lesson</a>
+      <MobileMenu
+        primary={primaryNav}
+        more={moreNav}
+        phone={business.phone}
+        phoneHref={business.phoneHref}
+        current={current}
+      />
+    </div>
+  </div>
+  <div class="site-nav__progress" aria-hidden="true">
+    <svg viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="15.5" stroke="currentColor" stroke-width="2" opacity=".22" />
+      <circle cx="18" cy="18" r="15.5" stroke="currentColor" stroke-width="2" pathLength="1" data-progress-ring stroke-linecap="round" />
+      <circle cx="18" cy="18" r="4" fill="currentColor" />
+    </svg>
+  </div>
+</header>
+
+<style>
+  /* ------------------------------------------------------------- utility */
+  .utility {
+    display: none;
+    background: var(--pine-900);
+    color: var(--cream-50);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    overflow: hidden;
+    height: 2.25rem;
+    transition: height var(--dur) var(--ease), opacity var(--dur) var(--ease);
+  }
+  @media (min-width: 64rem) { .utility { display: block; } }
+  /* On scroll the header tightens: the utility bar rolls away and the nav shrinks. */
+  .site-nav[data-scrolled] .utility { height: 0; opacity: 0; }
+  .utility__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-5);
+    min-height: 2.25rem;
+  }
+  .utility__facts {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: rgba(248, 245, 238, 0.78);
+    margin: 0;
+  }
+  .utility__facts a { text-decoration: none; transition: color var(--dur-fast) var(--ease); }
+  .utility__facts a:hover { color: var(--ember); }
+  .utility__facts span { color: rgba(248, 245, 238, 0.32); }
+  .utility__social { display: flex; gap: 0.9rem; list-style: none; margin: 0; padding: 0; }
+  .utility__social a { color: rgba(248, 245, 238, 0.6); transition: color var(--dur-fast) var(--ease); }
+  .utility__social a:hover { color: var(--ember); }
+
+  /* ----------------------------------------------------------------- nav */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    isolation: isolate;
+    z-index: var(--z-nav);
+    background: color-mix(in srgb, var(--cream-50) 92%, transparent);
+    backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom: 1px solid transparent;
+    transition:
+      background var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+  .site-nav[data-over-hero]:not([data-scrolled]) { --ember: var(--ember-bright); }
+  .site-nav[data-over-hero] {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    background: transparent;
+    backdrop-filter: none;
+    color: var(--cream-50);
+  }
+  /* The utility bar keeps its own dark ground even where the nav is see-through. */
+  .site-nav[data-over-hero] .utility { background: rgba(20, 38, 27, 0.72); backdrop-filter: blur(8px); }
+  .site-nav[data-over-hero]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to bottom, rgba(20, 38, 27, 0.55), rgba(20, 38, 27, 0));
+    pointer-events: none;
+  }
+  .site-nav[data-scrolled] {
+    background: color-mix(in srgb, var(--cream-50) 94%, transparent);
+    backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom-color: var(--cream-200);
+    box-shadow: 0 1px 24px rgba(30, 23, 17, 0.06);
+    color: var(--bark-900);
+  }
+  .site-nav[data-scrolled]::before { opacity: 0; }
+
+  .site-nav__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-5);
+    height: var(--nav-h);
+    transition: height var(--dur) var(--ease);
+    position: relative;
+  }
+  .site-nav[data-scrolled] .site-nav__inner { height: var(--nav-h-shrunk); }
+
+  .site-nav__logo { display: flex; align-items: center; flex: none; }
+  .site-nav__logo :global(img) {
+    width: auto;
+    height: 2.5rem;
+    transition: height var(--dur) var(--ease);
+  }
+  @media (min-width: 64rem) { .site-nav__logo :global(img) { height: 3.5rem; } }
+  .site-nav[data-scrolled] .site-nav__logo :global(img) { height: 2.25rem; }
+  /* The lockup is navy and orange; on the hero it needs a soft plate to stay
+     legible over moving footage. */
+  .site-nav[data-over-hero]:not([data-scrolled]) .site-nav__logo {
+    background: color-mix(in srgb, var(--cream-50) 90%, transparent);
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 20px rgba(20, 38, 27, 0.28);
+  }
+
+  .site-nav__links { display: none; margin-inline-start: auto; }
+  @media (min-width: 86rem) { .site-nav__links { display: block; } }
+  .site-nav__links > ul {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 0.1rem + 0.8vw, 1.35rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-nav__links a,
+  .site-nav__more button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0.35rem 0;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .site-nav__links a::after,
+  .site-nav__more button::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: var(--ember);
+    scale: 0 1;
+    transform-origin: left;
+    transition: scale var(--dur) var(--ease);
+  }
+  .site-nav__links a:hover::after,
+  .site-nav__more button:hover::after,
+  .site-nav__links a[aria-current='page']::after,
+  .site-nav__more button[data-active]::after { scale: 1 1; }
+  .site-nav__links a:hover, .site-nav__more button:hover { color: var(--ember); }
+
+  .site-nav__more { position: relative; }
+  .more-menu {
+    position: absolute;
+    top: calc(100% + 1.1rem);
+    right: 0;
+    min-width: 21rem;
+    background: var(--cream-50);
+    color: var(--bark-900);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 0.6rem;
+    opacity: 0;
+    translate: 0 -8px;
+    transition: opacity var(--dur-fast) var(--ease), translate var(--dur-fast) var(--ease);
+  }
+  .more-menu[data-open] { opacity: 1; translate: 0 0; }
+  .more-menu ul { list-style: none; margin: 0; padding: 0; }
+  .more-menu a {
+    display: grid;
+    gap: 0.1rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius);
+    text-transform: none;
+    letter-spacing: 0;
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .more-menu a::after { display: none; }
+  .more-menu a:hover { background: var(--cream-100); color: inherit; }
+  .more-menu__label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+  }
+  .more-menu__blurb { font-size: 0.8rem; color: var(--bark-500); line-height: 1.4; }
+
+  .site-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-inline-start: auto;
+  }
+  @media (min-width: 86rem) { .site-nav__actions { margin-inline-start: var(--sp-5); } }
+
+  .site-nav__phone {
+    display: none;
+    flex: none;
+    place-items: center;
+    width: 2.5rem; height: 2.5rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.7;
+    transition: opacity var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  }
+  @media (min-width: 48rem) { .site-nav__phone { display: grid; } }
+  .site-nav__phone:hover { opacity: 1; color: var(--ember); }
+
+  .site-nav__cta {
+    display: none;
+    flex: none;
+    white-space: nowrap;
+    align-items: center;
+    background: var(--ember-bright);
+    color: var(--bark-900);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.85rem 1.4rem;
+    border-radius: var(--radius);
+    transition: background var(--dur-fast) var(--ease), translate var(--dur-fast) var(--ease);
+  }
+  @media (min-width: 48rem) { .site-nav__cta { display: inline-flex; } }
+  .site-nav__cta:hover { background: var(--ember-hover); translate: 0 -1px; }
+
+  .site-nav__progress {
+    position: absolute;
+    left: 50%; bottom: -1.35rem;
+    translate: -50% 0;
+    width: 1.75rem; height: 1.75rem;
+    color: var(--ember);
+    opacity: 0;
+    transition: opacity var(--dur) var(--ease);
+    pointer-events: none;
+  }
+  .site-nav[data-scrolled] .site-nav__progress { opacity: 1; }
+  .site-nav__progress svg { width: 100%; height: 100%; rotate: -90deg; }
+  .site-nav__progress [data-progress-ring] {
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--scroll-progress, 0));
+  }
+  @media (max-width: 47.99rem) { .site-nav__progress { display: none; } }
+</style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  const ring = document.querySelector<SVGCircleElement>('[data-progress-ring]');
+
+  let ticking = false;
+  function update() {
+    ticking = false;
+    if (!nav) return;
+    const y = window.scrollY;
+    nav.toggleAttribute('data-scrolled', y > 24);
+    if (ring) {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? Math.min(1, y / max) : 0;
+      ring.style.setProperty('--scroll-progress', String(p));
+    }
+  }
+  addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+  update();
+
+  // MORE dropdown: click to open, Escape or an outside click to close.
+  const toggle = document.querySelector<HTMLButtonElement>('[data-more-toggle]');
+  const menu = document.getElementById('more-menu');
+  if (toggle && menu) {
+    const close = () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      menu.removeAttribute('data-open');
+      setTimeout(() => { if (toggle.getAttribute('aria-expanded') === 'false') menu.hidden = true; }, 240);
+    };
+    const open = () => {
+      menu.hidden = false;
+      requestAnimationFrame(() => menu.setAttribute('data-open', ''));
+      toggle.setAttribute('aria-expanded', 'true');
+    };
+    toggle.addEventListener('click', () => {
+      toggle.getAttribute('aria-expanded') === 'true' ? close() : open();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    document.addEventListener('click', (e) => {
+      if (!(e.target instanceof Node)) return;
+      if (!menu.contains(e.target) && !toggle.contains(e.target)) close();
+    });
+    menu.addEventListener('focusout', (e) => {
+      if (!menu.contains(e.relatedTarget as Node) && e.relatedTarget !== toggle) close();
+    });
+  }
+</script>

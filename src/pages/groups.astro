@@ -1,0 +1,245 @@
+---
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Form from '~/components/Form.astro';
+import Field from '~/components/Field.astro';
+import GalleryBlock from '~/components/GalleryBlock.astro';
+import { business } from '~/data/business';
+
+import heroImg from '~/assets/groups/speaker-night-wide.jpg';
+import seminar1 from '~/assets/groups/seminar-01.jpg';
+import seminar2 from '~/assets/groups/seminar-02.jpg';
+import seminar3 from '~/assets/groups/seminar-03.jpg';
+import seminar4 from '~/assets/groups/seminar-04.jpg';
+import speaker1 from '~/assets/groups/speaker-night-01.jpg';
+import speaker2 from '~/assets/groups/speaker-night-02.jpg';
+import speaker3 from '~/assets/groups/speaker-night-03.jpg';
+import adultImg from '~/assets/leagues/adult-01.jpg';
+
+const groups = [
+  { title: 'Team outings', body: 'Something for a group that has already done bowling. Everybody starts at zero, which levels a room faster than anything else we have seen.' },
+  { title: 'Scout troops', body: 'Badge sessions with certified instruction and equipment for the whole troop. Bring the requirements and we will build the evening around them.' },
+  { title: 'Birthday parties', body: 'On the range, with instruction, targets and all the gear. Kids from age seven, adults from any age they will admit to.' },
+  { title: 'Corporate events', body: 'A room full of colleagues discovering who is quietly good at this. Works better than it sounds, every single time.' },
+  { title: 'Bachelor & bachelorette parties', body: 'Yes, we do these. <!-- CONFIRM: whether Rob wants this listed publicly. -->' },
+  { title: 'Speaker & seminar nights', body: 'Names from the archery and hunting world, on our range, with a long question section that always runs longer than the talk.' },
+];
+
+const includes = [
+  'All equipment for the group',
+  'Range time on our indoor lanes',
+  'Professional instruction throughout',
+  'Targets',
+];
+
+const galleryItems = [
+  { image: speaker1, alt: 'A speaker night at the pro shop' },
+  { image: seminar1, alt: 'A technical seminar on the range' },
+  { image: speaker2, alt: 'A packed room at a speaker night' },
+  { image: seminar2, alt: 'Seminar attendees at the range' },
+  { image: adultImg, alt: 'A group evening on the shooting line' },
+  { image: seminar3, alt: 'A hands-on seminar session' },
+  { image: speaker3, alt: 'Q and A after a speaker night' },
+  { image: seminar4, alt: 'A seminar at Targeteers Archery' },
+];
+---
+<Base
+  title="Groups, Parties & Corporate Events | Targeteers Archery · Saddle Brook, NJ"
+  description="Team outings, scout badge sessions, parties, corporate events and speaker nights on our indoor range in Saddle Brook, NJ. Equipment and instruction included."
+  keywords={['archery group events NJ', 'corporate archery North Jersey', 'scout archery badge NJ', 'archery birthday party Saddle Brook']}
+  ogImage="/og/groups.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Groups', path: '/groups/' }]}
+>
+  <PageHero
+    eyebrow="Groups & events"
+    title="Put a room full of people on the line."
+    lead="Nobody is good at this on the first night, which is exactly why it works as a group."
+    image={heroImg}
+    imageAlt="A group evening on the Targeteers range"
+  />
+
+  <Section tone="cream">
+    <div class="intro">
+      <Reveal class="intro__copy">
+        <p class="lead">
+          We have run troops, teams, offices, birthday parties and rooms full of strangers through
+          this range. The pattern is always the same: awkward for eight minutes, then loud.
+        </p>
+        <p>
+          Everything is included: equipment, range time, instruction and targets. You bring people
+          and we handle the rest. A deposit is required and it is non-refundable, so pick a date you
+          are confident about.
+        </p>
+        <p>
+          Booking is by phone during business hours:
+          <a href={business.phoneHref}>{business.phone}</a>. Or send the form below and we will call
+          you back. Ask about gift certificates while you are at it.
+        </p>
+      </Reveal>
+      <Reveal class="intro__aside" delay={2}>
+        <div class="includes">
+          <h2>Every group includes</h2>
+          <ul>{includes.map((i) => <li>{i}</li>)}</ul>
+          <p class="includes__note">Deposit required, non-refundable.</p>
+        </div>
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead eyebrow="What we host" title="Six kinds of evening." />
+    <ul class="groups">
+      {groups.map((g, i) => (
+        <li>
+          <Reveal delay={i}>
+            <article>
+              <h3>{g.title}</h3>
+              <p set:html={g.body.replace(/<!--[\s\S]*?-->/g, '')} />
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <section class="speakers tone-pine" aria-labelledby="speakers-title">
+    <div class="wrap speakers__inner">
+      <Reveal class="speakers__copy">
+        <Eyebrow>Speaker nights</Eyebrow>
+        <h2 id="speakers-title">We clear the front of the store and put out chairs.</h2>
+        <p class="lead">
+          Brian Quaca, better known as Pig Man, has been here. Hoyt and Easton have run technical
+          seminars on this range. A long list of people from the archery world have come through,
+          and most of them ended up in a photograph on our office wall.
+        </p>
+        <p class="speakers__note">
+          Nobody sells from the front of the room. If it starts feeling like a pitch, we have not
+          booked it well.
+        </p>
+        <ArrowLink href="/insights/speaker-nights-and-seminars/">More on speaker nights</ArrowLink>
+      </Reveal>
+      <Reveal class="speakers__media" delay={2}>
+        <Image src={seminar1} alt="A technical seminar in progress on the range"
+          widths={[560, 1000]} sizes="(max-width: 60rem) 90vw, 28rem" loading="lazy" />
+      </Reveal>
+    </div>
+  </section>
+
+  <Section tone="cream" id="enquire">
+    <div class="enquire">
+      <div class="enquire__copy flow">
+        <Reveal><Eyebrow>Plan a group</Eyebrow></Reveal>
+        <Reveal delay={1}><h2>Tell us who is coming and roughly when.</h2></Reveal>
+        <Reveal delay={2}>
+          <p>
+            We will come back with what the range can hold that night, what it costs, and what the
+            deposit is. Larger groups are easier on weeknights than Saturdays.
+          </p>
+        </Reveal>
+      </div>
+      <Reveal class="enquire__form" delay={2}>
+        <Form
+          action={business.formspree.groups}
+          subject="Group booking enquiry · targeteersarchery.com"
+          name="group-enquiry"
+          submitLabel="Send enquiry"
+          note="Nothing is held until we confirm and take the deposit."
+        >
+          <Field label="Your name" name="name" required autocomplete="name" />
+          <Field label="Organisation" name="organisation" placeholder="Troop, company, team or family" />
+          <Field label="Email" name="email" type="email" required autocomplete="email" />
+          <Field label="Phone" name="phone" type="tel" required autocomplete="tel" />
+          <Field label="Type of event" name="event_type" as="select" required
+            options={['Team outing', 'Scout troop / badge session', 'Birthday party', 'Corporate event', 'Bachelor / bachelorette party', 'Speaker or seminar night', 'Something else']} />
+          <Field label="Group size" name="size" type="number" min="1" required />
+          <Field label="Preferred date" name="date" type="date" />
+          <Field label="Ages, roughly" name="ages" placeholder="e.g. scouts 11–14, or adults" />
+          <Field label="What are you hoping for" name="notes" as="textarea" full
+            placeholder="Badge requirements, a competition at the end, food arrangements, anything at all." />
+        </Form>
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead eyebrow="Nights here" title="A room full of people, on a range." />
+    <GalleryBlock items={galleryItems} label="Group and seminar photographs" />
+  </Section>
+
+  <ContactBand
+    title="Bring the troop."
+    body="Scout groups and school visits also get the Trophy Room, which for a lot of kids is the first time they have stood close to a moose."
+    primary={{ label: 'See the Trophy Room', href: '/trophy-room/' }}
+    secondary={{ label: 'Check the calendar', href: '/calendar/' }}
+  />
+</Base>
+
+<style>
+  .intro { display: grid; gap: var(--sp-7); align-items: start; }
+  @media (min-width: 60rem) { .intro { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--sp-8); } }
+  .intro__copy p { max-width: 50ch; }
+  .intro__copy p + p { margin-top: var(--sp-4); }
+  .intro__copy a { color: var(--ember); }
+
+  .includes {
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+  }
+  .includes h2 {
+    font-family: var(--font-body);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: var(--sp-4);
+  }
+  .includes ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+  .includes li { position: relative; padding-left: 1.6rem; font-size: var(--fs-small); color: var(--bark-500); }
+  .includes li::before {
+    content: '';
+    position: absolute; left: 0; top: 0.45em;
+    width: 0.7rem; height: 0.7rem;
+    border: 1.5px solid var(--ember);
+    border-radius: 999px;
+  }
+  .includes__note { margin: var(--sp-4) 0 0; font-size: 0.75rem; color: var(--stone-400); font-style: italic; }
+
+  .groups {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--sp-6) var(--sp-7);
+  }
+  .groups article { padding-top: var(--sp-4); border-top: 1px solid var(--rule); }
+  .groups h3 { font-size: var(--fs-h4); margin: 0 0 var(--sp-3); }
+  .groups p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+
+  .speakers { background: var(--pine-900); color: var(--cream-50); padding-block: var(--section-y); --accent: var(--sage-300); }
+  .speakers__inner { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) { .speakers__inner { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .speakers h2 { color: var(--cream-50); }
+  .speakers .lead { margin-top: var(--sp-4); color: rgba(248, 245, 238, 0.84); }
+  .speakers__note { margin-top: var(--sp-4); font-size: var(--fs-small); color: rgba(248, 245, 238, 0.6); font-style: italic; max-width: 44ch; }
+  .speakers :global(.arrow-link) { margin-top: var(--sp-5); }
+  .speakers__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+
+  .enquire { display: grid; gap: var(--sp-8); align-items: start; }
+  @media (min-width: 60rem) { .enquire { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.2fr); gap: var(--sp-9); } }
+  .enquire__copy p { max-width: 40ch; margin-top: var(--sp-4); }
+  .enquire__form {
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.25rem, 0.6rem + 2vw, 2.25rem);
+  }
+</style>

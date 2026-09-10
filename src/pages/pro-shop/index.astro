@@ -1,0 +1,223 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import DealerRow from '~/components/DealerRow.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import GalleryBlock from '~/components/GalleryBlock.astro';
+import Card from '~/components/Card.astro';
+import BowIcon from '~/components/icons/BowIcon.astro';
+
+import heroImg from '~/assets/shop/wall-of-bows.jpg';
+import bows1 from '~/assets/shop/bows-01.jpg';
+import bows2 from '~/assets/shop/bows-02.jpg';
+import bows3 from '~/assets/shop/bows-03.jpg';
+import bows4 from '~/assets/shop/bows-04.jpg';
+import bows5 from '~/assets/shop/bows-05.jpg';
+import bowsTall from '~/assets/shop/bows-tall-01.jpg';
+import arrows1 from '~/assets/shop/arrows-01.jpg';
+import arrows2 from '~/assets/shop/arrows-02.jpg';
+import arrows3 from '~/assets/shop/arrows-03.jpg';
+import arrows4 from '~/assets/shop/arrows-04.jpg';
+import showroom1 from '~/assets/shop/showroom-01.jpg';
+import showroom2 from '~/assets/shop/showroom-06.jpg';
+import showroom3 from '~/assets/shop/showroom-07.jpg';
+import hoytImg from '~/assets/story/rob-hoyt.jpg';
+import sitkaImg from '~/assets/hunting/hunter-sunset.jpg';
+
+const departments = [
+  { title: 'Compound bows', body: 'Hoyt, Mathews and Bowtech, in every draw length and weight worth stocking. Fitted to your measurements and tuned before it leaves.' },
+  { title: 'Crossbows', body: 'TenPoint and Ravin. Cocking devices, scopes mounted and sighted in, bolts cut to length. If holding a draw is your barrier, this is the answer.' },
+  { title: 'Recurve & traditional', body: 'Where nearly everybody should start, and where a lot of people come back to. Takedowns, tabs, gloves, and the simplicity that teaches form fast.' },
+  { title: 'Arrows & custom strings', body: 'Easton and Carbon Express shafts, cut squared and fletched to your setup. Custom strings are what this shop has always specialized in, built for your bow rather than pulled off a peg.' },
+  { title: 'Broadheads & accessories', body: 'Fixed and mechanical heads, rests, sights, releases, quivers, stabilizers, targets. A full wall of it, and somebody who can tell you which ones matter for what you do.' },
+  { title: 'Apparel & youth gear', body: 'SITKA layering systems for northeast seasons, plus youth bows and kit sized for kids who are actually going to grow. Draw it on before you buy it.' },
+];
+
+const galleryItems = [
+  { image: bows1, alt: 'Compound bows on the wall' },
+  { image: bowsTall, alt: 'A rack of bows in the showroom' },
+  { image: bows3, alt: 'Bows and accessories in the pro shop' },
+  { image: arrows1, alt: 'Custom arrows built in the shop' },
+  { image: bows4, alt: 'Compound bows on display' },
+  { image: arrows2, alt: 'Arrow shafts and fletching' },
+  { image: showroom1, alt: 'Broadheads and accessories on the wall' },
+  { image: arrows3, alt: 'A batch of finished custom arrows' },
+  { image: bows5, alt: 'The bow wall from the aisle' },
+  { image: showroom2, alt: 'Inside the Targeteers showroom' },
+  { image: arrows4, alt: 'Arrows standing in the shop' },
+  { image: showroom3, alt: 'The pro shop counter' },
+];
+---
+<Base
+  title="Pro Shop | Targeteers Archery · Saddle Brook, NJ"
+  description="Hundreds of bows on the wall in Saddle Brook, NJ. Compounds, crossbows, recurves, custom arrows and strings, and SITKA gear. Fitted and tuned in house."
+  keywords={['archery pro shop North Jersey', 'bow shop NJ', 'crossbows NJ', 'archery accessories Saddle Brook']}
+  ogImage="/og/pro-shop.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Pro Shop', path: '/pro-shop/' }]}
+>
+  <PageHero
+    eyebrow="The pro shop"
+    title="100s of bows on the wall. Zero pressure."
+    lead="No cart, no checkout, no drop-shipping. A bow is a fit, and a fit happens in person."
+    image={heroImg}
+    imageAlt="The wall of bows at Targeteers Archery"
+    focus="50% 45%"
+  />
+
+  <Section tone="cream">
+    <div class="intro">
+      <Reveal class="intro__copy">
+        <p class="lead">
+          We keep a clean, well-stocked showroom because a bow you are going to own for ten years
+          deserves better than a cardboard box and a spec sheet.
+        </p>
+        <p>
+          Take one off the wall. Have it set to your draw length and a weight you can actually hold
+          at the end of a long sit. Then walk fifteen feet and shoot it on our own range. That
+          sequence is the entire reason this building has a range attached to a store.
+        </p>
+        <p>
+          Nobody here works on commission. If the right answer is the cheaper bow, or the bow you
+          already own, that is what you will hear.
+        </p>
+      </Reveal>
+      <Reveal class="intro__aside" delay={2}>
+        <div class="promise">
+          <BowIcon size={32} />
+          <h2>Every bow, twice.</h2>
+          <p>
+            Fitted. Paper tuned. Timed. Center shot checked. Shot on the range. Then looked over a
+            second time before it goes out the door.
+          </p>
+          <p class="promise__note">That rule is older than everybody currently working here.</p>
+        </div>
+      </Reveal>
+    </div>
+    <div class="dealers-wrap"><DealerRow /></div>
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead eyebrow="What we carry" title="Six walls, roughly." />
+    <ul class="departments">
+      {departments.map((d, i) => (
+        <li>
+          <Reveal delay={i}>
+            <article>
+              <h3>{d.title}</h3>
+              <p>{d.body}</p>
+              <ArrowLink href="/contact/">Ask a pro</ArrowLink>
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section tone="cream">
+    <SectionHead eyebrow="Brands" title="Three worth their own page." />
+    <div class="brand-grid">
+      <Reveal delay={0}>
+        <Card href="/pro-shop/mathews/" eyebrow="Mathews Archery" title="Mathews dealer in North Jersey"
+          body="Top 100 Dealer, multiple years. Draw one, have it fitted, and shoot it before you decide."
+          image={bows2} imageAlt="Mathews compound bows in the showroom" />
+      </Reveal>
+      <Reveal delay={1}>
+        <Card href="/pro-shop/hoyt/" eyebrow="Hoyt" title="Hoyt dealer in North Jersey"
+          body="Top 50 Dealer, multiple years. Target and hunting rigs, tuned by people who shoot them."
+          image={hoytImg} imageAlt="Rob with a Hoyt bow in the pro shop" />
+      </Reveal>
+      <Reveal delay={2}>
+        <Card href="/pro-shop/sitka/" eyebrow="SITKA Gear" title="SITKA layering for the northeast"
+          body="The system that keeps you in the stand another two hours. Draw your bow in it before you buy it."
+          image={sitkaImg} imageAlt="A hunter at sunset" />
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead eyebrow="Why a pro shop" title="What the box does not come with." />
+    <ol class="why">
+      <li><Reveal delay={0}><h3>It fits you</h3><p>Draw length off your actual anchor, draw weight you can hold on arrow forty, a grip that puts your hand in the same place every time.</p></Reveal></li>
+      <li><Reveal delay={1}><h3>It arrives tuned</h3><p>Paper tuned, cams timed, center shot and nock height set, peep tied in at your anchor. A shipped bow has been assembled, not tuned.</p></Reveal></li>
+      <li><Reveal delay={2}><h3>It gets shot first</h3><p>On our range, by us, before you take it. A bow that tunes clean on paper and shoots badly at twenty yards has not been tuned.</p></Reveal></li>
+      <li><Reveal delay={3}><h3>It comes with a year</h3><p>Any bow bought here comes with a discount range card, honored for a year from the purchase date. Somewhere to put the practice in.</p></Reveal></li>
+    </ol>
+    <p class="why__link"><ArrowLink href="/insights/why-we-dont-sell-online/">Why we don&rsquo;t sell online</ArrowLink></p>
+  </Section>
+
+  <Section tone="cream">
+    <SectionHead eyebrow="The showroom" title="What it actually looks like." />
+    <GalleryBlock items={galleryItems} label="Pro shop photographs" />
+  </Section>
+
+  <ContactBand
+    title="Come draw a few."
+    body="Tell us what you want to do with it: hunt, shoot leagues, or find out whether you like this at all. We will put two or three in your hands."
+    primary={{ label: 'Book a lesson', href: '/lessons/#book' }}
+    secondary={{ label: 'See our services', href: '/services/' }}
+  />
+</Base>
+
+<style>
+  .intro { display: grid; gap: var(--sp-7); align-items: start; }
+  @media (min-width: 60rem) { .intro { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--sp-8); } }
+  .intro__copy p + p { margin-top: var(--sp-4); }
+  .intro__copy p { max-width: 52ch; }
+
+  .promise {
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-6);
+    display: grid;
+    gap: var(--sp-3);
+  }
+  .promise :global(svg) { color: var(--ember); margin-bottom: var(--sp-2); }
+  .promise h2 { font-size: var(--fs-h3); margin: 0; }
+  .promise p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+  .promise__note { color: var(--stone-400) !important; font-style: italic; }
+
+  .dealers-wrap { margin-top: var(--sp-8); }
+
+  .departments {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: var(--sp-6) var(--sp-7);
+  }
+  .departments article { display: grid; gap: var(--sp-3); align-content: start; padding-top: var(--sp-4); border-top: 1px solid var(--rule); }
+  .departments h3 { font-size: var(--fs-h4); margin: 0; }
+  .departments p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+
+  .brand-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+  }
+  .brand-grid > :global(*) { display: flex; }
+  .brand-grid > :global(*) > :global(*) { width: 100%; }
+
+  .why {
+    list-style: none; margin: 0; padding: 0;
+    counter-reset: why;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: var(--sp-6);
+  }
+  .why li { counter-increment: why; }
+  .why h3 { font-size: var(--fs-h4); margin: 0 0 var(--sp-3); display: flex; align-items: baseline; gap: 0.6em; }
+  .why h3::before {
+    content: counter(why, decimal-leading-zero);
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--ember);
+  }
+  .why p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+  .why__link { margin-top: var(--sp-7); }
+</style>

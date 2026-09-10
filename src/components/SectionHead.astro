@@ -1,0 +1,28 @@
+---
+import Eyebrow from './Eyebrow.astro';
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  align?: 'start' | 'center';
+  level?: 2 | 3;
+  class?: string;
+}
+const { eyebrow, title, lead, align = 'start', level = 2, class: klass = '' } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
+---
+<header class={`section-head align-${align} ${klass}`} data-reveal>
+  {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+  <Heading>{title}</Heading>
+  {lead && <p class="lead">{lead}</p>}
+  <slot />
+</header>
+
+<style>
+  .section-head { max-width: 46rem; margin-bottom: var(--sp-7); }
+  .section-head .lead { margin-top: var(--sp-4); }
+  .align-center { margin-inline: auto; text-align: center; }
+  .align-center :global(.eyebrow) { justify-content: center; }
+  .align-center :global(.eyebrow)::before { display: none; }
+  .align-center .lead { margin-inline: auto; }
+</style>

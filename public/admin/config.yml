@@ -1,0 +1,117 @@
+# ---------------------------------------------------------------------------
+# Decap CMS — Insights posts only.
+#
+# Lisa writes and publishes blog posts here. Everything else on the site is
+# page-level code and stays with Live Web Studios.
+#
+# Setup, once, in Netlify:
+#   1. Site settings → Identity → Enable Identity
+#   2. Identity → Registration → Invite only
+#   3. Identity → Services → Git Gateway → Enable
+#   4. Identity → Invite users → Lisa's email (and Jon's)
+# ---------------------------------------------------------------------------
+
+backend:
+  name: git-gateway
+  branch: main
+  commit_messages:
+    create: 'Insights: create "{{slug}}"'
+    update: 'Insights: update "{{slug}}"'
+    delete: 'Insights: delete "{{slug}}"'
+    uploadMedia: 'Insights: upload {{path}}'
+    deleteMedia: 'Insights: remove {{path}}'
+
+# Draft → In review → Ready, with a deploy preview on each pull request.
+publish_mode: editorial_workflow
+
+# Images live beside the posts so astro:assets can optimise them. public_folder
+# matches the path Astro resolves from a content file.
+media_folder: src/assets/insights
+public_folder: ../../assets/insights
+
+site_url: https://targeteersarchery.com
+display_url: https://targeteersarchery.com
+logo_url: https://targeteersarchery.com/images/logoRGB.png
+
+collections:
+  - name: insights
+    label: Insights
+    label_singular: Post
+    folder: src/content/insights
+    create: true
+    slug: '{{slug}}'
+    preview_path: 'insights/{{slug}}'
+    summary: '{{title}} — {{category}} — {{year}}-{{month}}-{{day}}'
+    sortable_fields: [date, title, category]
+    view_filters:
+      - label: Drafts
+        field: draft
+        pattern: true
+    fields:
+      - label: Title
+        name: title
+        widget: string
+        hint: Sentence case. This becomes the page heading and the browser tab.
+
+      - label: Description
+        name: description
+        widget: text
+        hint: One or two sentences. Google shows this under the link, so make it useful rather than clever.
+        pattern: ['^.{50,170}$', 'Aim for 50 to 170 characters.']
+
+      - label: Date
+        name: date
+        widget: datetime
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+        picker_utc: false
+
+      - label: Updated
+        name: updated
+        widget: datetime
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+        picker_utc: false
+        required: false
+        hint: Only set this if you meaningfully revise a post after publishing.
+
+      - label: Category
+        name: category
+        widget: select
+        options:
+          - Tuning & Gear
+          - Getting Started
+          - Hunting
+          - Kids & Family
+          - Leagues & Community
+          - From the Family
+
+      - label: Header image
+        name: image
+        widget: image
+        required: false
+        hint: Landscape works best. Something from the shop or the range beats a stock photo every time.
+
+      - label: Image description
+        name: imageAlt
+        widget: string
+        required: false
+        default: ''
+        hint: Describe what is in the photo, for people using a screen reader.
+
+      - label: Author
+        name: author
+        widget: string
+        default: Targeteers Archery
+        required: false
+
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: false
+        hint: Leave on while you are still working. Drafts never appear on the live site.
+
+      - label: Body
+        name: body
+        widget: markdown
+        hint: Write the way you talk. Short paragraphs. Use "## " for a section heading.

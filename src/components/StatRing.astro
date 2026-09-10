@@ -1,0 +1,37 @@
+---
+interface Props { value: string; label: string; note?: string; }
+const { value, label, note } = Astro.props;
+---
+<div class="stat" data-reveal>
+  <svg class="stat__ring" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+    <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="0.7" opacity=".28" />
+    <circle cx="50" cy="50" r="34" stroke="currentColor" stroke-width="0.7" opacity=".2" />
+    <circle cx="50" cy="50" r="22" stroke="currentColor" stroke-width="0.7" opacity=".14" />
+  </svg>
+  <p class="stat__value num">{value}</p>
+  <p class="stat__label">{label}</p>
+  {note && <p class="stat__note">{note}</p>}
+</div>
+
+<style>
+  .stat { position: relative; padding: var(--sp-5) 0; }
+  .stat__ring {
+    position: absolute;
+    top: 50%; left: -2.5rem;
+    translate: 0 -50%;
+    width: 11rem; height: 11rem;
+    color: var(--accent, var(--ember));
+    pointer-events: none;
+    z-index: -1;
+  }
+  .stat__value { font-size: clamp(3rem, 1.6rem + 4.6vw, 6rem); color: var(--fg); margin: 0; }
+  .stat__label {
+    margin: var(--sp-3) 0 0;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--accent, var(--ember));
+  }
+  .stat__note { margin: var(--sp-2) 0 0; font-size: var(--fs-small); color: var(--fg-muted); max-width: 26ch; }
+</style>

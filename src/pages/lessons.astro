@@ -1,0 +1,276 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Form from '~/components/Form.astro';
+import Field from '~/components/Field.astro';
+import Faq from '~/components/Faq.astro';
+import { business } from '~/data/business';
+import { faqSchema } from '~/components/seo/localBusiness';
+
+import heroImg from '~/assets/lessons/lesson-wide.jpg';
+import coachImg from '~/assets/lessons/coaching-kid.jpg';
+import rangeImg from '~/assets/range/full-draw.jpg';
+
+/* [CONFIRM 2026 pricing] — these are the rates carried over from the old site. */
+const pricing = [
+  { equipment: 'With our equipment', half: '$35', hour: '$55' },
+  { equipment: 'With your equipment', half: '$25', hour: '$45' },
+];
+
+const includes = [
+  'Range time on our indoor lanes',
+  'Professional instruction, one on one',
+  'A target',
+  'All equipment, on the "with our equipment" rate',
+];
+
+const rules = [
+  'All lessons are booked in advance and a deposit is required.',
+  'Age seven and up, for the range and for lessons.',
+  'Closed-toe shoes on the shooting line, no exceptions.',
+  'Children must be with a parent or guardian.',
+];
+
+const allFaqs = await getCollection('faq');
+const lessonFaqs = allFaqs
+  .filter((f) => f.data.group === 'Lessons & Kids')
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((f) => ({ question: f.data.question, answer: f.data.answer.replace(/<!--[\s\S]*?-->/g, '').trim() }));
+---
+<Base
+  title="Archery Lessons | Targeteers Archery · Saddle Brook, NJ"
+  description="Private and group archery lessons in Saddle Brook, NJ. Equipment included, USA Archery certified instruction, from age seven. Half hour or full hour, booked in advance."
+  keywords={['archery lessons NJ', 'archery lessons North Jersey', 'learn archery Bergen County']}
+  ogImage="/og/lessons.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Lessons', path: '/lessons/' }]}
+  schema={faqSchema(lessonFaqs)}
+>
+  <PageHero
+    eyebrow="Lessons"
+    title="Ever wanted to try archery but didn&rsquo;t have the equipment? No problem."
+    lead="Half an hour is enough to find out whether you like this. Everything you need is here."
+    image={heroImg}
+    imageAlt="An archer on the line at the indoor range"
+  />
+
+  <Section tone="cream">
+    <div class="intro">
+      <div class="intro__copy flow">
+        <Reveal>
+          <p class="lead">
+            You do not need to own anything, know anything, or be in any particular shape. You need
+            closed-toe shoes and an hour.
+          </p>
+        </Reveal>
+        <Reveal delay={1}>
+          <p>
+            Your instructor measures you first: draw length off your actual anchor, and a draw
+            weight you can hold comfortably rather than the most you can haul back once. Then a bow
+            gets fitted to those numbers, and you shoot from close range where every arrow hits and
+            the only thing to think about is the shot itself.
+          </p>
+        </Reveal>
+        <Reveal delay={2}>
+          <p>
+            Distance goes back a step at a time, once the shot holds together. Somewhere in there
+            you will put an arrow exactly where you meant to, and you will feel the difference.
+          </p>
+        </Reveal>
+        <Reveal delay={3}><ArrowLink href="/insights/your-first-lesson-at-targeteers/">What a first lesson is really like</ArrowLink></Reveal>
+      </div>
+      <Reveal class="intro__media" delay={2}>
+        <Image src={coachImg} alt="An instructor coaching a young archer at the line"
+          widths={[520, 900]} sizes="(max-width: 60rem) 90vw, 26rem" loading="lazy" />
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <div class="rates">
+      <div class="rates__table flow">
+        <Reveal><Eyebrow>Rates</Eyebrow></Reveal>
+        <Reveal delay={1}><h2>Two lengths, two rates.</h2></Reveal>
+        <Reveal delay={2}>
+          <table>
+            <caption class="visually-hidden">Lesson pricing</caption>
+            <thead>
+              <tr><th scope="col">Lesson</th><th scope="col">½ hour</th><th scope="col">1 hour</th></tr>
+            </thead>
+            <tbody>
+              {pricing.map((row) => (
+                <tr>
+                  <th scope="row">{row.equipment}</th>
+                  <td class="num-cell">{row.half}</td>
+                  <td class="num-cell">{row.hour}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Reveal>
+        <Reveal delay={3}>
+          <p class="rates__note">
+            A half hour is plenty for a first try. An hour is better if you want to leave having
+            actually built something.
+          </p>
+        </Reveal>
+      </div>
+
+      <div class="rates__lists">
+        <Reveal delay={2}>
+          <div class="list-block">
+            <h3>Every lesson includes</h3>
+            <ul>{includes.map((i) => <li>{i}</li>)}</ul>
+          </div>
+        </Reveal>
+        <Reveal delay={3}>
+          <div class="list-block">
+            <h3>Before you come</h3>
+            <ul>{rules.map((r) => <li>{r}</li>)}</ul>
+          </div>
+        </Reveal>
+      </div>
+    </div>
+  </Section>
+
+  <!-- ------------------------------------------------------------ booking -->
+  <Section tone="cream" id="book">
+    <div class="booking">
+      <div class="booking__copy flow">
+        <Reveal><Eyebrow>Book a lesson</Eyebrow></Reveal>
+        <Reveal delay={1}><h2>Tell us when, and who is coming.</h2></Reveal>
+        <Reveal delay={2}>
+          <p>
+            We will get back to you to confirm a lane and take the deposit. If you would rather do
+            it by voice, call <a href={business.phoneHref}>{business.phone}</a> during store hours.
+          </p>
+        </Reveal>
+        <Reveal delay={3}>
+          <figure class="booking__figure">
+            <Image src={rangeImg} alt="An archer at full draw on the indoor range"
+              widths={[520, 900]} sizes="(max-width: 60rem) 90vw, 24rem" loading="lazy" />
+          </figure>
+        </Reveal>
+      </div>
+
+      <Reveal class="booking__form" delay={2}>
+        <Form
+          action={business.formspree.lesson}
+          subject="Lesson booking request · targeteersarchery.com"
+          name="lesson-booking"
+          submitLabel="Request a lesson"
+          note="We will confirm by phone or email before anything is booked. A deposit is required to hold a lane."
+        >
+          <Field label="Name" name="name" required autocomplete="name" />
+          <Field label="Email" name="email" type="email" required autocomplete="email" />
+          <Field label="Phone" name="phone" type="tel" required autocomplete="tel" />
+          <Field label="Preferred date" name="date" type="date" required />
+          <Field label="Preferred time" name="time" as="select" required
+            options={['Weekday afternoon', 'Weekday evening', 'Saturday', 'Sunday']} />
+          <Field label="Number of people" name="people" type="number" min="1" required />
+          <Field label="Own equipment?" name="equipment" as="select" required
+            options={['No, use yours', 'Yes, I have my own bow']} />
+          <Field label="Experience level" name="experience" as="select" required
+            options={['Never held a bow', 'Tried it a few times', 'Shoot regularly', 'Coming back after a long break']} />
+          <Field label="Anything we should know" name="notes" as="textarea" full
+            placeholder="Ages of anyone under 18, injuries or limitations, what you are hoping to get out of it." />
+        </Form>
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead eyebrow="Questions" title="Lessons and kids, answered." />
+    <Faq items={lessonFaqs} />
+  </Section>
+
+  <ContactBand
+    title="After the first lesson."
+    body="Most people take a few more, then join a league. That is where this gets social, and social is why people are still shooting here thirty years later."
+    primary={{ label: 'See the leagues', href: '/leagues/' }}
+    secondary={{ label: 'Kids camp', href: '/kids/' }}
+  />
+</Base>
+
+<style>
+  .intro { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) { .intro { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .intro__copy p { max-width: 48ch; }
+  .intro__copy p + p { margin-top: var(--sp-4); }
+  .intro__copy :global(.arrow-link) { margin-top: var(--sp-5); }
+  .intro__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+
+  .rates { display: grid; gap: var(--sp-8); align-items: start; }
+  @media (min-width: 60rem) { .rates { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .rates table { width: 100%; border-collapse: collapse; margin-top: var(--sp-5); }
+  .rates th, .rates td {
+    text-align: left;
+    padding: 0.9rem 0.5rem 0.9rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-weight: 400;
+    color: var(--fg-muted);
+  }
+  .rates thead th {
+    font-family: var(--font-body);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--stone-400);
+  }
+  .rates tbody th { color: var(--fg); font-weight: 500; }
+  .num-cell {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--bark-700) !important;
+    text-align: right;
+    width: 5.5rem;
+  }
+  .rates__note { margin-top: var(--sp-4); font-size: var(--fs-small); color: var(--stone-400); max-width: 44ch; }
+
+  .rates__lists { display: grid; gap: var(--sp-5); }
+  .list-block {
+    background: var(--cream-50);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+  }
+  .list-block h3 {
+    font-family: var(--font-body);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: var(--sp-4);
+  }
+  .list-block ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+  .list-block li { position: relative; padding-left: 1.6rem; font-size: var(--fs-small); line-height: 1.6; color: var(--bark-500); }
+  .list-block li::before {
+    content: '';
+    position: absolute; left: 0; top: 0.45em;
+    width: 0.7rem; height: 0.7rem;
+    border: 1.5px solid var(--ember);
+    border-radius: 999px;
+  }
+
+  .booking { display: grid; gap: var(--sp-8); align-items: start; }
+  @media (min-width: 60rem) { .booking { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.15fr); gap: var(--sp-9); } }
+  .booking__copy p { max-width: 42ch; margin-top: var(--sp-4); }
+  .booking__figure { margin: var(--sp-6) 0 0; }
+  .booking__figure :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+  .booking__form {
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.25rem, 0.6rem + 2vw, 2.25rem);
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Gallery from './Gallery.tsx';
+import type { Shot } from './Lightbox';
+
+export interface GalleryItem { image: ImageMetadata; alt: string; caption?: string; }
+interface Props { items: GalleryItem[]; layout?: 'masonry' | 'grid'; label: string; }
+const { items, layout = 'grid', label } = Astro.props;
+
+/* Resolve every photo through astro:assets at build time, so the React island
+   only ever receives finished URLs. */
+const shots: Shot[] = await Promise.all(
+  items.map(async (item) => {
+    const wide = await getImage({ src: item.image, widths: [400, 800, 1600], format: 'webp' });
+    return {
+      src: wide.src,
+      srcset: wide.srcSet.attribute || undefined,
+      width: wide.attributes.width ?? item.image.width,
+      height: wide.attributes.height ?? item.image.height,
+      alt: item.alt,
+      caption: item.caption,
+    };
+  }),
+);
+---
+<Gallery client:visible shots={shots} layout={layout} label={label} />

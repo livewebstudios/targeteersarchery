@@ -1,0 +1,55 @@
+---
+import { business } from '~/data/business';
+
+export interface SeoProps {
+  title: string;
+  description: string;
+  /** Falls back to the ring-watermark OG card generated at build time. */
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  keywords?: string[];
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  ogType = 'website',
+  noindex = false,
+  publishedTime,
+  modifiedTime,
+  keywords,
+} = Astro.props as SeoProps;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const image = new URL(ogImage ?? '/og/default.jpg', Astro.site).href;
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={business.shortName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={image} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="en_US" />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@TargeteerArcher" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+
+<meta name="geo.region" content="US-NJ" />
+<meta name="geo.placename" content={business.address.city} />

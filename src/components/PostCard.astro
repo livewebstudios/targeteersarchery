@@ -1,0 +1,77 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { readingTime } from '~/utils/posts';
+
+interface Props {
+  post: CollectionEntry<'insights'>;
+  loading?: 'eager' | 'lazy';
+  /** 2 when the cards are the page's top-level structure, 3 under a section heading. */
+  level?: 2 | 3;
+}
+const { post, loading = 'lazy', level = 3 } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
+const { title, description, date, category, image, imageAlt } = post.data;
+const minutes = readingTime(post.body ?? '');
+---
+<article class="post-card">
+  <a href={`/insights/${post.id}/`}>
+    {image && (
+      <div class="post-card__media">
+        <Image src={image} alt={imageAlt} widths={[420, 760, 1100]}
+          sizes="(max-width: 48rem) 92vw, (max-width: 72rem) 44vw, 24rem" loading={loading} />
+      </div>
+    )}
+    <div class="post-card__body">
+      <p class="post-card__meta">
+        <span class="post-card__cat">{category}</span>
+        <span aria-hidden="true">·</span>
+        <time datetime={date.toISOString()}>
+          {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+        </time>
+        <span aria-hidden="true">·</span>
+        <span>{minutes} min read</span>
+      </p>
+      <Heading>{title}</Heading>
+      <p class="post-card__desc">{description}</p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .post-card { height: 100%; }
+  .post-card a {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg);
+    transition: translate var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .post-card a:hover { translate: 0 -4px; box-shadow: var(--shadow); border-color: var(--parchment); }
+
+  .post-card__media { aspect-ratio: 16 / 10; overflow: hidden; background: var(--cream-100); }
+  .post-card__media :global(img) { width: 100%; height: 100%; object-fit: cover; transition: scale var(--dur-slow) var(--ease); }
+  .post-card a:hover .post-card__media :global(img) { scale: 1.03; }
+
+  .post-card__body { padding: var(--sp-5); display: grid; gap: var(--sp-3); align-content: start; flex: 1; }
+  .post-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+  }
+  .post-card__cat { color: var(--accent); }
+  .post-card h2,
+  .post-card h3 { font-size: var(--fs-h4); margin: 0; }
+  .post-card__desc { font-size: var(--fs-small); line-height: 1.6; color: var(--fg-muted); margin: 0; }
+</style>

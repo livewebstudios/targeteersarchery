@@ -1,0 +1,120 @@
+---
+import type { NavLink } from '~/data/nav';
+
+interface Props {
+  primary: NavLink[];
+  more: NavLink[];
+  phone: string;
+  phoneHref: string;
+  current: string;
+}
+const { primary, more, phone, phoneHref, current } = Astro.props;
+const isCurrent = (href: string) => current === href;
+---
+<!--
+  Full-screen cream overlay menu. Deliberately not a React island: it is on
+  every page, and a hamburger does not justify shipping a UI framework to
+  someone on a phone in a parking lot. Focus is trapped while open, Escape
+  closes it, and the page underneath is locked.
+-->
+<button
+  type="button"
+  class="menu-toggle"
+  aria-expanded="false"
+  aria-controls="mobile-menu"
+  data-menu-toggle
+>
+  <span class="menu-toggle__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+  <span class="visually-hidden" data-menu-label>Open menu</span>
+</button>
+
+<div id="mobile-menu" class="mobile-menu" aria-hidden="true" data-menu-panel inert>
+  <div class="mobile-menu__ring" aria-hidden="true">
+    <svg viewBox="0 0 400 400" fill="none" stroke="currentColor">
+      {[190, 148, 106, 64].map((r, i) => (
+        <circle cx="200" cy="200" r={r} stroke-width="1.25" pathLength="1" style={`--i:${i}`} />
+      ))}
+      <circle cx="200" cy="200" r="22" fill="currentColor" stroke="none" style="--i:4" />
+    </svg>
+  </div>
+
+  <div class="mobile-menu__inner">
+    <nav aria-label="Main menu">
+      <ul class="mobile-menu__primary">
+        {primary.map((link, i) => (
+          <li style={`--i:${i}`}>
+            <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>{link.label}</a>
+          </li>
+        ))}
+      </ul>
+      <ul class="mobile-menu__more">
+        {more.map((link, i) => (
+          <li style={`--i:${i + primary.length}`}>
+            <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="mobile-menu__foot" style={`--i:${primary.length + more.length}`}>
+      <a class="mobile-menu__cta" href="/lessons/#book">Book a lesson</a>
+      <a class="mobile-menu__phone" href={phoneHref}>{phone}</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const FOCUSABLE = 'a[href], button:not([disabled])';
+
+  function wire() {
+    const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+    const label = toggle?.querySelector('[data-menu-label]');
+    const bars = toggle?.querySelector<HTMLElement>('.menu-toggle__bars');
+    if (!toggle || !panel) return;
+
+    let open = false;
+    let restoreOverflow = '';
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setOpen(false); toggle.focus(); return; }
+      if (e.key !== 'Tab') return;
+      const items = panel.querySelectorAll<HTMLElement>(FOCUSABLE);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+
+    function setOpen(next: boolean) {
+      if (next === open) return;
+      open = next;
+      toggle!.setAttribute('aria-expanded', String(open));
+      panel!.setAttribute('aria-hidden', String(!open));
+      panel!.toggleAttribute('data-open', open);
+      panel!.toggleAttribute('inert', !open);
+      bars?.toggleAttribute('data-open', open);
+      if (label) label.textContent = open ? 'Close menu' : 'Open menu';
+
+      if (open) {
+        restoreOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        document.addEventListener('keydown', onKey);
+        window.setTimeout(() => panel!.querySelector<HTMLElement>('a[href]')?.focus(), 320);
+      } else {
+        document.body.style.overflow = restoreOverflow;
+        document.removeEventListener('keydown', onKey);
+      }
+    }
+
+    toggle.addEventListener('click', () => setOpen(!open));
+    // A navigation inside the overlay should leave the body scrollable again.
+    panel.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a[href]')) setOpen(false);
+    });
+    document.addEventListener('astro:before-swap', () => setOpen(false), { once: true });
+  }
+
+  wire();
+  document.addEventListener('astro:after-swap', wire);
+</script>

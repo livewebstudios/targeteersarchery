@@ -1,0 +1,87 @@
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'ghost' | 'dark' | 'quiet';
+  type?: 'button' | 'submit';
+  class?: string;
+  external?: boolean;
+  'aria-label'?: string;
+}
+const {
+  href,
+  variant = 'primary',
+  type = 'button',
+  class: klass = '',
+  external = false,
+  ...rest
+} = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+<Tag
+  class={`btn btn--${variant} ${klass}`}
+  href={href}
+  type={href ? undefined : type}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener' : undefined}
+  {...rest}
+>
+  <span><slot /></span>
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 1.05rem 1.75rem;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    line-height: 1;
+    transition:
+      background var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease),
+      translate var(--dur-fast) var(--ease);
+  }
+  .btn:hover { translate: 0 -1px; }
+  .btn:active { translate: 0 0; }
+
+  .btn--primary { background: var(--ember-bright); color: var(--bark-900); }
+  .btn--primary:hover { background: var(--ember-hover); }
+
+  .btn--ghost { border-color: currentColor; color: inherit; opacity: 0.9; }
+  .btn--ghost:hover { background: currentColor; opacity: 1; }
+  .btn--ghost:hover span { mix-blend-mode: difference; }
+
+  .btn--dark { background: var(--pine-700); color: var(--cream-50); }
+  .btn--dark:hover { background: var(--pine-900); }
+
+  .btn--quiet {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--accent, var(--ember));
+    position: relative;
+  }
+  .btn--quiet span { position: relative; padding-bottom: 0.3em; }
+  .btn--quiet span::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    scale: 1 1;
+    transform-origin: left;
+    transition: scale var(--dur) var(--ease);
+  }
+  .btn--quiet:hover span::after { scale: 0 1; transform-origin: right; }
+</style>

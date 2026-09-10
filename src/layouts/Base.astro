@@ -1,0 +1,90 @@
+---
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/instrument-sans';
+import '~/styles/tokens.css';
+import '~/styles/global.css';
+import '~/styles/mobile-menu.css';
+
+import { ClientRouter } from 'astro:transitions';
+import Nav from '~/components/nav/Nav.astro';
+import Footer from '~/components/Footer.astro';
+import Analytics from '~/components/Analytics.astro';
+import Seo from '~/components/seo/Seo.astro';
+import type { SeoProps } from '~/components/seo/Seo.astro';
+import JsonLd from '~/components/seo/JsonLd.astro';
+import { localBusinessSchema, breadcrumbSchema } from '~/components/seo/localBusiness';
+
+export interface Props extends SeoProps {
+  /** The hero page lets the nav float over the film. */
+  overHero?: boolean;
+  bodyClass?: string;
+  breadcrumbs?: { name: string; path: string }[];
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  overHero = false,
+  bodyClass = '',
+  breadcrumbs,
+  schema,
+  ...seo
+} = Astro.props;
+
+const siteUrl = Astro.site!.href;
+const graph: Record<string, unknown>[] = [localBusinessSchema(siteUrl)];
+if (breadcrumbs?.length) graph.push(breadcrumbSchema(siteUrl, breadcrumbs));
+if (schema) graph.push(...(Array.isArray(schema) ? schema : [schema]));
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#14261B" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="application/rss+xml" title="Targeteers Archery · Insights" href="/rss.xml" />
+
+    <Seo {...seo} />
+    <JsonLd data={graph} />
+    <Analytics />
+    <ClientRouter fallback="swap" />
+  </head>
+
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav overHero={overHero} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Decap CMS invite links arrive as #invite_token=… on the home page.
+      if (window.location.hash.startsWith('#invite_token=') ||
+          window.location.hash.startsWith('#recovery_token=')) {
+        window.location.replace('/admin/' + window.location.hash);
+      }
+    </script>
+
+    <script src="~/scripts/motion.ts"></script>
+  </body>
+</html>
+
+<style is:global>
+  /* View transition: a slow cream crossfade rather than a slide. */
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) { animation: none; }
+  }
+</style>

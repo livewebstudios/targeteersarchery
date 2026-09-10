@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# Targeteers Archery — old WordPress URLs mapped to the new site.
+# Netlify processes these top to bottom; the first match wins.
+# ---------------------------------------------------------------------------
+
+# --- old top-level pages -----------------------------------------------------
+/home/                    /                      301
+/about-us/                /about/                301
+/about-us/galleries/      /about/#gallery        301
+/about-us/events/         /groups/               301
+/services/lessons/        /lessons/              301
+/on-the-range/            /range/                301
+/events-calendar/         /calendar/             301
+/hunting-trip/            /hunting/              301
+/contact-us/              /contact/              301
+/employment/              /careers/              301
+
+# --- blog --------------------------------------------------------------------
+/blog/                    /insights/             301
+/blog/*                   /insights/             301
+/feed/                    /rss.xml               301
+/feed/*                   /rss.xml               301
+/comments/feed/           /rss.xml               301
+/category/*               /insights/             301
+/tag/*                    /insights/             301
+/author/*                 /insights/             301
+
+# --- pages that kept their path ----------------------------------------------
+/services/                /services/             200
+/leagues/                 /leagues/              200
+
+# --- WordPress surface area. Nothing here exists any more --------------------
+/wp-admin                 /404                   404
+/wp-admin/*               /404                   404
+/wp-content/*             /404                   404
+/wp-includes/*            /404                   404
+/wp-json/*                /404                   404
+/wp-login.php             /404                   404
+/wp-cron.php              /404                   404
+/xmlrpc.php               /404                   404
+/cgi-bin/*                /404                   404
+/*.php                    /404                   404

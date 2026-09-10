@@ -1,0 +1,169 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Form from '~/components/Form.astro';
+import Field from '~/components/Field.astro';
+import Checkbox from '~/components/Checkbox.astro';
+import ShieldRingIcon from '~/components/icons/ShieldRingIcon.astro';
+import { business } from '~/data/business';
+---
+<Base
+  title="Range Waiver | Targeteers Archery · Saddle Brook, NJ"
+  description="Sign the Targeteers Archery range waiver before you shoot. Fill it in here or at the front desk when you arrive in Saddle Brook, NJ."
+  ogImage="/og/waiver.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Waiver', path: '/waiver/' }]}
+>
+  <PageHero
+    eyebrow="Before you shoot"
+    title="The range waiver."
+    lead="Everybody on the line signs one. Do it here and skip the clipboard, or fill it in at the front desk when you arrive."
+    tone="cream"
+  />
+
+  <Section tone="cream">
+    <div class="waiver">
+      <div class="waiver__copy">
+        <Reveal>
+          <div class="notice">
+            <ShieldRingIcon size={30} />
+            <p class="notice__label">Read before signing</p>
+            <p>
+              Archery involves inherent risk. Bows, arrows and broadheads can cause serious injury.
+              By signing you confirm that you understand this, that you will follow every range rule
+              and every instruction from staff, and that you accept responsibility for your own
+              participation and for any minor in your care.
+            </p>
+            <p>
+              Management has the final decision about equipment and about anybody on the line.
+              Anyone not following safety rules will be removed without a refund.
+            </p>
+            <!-- CONFIRM: final waiver wording. This is a plain-language placeholder written
+                 for the site. The old Waiver.pdf came from the compromised WordPress install
+                 and was deliberately not carried over. Rob to supply the legal text his
+                 insurer expects before this form is switched on. -->
+          </div>
+        </Reveal>
+
+        <Reveal delay={2}>
+          <div class="rules-recap">
+            <h2>The short version of the rules</h2>
+            <ul>
+              <li>Closed-toe shoes on the line, every time.</li>
+              <li>Outside equipment gets checked and must meet our standards.</li>
+              <li>Children must be seven or older and with an adult.</li>
+              <li>First-time shooters need prior instruction or management approval.</li>
+              <li>Shoot only when the line is clear and only at your own bale.</li>
+            </ul>
+            <p><a href="/range/#rules">The full range rules</a></p>
+          </div>
+        </Reveal>
+      </div>
+
+      <Reveal class="waiver__form" delay={1}>
+        <Eyebrow>Sign it</Eyebrow>
+        <Form
+          action={business.formspree.waiver}
+          subject="Range waiver · targeteersarchery.com"
+          name="range-waiver"
+          submitLabel="Sign and send"
+          note="A copy goes to the store. You may still be asked to confirm your details at the front desk."
+        >
+          <Field label="Full name" name="name" required autocomplete="name" full />
+          <Field label="Date of birth" name="dob" type="date" required />
+          <Field label="Date" name="date" type="date" required />
+          <Field label="Email" name="email" type="email" required autocomplete="email" />
+          <Field label="Phone" name="phone" type="tel" required autocomplete="tel" />
+          <Field label="Address" name="address" autocomplete="street-address" full />
+          <Field label="Emergency contact name" name="emergency_name" required />
+          <Field label="Emergency contact phone" name="emergency_phone" type="tel" required />
+          <Field
+            label="Minors in your care"
+            name="minors"
+            as="textarea"
+            rows={3}
+            full
+            hint="Name and age of each minor you are signing for. Leave blank if none."
+            placeholder="e.g. Sam Rivera, 9 · Alex Rivera, 12"
+          />
+          <Checkbox name="agree" required label="I agree">
+            I have read the above, I understand the risks of archery, I agree to follow all range
+            rules and staff instructions, and I am signing for myself and for any minor named above.
+          </Checkbox>
+          <Field
+            label="Typed signature"
+            name="signature"
+            required
+            full
+            hint="Type your full name. This stands as your signature."
+          />
+        </Form>
+      </Reveal>
+    </div>
+  </Section>
+
+  <ContactBand
+    title="Questions before you sign?"
+    body="Call the store and ask. Nobody here minds explaining a rule, and it is a much better conversation to have before you are standing on the line."
+    primary={{ label: 'Call the shop', href: business.phoneHref }}
+    secondary={{ label: 'Range rules', href: '/range/#rules' }}
+    tone="linen"
+  />
+</Base>
+
+<style>
+  .waiver { display: grid; gap: var(--sp-8); align-items: start; }
+  @media (min-width: 64rem) { .waiver { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: var(--sp-9); } }
+  .waiver__copy { display: grid; gap: var(--sp-5); }
+  @media (min-width: 64rem) { .waiver__copy { position: sticky; top: calc(var(--nav-h) + 3rem); } }
+
+  .notice, .rules-recap {
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    display: grid;
+    gap: var(--sp-3);
+  }
+  .notice :global(svg) { color: var(--ember); }
+  .notice__label {
+    margin: 0;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+  }
+  .notice p { margin: 0; font-size: var(--fs-small); line-height: 1.7; color: var(--bark-500); }
+
+  .rules-recap h2 {
+    font-family: var(--font-body);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+    margin: 0;
+  }
+  .rules-recap ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+  .rules-recap li { position: relative; padding-left: 1.6rem; font-size: var(--fs-small); color: var(--bark-500); }
+  .rules-recap li::before {
+    content: '';
+    position: absolute; left: 0; top: 0.45em;
+    width: 0.7rem; height: 0.7rem;
+    border: 1.5px solid var(--ember);
+    border-radius: 999px;
+  }
+  .rules-recap p { margin: var(--sp-2) 0 0; font-size: var(--fs-small); }
+  .rules-recap a { color: var(--ember); }
+
+  .waiver__form {
+    background: var(--cream-50);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.25rem, 0.6rem + 2vw, 2.25rem);
+  }
+</style>

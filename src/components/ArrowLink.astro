@@ -1,0 +1,38 @@
+---
+import ArrowRightIcon from './icons/ArrowRightIcon.astro';
+interface Props { href: string; class?: string; }
+const { href, class: klass = '' } = Astro.props;
+---
+<a class={`arrow-link ${klass}`} href={href}>
+  <span><slot /></span>
+  <ArrowRightIcon size={17} />
+</a>
+
+<style>
+  .arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--accent, var(--ember));
+  }
+  .arrow-link :global(svg) { transition: translate var(--dur) var(--ease); flex: none; }
+  .arrow-link:hover :global(svg) { translate: 0.35rem 0; }
+  .arrow-link span { position: relative; padding-bottom: 0.25em; }
+  .arrow-link span::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    scale: 0 1;
+    transform-origin: left;
+    transition: scale var(--dur) var(--ease);
+  }
+  .arrow-link:hover span::after { scale: 1 1; }
+</style>

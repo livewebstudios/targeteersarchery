@@ -1,0 +1,243 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Faq from '~/components/Faq.astro';
+import GalleryBlock from '~/components/GalleryBlock.astro';
+import { faqSchema } from '~/components/seo/localBusiness';
+
+import heroImg from '~/assets/hunting/deer-wide.jpg';
+import bcImg from '~/assets/hunting/british-columbia.jpg';
+import yukonImg from '~/assets/hunting/yukon.jpg';
+import bigWoods from '~/assets/hunting/big-woods.jpg';
+import sunset from '~/assets/hunting/hunter-sunset.jpg';
+import turkey from '~/assets/hunting/turkey-wide.jpg';
+import forest from '~/assets/hunting/forest-wide.jpg';
+import forest2 from '~/assets/hunting/forest-wide-2.jpg';
+import bcCamp from '~/assets/hunting/bc-camp.jpg';
+import robBC from '~/assets/hunting/rob-bc.jpg';
+
+const checklist = [
+  { n: '01', title: 'Tune-up, a month out', body: 'New strings if last year’s are fuzzy or simply a year old, then a full tune. A month out means we can order a part and you can shoot the bow enough afterwards to trust it.' },
+  { n: '02', title: 'Broadhead tune, three weeks out', body: 'Field points lie. A broadhead has blades, and blades steer. If the two do not agree at twenty yards the bow is out, not the heads.' },
+  { n: '03', title: 'Check every arrow', body: 'One at a time. Flex it and listen, spin it on the point and watch the nock end. A cracked carbon shaft is not a group problem, it is a hand problem.' },
+  { n: '04', title: 'Layering, tried on', body: 'Put the whole kit on and draw your bow in it. A jacket that binds at full draw is a jacket that will cost you a shot.' },
+  { n: '05', title: 'Scent control, started early', body: 'Whatever system you use, start it now rather than the night before, so the clothes are actually clean and stored properly.' },
+  { n: '06', title: 'Shoot cold', body: 'One arrow, first thing, no warm-up. That is the shot you will actually take. If it lands where your twentieth lands, you are ready.' },
+];
+
+const allFaqs = await getCollection('faq');
+const huntFaqs = allFaqs
+  .filter((f) => f.data.group === 'Hunting')
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((f) => ({ question: f.data.question, answer: f.data.answer.replace(/<!--[\s\S]*?-->/g, '').trim() }));
+
+const galleryItems = [
+  { image: bcImg, alt: 'British Columbia backcountry' },
+  { image: robBC, alt: 'Rob Cerone Jr. hunting in British Columbia' },
+  { image: yukonImg, alt: 'The Yukon' },
+  { image: bcCamp, alt: 'Camp on a British Columbia hunt' },
+  { image: bigWoods, alt: 'Big woods in autumn' },
+  { image: sunset, alt: 'A hunter at sunset' },
+  { image: turkey, alt: 'Turkey country' },
+  { image: forest2, alt: 'Northeast forest before the season' },
+];
+---
+<Base
+  title="Planning a Hunting Trip | Targeteers Archery · Saddle Brook, NJ"
+  description="Sixty-five years of family hunting experience, specialising in North American big game. Pre-season tune-ups, broadheads, arrows and SITKA layering in Saddle Brook, NJ."
+  keywords={['hunting equipment Saddle Brook', 'bowhunting NJ', 'pre-season bow tune NJ', 'North Jersey bowhunting gear']}
+  ogImage="/og/hunting.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Hunting', path: '/hunting/' }]}
+  schema={faqSchema(huntFaqs)}
+>
+  <PageHero
+    eyebrow="Hunting"
+    title="Planning a hunting trip?"
+    lead="Sixty-five years of family hunting experience, most of it after North American big game. Come get the gear that will actually be there when it matters."
+    image={heroImg}
+    imageAlt="Whitetail country at first light"
+  />
+
+  <Section tone="cream">
+    <div class="intro">
+      <Reveal class="intro__copy">
+        <p class="lead">
+          Rob has been hunting since he was small, and the family has been at it a great deal longer
+          than that. British Columbia, the Yukon, and a lot of ground in between.
+        </p>
+        <p>
+          What that buys you is not stories, although you will get some. It is somebody who has
+          packed for cold, wet, high, far and early, and who will tell you what actually mattered
+          rather than what looked good in the catalogue.
+        </p>
+        <p>
+          Come in with your dates and your tag. We will go through the bow, the arrows, the heads
+          and the clothing, in that order, because that is the order they will fail in.
+        </p>
+      </Reveal>
+      <Reveal class="intro__media" delay={2}>
+        <Image src={bcImg} alt="British Columbia backcountry" widths={[560, 1000]}
+          sizes="(max-width: 60rem) 90vw, 28rem" loading="lazy" />
+      </Reveal>
+    </div>
+  </Section>
+
+  <section class="checklist tone-pine" aria-labelledby="checklist-title">
+    <div class="wrap">
+      <div class="checklist__head" data-reveal>
+        <Eyebrow>Pre-season</Eyebrow>
+        <h2 id="checklist-title">The checklist, in the order it should happen.</h2>
+        <p class="lead">
+          Every year the last two weeks of September look the same in this shop. It does not have
+          to be that way for you.
+        </p>
+      </div>
+      <ol class="checklist__items">
+        {checklist.map((c, i) => (
+          <li>
+            <Reveal delay={i}>
+              <span class="checklist__n num">{c.n}</span>
+              <h3>{c.title}</h3>
+              <p>{c.body}</p>
+            </Reveal>
+          </li>
+        ))}
+      </ol>
+      <p class="checklist__link" data-reveal>
+        <ArrowLink href="/insights/hunting-season-prep-checklist/">The full pre-season checklist</ArrowLink>
+      </p>
+    </div>
+  </section>
+
+  <Section tone="cream">
+    <SectionHead eyebrow="What we can do for you" title="Three things before opening day." />
+    <div class="cards">
+      <Reveal delay={0}>
+        <article class="card-plain">
+          <h3>A full pre-season tune</h3>
+          <p>
+            Strings, timing, center shot, nock height, paper tune, then out on the range. A month
+            out, not the week of.
+          </p>
+          <ArrowLink href="/services/bow-tuning/">How we tune a bow</ArrowLink>
+        </article>
+      </Reveal>
+      <Reveal delay={1}>
+        <article class="card-plain">
+          <h3>Broadhead tuning</h3>
+          <p>
+            With the actual heads and shafts you will hunt with, until broadheads and field points
+            hit the same place.
+          </p>
+          <ArrowLink href="/insights/broadhead-tuning-why-field-points-lie/">Why field points lie</ArrowLink>
+        </article>
+      </Reveal>
+      <Reveal delay={2}>
+        <article class="card-plain">
+          <h3>SITKA layering, fitted</h3>
+          <p>
+            The system that keeps you in the stand another two hours. Draw your own bow in the
+            jacket before you buy it.
+          </p>
+          <ArrowLink href="/pro-shop/sitka/">SITKA at Targeteers</ArrowLink>
+        </article>
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <div class="licence">
+      <Reveal class="licence__copy">
+        <Eyebrow>New Jersey</Eyebrow>
+        <h2>Licences, seasons and zones.</h2>
+        <p>
+          These change, and we are not the authority on them. New Jersey Fish and Wildlife publishes
+          the current licence requirements, season dates and zone maps. Go to the source
+          rather than trusting anything second-hand, us included.
+        </p>
+        <p>
+          <a href="https://dep.nj.gov/njfw/hunting/" target="_blank" rel="noopener">
+            NJ Fish &amp; Wildlife hunting information
+          </a>
+        </p>
+      </Reveal>
+      <Reveal class="licence__media" delay={2}>
+        <Image src={forest} alt="New Jersey woodland in the autumn" widths={[560, 1000]}
+          sizes="(max-width: 60rem) 90vw, 28rem" loading="lazy" />
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="cream">
+    <SectionHead eyebrow="Questions" title="Hunting, answered." />
+    <Faq items={huntFaqs} />
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead eyebrow="Where we have been" title="Sixty-five years of it." />
+    <GalleryBlock items={galleryItems} label="Hunting photographs" />
+  </Section>
+
+  <ContactBand
+    title="Come talk it through."
+    body="Bring your dates, your tag and your bow. That conversation goes a lot better across a counter than over a keyboard."
+    primary={{ label: 'Call the shop', href: 'tel:+12018437788' }}
+    secondary={{ label: 'See the Trophy Room', href: '/trophy-room/' }}
+  />
+</Base>
+
+<style>
+  .intro { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) { .intro { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .intro__copy p { max-width: 50ch; }
+  .intro__copy p + p { margin-top: var(--sp-4); }
+  .intro__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+
+  .checklist { background: var(--pine-900); color: var(--cream-50); padding-block: var(--section-y); --accent: var(--sage-300); }
+  .checklist__head { margin-bottom: var(--sp-7); max-width: 44rem; }
+  .checklist__head h2 { color: var(--cream-50); }
+  .checklist__head .lead { margin-top: var(--sp-4); color: rgba(248, 245, 238, 0.78); }
+  .checklist__items {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: var(--sp-6);
+  }
+  .checklist__items li { border-top: 1px solid rgba(248, 245, 238, 0.18); padding-top: var(--sp-4); }
+  .checklist__n { display: block; font-size: 2.25rem; color: var(--ember); margin-bottom: var(--sp-3); }
+  .checklist__items h3 { color: var(--cream-50); font-size: var(--fs-h4); margin-bottom: var(--sp-2); }
+  .checklist__items p { color: rgba(248, 245, 238, 0.72); font-size: var(--fs-small); line-height: 1.65; margin: 0; }
+  .checklist__link { margin-top: var(--sp-7); }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+  }
+  .card-plain {
+    height: 100%;
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    display: grid;
+    gap: var(--sp-3);
+    align-content: start;
+  }
+  .card-plain h3 { font-size: var(--fs-h4); margin: 0; }
+  .card-plain p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+
+  .licence { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) { .licence { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .licence__copy p { max-width: 48ch; margin-top: var(--sp-4); }
+  .licence__copy a { color: var(--ember); }
+  .licence__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+</style>

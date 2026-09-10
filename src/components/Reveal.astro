@@ -1,0 +1,12 @@
+---
+interface Props {
+  /** Stagger index; each step adds 60ms. */
+  delay?: number;
+  as?: keyof HTMLElementTagNameMap;
+  class?: string;
+}
+// Astro derives this component's public prop types from `Props` above; casting
+// Astro.props here would sever that link, so it is read as-is.
+const { delay = 0, as: Tag = 'div', class: klass = '' } = Astro.props;
+---
+<Tag data-reveal class={klass} style={`--reveal-delay:${delay * 60}ms`}><slot /></Tag>

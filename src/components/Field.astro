@@ -1,0 +1,82 @@
+---
+interface Props {
+  label: string;
+  name: string;
+  type?: 'text' | 'email' | 'tel' | 'date' | 'number' | 'url';
+  required?: boolean;
+  placeholder?: string;
+  autocomplete?: string;
+  as?: 'input' | 'textarea' | 'select';
+  options?: string[];
+  rows?: number;
+  full?: boolean;
+  min?: string;
+  hint?: string;
+}
+const {
+  label, name, type = 'text', required = false, placeholder, autocomplete,
+  as = 'input', options = [], rows = 5, full = false, min, hint,
+} = Astro.props;
+const id = `f-${name}`;
+---
+<p class={`field ${full ? 'is-full' : ''}`}>
+  <label for={id}>
+    {label}{required && <span class="field__req" aria-hidden="true">*</span>}
+    {!required && <span class="field__opt">optional</span>}
+  </label>
+  {as === 'textarea' && (
+    <textarea id={id} name={name} rows={rows} required={required} placeholder={placeholder} />
+  )}
+  {as === 'select' && (
+    <select id={id} name={name} required={required}>
+      <option value="">Choose one</option>
+      {options.map((o: string) => <option value={o}>{o}</option>)}
+    </select>
+  )}
+  {as === 'input' && (
+    <input id={id} name={name} type={type} required={required} placeholder={placeholder}
+      autocomplete={autocomplete} min={min} />
+  )}
+  {hint && <span class="field__hint">{hint}</span>}
+</p>
+
+<style>
+  .field { display: grid; gap: 0.45rem; margin: 0; }
+  .is-full { grid-column: 1 / -1; }
+  label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4em;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+  .field__req { color: var(--bullseye); }
+  .field__opt {
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    color: var(--fg-faint);
+    text-transform: lowercase;
+    font-weight: 400;
+  }
+  input, textarea, select {
+    width: 100%;
+    background: var(--cream-50);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius);
+    padding: 0.85rem 1rem;
+    font-size: var(--fs-body);
+    color: var(--bark-900);
+    transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+  }
+  textarea { resize: vertical; min-height: 8rem; line-height: 1.55; }
+  input:focus, textarea:focus, select:focus {
+    outline: 0;
+    border-color: var(--ember);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ember) 18%, transparent);
+  }
+  input::placeholder, textarea::placeholder { color: var(--stone-400); }
+  .field__hint { font-size: 0.75rem; color: var(--fg-faint); }
+</style>

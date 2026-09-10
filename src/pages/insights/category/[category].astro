@@ -1,0 +1,107 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import Reveal from '~/components/Reveal.astro';
+import PostCard from '~/components/PostCard.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import { getPosts, CATEGORIES, categorySlug } from '~/utils/posts';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return CATEGORIES.filter((c) => posts.some((p) => p.data.category === c)).map((category) => ({
+    params: { category: categorySlug(category) },
+    props: { category, posts: posts.filter((p) => p.data.category === category) },
+  }));
+}
+
+interface Props { category: string; posts: CollectionEntry<'insights'>[]; }
+const { category, posts } = Astro.props;
+
+const blurbs: Record<string, string> = {
+  'Tuning & Gear': 'What we do at the bench, and why it changes how a bow shoots.',
+  'Getting Started': 'For people who have never held a bow and would like to.',
+  Hunting: 'Season prep, broadheads, layering, and sixty-five years of family experience.',
+  'Kids & Family': 'Camp, first lessons, and what parents actually ask.',
+  'Leagues & Community': 'League nights, speaker nights, and the people who fill this room.',
+  'From the Family': 'Sixty-nine years on Route 46, in the family’s own words.',
+};
+
+const allPosts = await getPosts();
+const counts = new Map<string, number>();
+for (const p of allPosts) counts.set(p.data.category, (counts.get(p.data.category) ?? 0) + 1);
+---
+<Base
+  title={`${category} | Insights | Targeteers Archery · Saddle Brook, NJ`}
+  description={`${blurbs[category] ?? ''} Notes from Targeteers Archery Pro Shop in Saddle Brook, New Jersey.`}
+  ogImage="/og/insights.jpg"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Insights', path: '/insights/' },
+    { name: category, path: `/insights/category/${categorySlug(category)}/` },
+  ]}
+>
+  <PageHero eyebrow="Insights" title={category} lead={blurbs[category]} tone="cream" />
+
+  <Section tone="cream">
+    <nav class="cats" aria-label="Post categories">
+      <a href="/insights/">All <span>{allPosts.length}</span></a>
+      {CATEGORIES.filter((c) => counts.has(c)).map((c) => (
+        <a href={`/insights/category/${categorySlug(c)}/`}
+           aria-current={c === category ? 'page' : undefined}>{c} <span>{counts.get(c)}</span></a>
+      ))}
+    </nav>
+
+    <div class="posts">
+      {posts.map((post, i) => (
+        <Reveal delay={Math.min(i, 5)}><PostCard post={post} level={2} loading={i < 3 ? 'eager' : 'lazy'} /></Reveal>
+      ))}
+    </div>
+  </Section>
+
+  <ContactBand
+    title="Rather just ask somebody?"
+    body="Everything here started as a question at the counter. Call and skip the reading."
+    primary={{ label: 'Call the shop', href: 'tel:+12018437788' }}
+    secondary={{ label: 'All insights', href: '/insights/' }}
+  />
+</Base>
+
+<style>
+  .cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--sp-7);
+    padding-bottom: var(--sp-5);
+    border-bottom: 1px solid var(--rule);
+  }
+  .cats a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45em;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.55rem 0.95rem;
+    border: 1px solid var(--cream-200);
+    border-radius: 999px;
+    color: var(--bark-500);
+    transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+  }
+  .cats a:hover { border-color: var(--ember); color: var(--ember); }
+  .cats a[aria-current='page'] { background: var(--pine-900); border-color: var(--pine-900); color: var(--cream-50); }
+  .cats span { font-variant-numeric: tabular-nums; color: var(--stone-400); }
+  .cats a[aria-current='page'] span { color: rgba(248, 245, 238, 0.66); }
+
+  .posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+  }
+  .posts > :global(*) { display: flex; }
+  .posts > :global(*) > :global(*) { width: 100%; }
+</style>

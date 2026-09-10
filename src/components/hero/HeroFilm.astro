@@ -1,0 +1,247 @@
+---
+import { Picture } from 'astro:assets';
+import heroPoster from '~/assets/hero/hero-poster.jpg';
+import Button from '../Button.astro';
+import TargetIcon from '../icons/TargetIcon.astro';
+import OpenNowPill from '../OpenNowPill.astro';
+import { business } from '~/data/business';
+---
+<section class="hero" data-hero aria-label="Targeteers Archery">
+  <div class="hero__media" data-hero-media>
+    <Picture
+      class="hero__poster"
+      src={heroPoster}
+      alt=""
+      formats={['avif', 'webp']}
+      widths={[560, 800, 1200, 1600, 1920]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      aria-hidden="true"
+    />
+    <!-- The poster is the LCP. The film is injected on capable clients only,
+         then crossfaded in on canplay, so it never blocks first paint. -->
+    <div class="hero__video" data-hero-video hidden></div>
+  </div>
+
+  <div class="hero__grain" aria-hidden="true"></div>
+  <div class="hero__scrim" aria-hidden="true"></div>
+
+  <div class="wrap hero__inner">
+    <div class="hero__copy" data-hero-copy>
+      <p class="hero__eyebrow">Saddle Brook, New Jersey · Since 1957</p>
+      <h1>Archery, the way it&rsquo;s been done here for three generations.</h1>
+      <p class="hero__sub">
+        North Jersey&rsquo;s family-owned pro shop, indoor range, and the people who tune your
+        bow like it&rsquo;s their own.
+      </p>
+      <div class="hero__actions">
+        <Button href="/lessons/#book" variant="primary">Book a lesson</Button>
+        <Button href="/pro-shop/" variant="ghost">Visit the pro shop</Button>
+      </div>
+      <div class="hero__meta">
+        <OpenNowPill />
+        <a class="hero__phone" href={business.phoneHref}>{business.phone}</a>
+      </div>
+    </div>
+  </div>
+
+  <a class="scroll-cue" href="#since" aria-label="Scroll to the story">
+    <span class="scroll-cue__ring"><TargetIcon size={34} strokeWidth={1.1} /></span>
+    <span class="scroll-cue__label">Scroll</span>
+  </a>
+</section>
+
+<style>
+  .hero {
+    /* A dark photographic ground: the bright accent applies here. */
+    --ember: var(--ember-bright);
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-items: end;
+    overflow: hidden;
+    background: var(--pine-900);
+    color: var(--cream-50);
+    isolation: isolate;
+  }
+
+  .hero__media { position: absolute; inset: -6% 0; z-index: 0; }
+  .hero__media :global(picture),
+  .hero__media :global(img),
+  .hero__media :global(video) {
+    display: block;
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  .hero__media :global(.hero__poster) {
+    animation: ken-burns 45s var(--ease) infinite alternate;
+    transform-origin: 52% 46%;
+  }
+  @keyframes ken-burns {
+    from { scale: 1; translate: 0 0; }
+    to { scale: 1.08; translate: -1.5% 1%; }
+  }
+
+  .hero__video { position: absolute; inset: 0; opacity: 0; transition: opacity var(--dur-slower) var(--ease); }
+  .hero__video[data-playing] { opacity: 1; }
+  .hero__video[data-playing] + .hero__grain ~ .hero__inner { /* no-op, keeps specificity honest */ }
+
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      /* Darkens the text column so the eyebrow and rule hold contrast over a
+         bright sky, without dimming the whole frame. */
+      linear-gradient(to right, rgba(20, 38, 27, 0.72) 0%, rgba(20, 38, 27, 0.34) 38%, transparent 66%),
+      radial-gradient(120% 90% at 50% 40%, transparent 38%, rgba(20, 38, 27, 0.42) 100%),
+      linear-gradient(to top, rgba(20, 38, 27, 0.93) 0%, rgba(20, 38, 27, 0.6) 30%, rgba(20, 38, 27, 0.12) 64%, rgba(20, 38, 27, 0.45) 100%);
+    pointer-events: none;
+  }
+
+  /* Film grain: hides 720p softness and adds the printed-paper feel. */
+  .hero__grain {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0.04;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+
+  .hero__inner {
+    position: relative;
+    z-index: 3;
+    padding-block: clamp(4rem, 2rem + 10vh, 8rem);
+  }
+  .hero__copy { max-width: 54rem; }
+
+  .hero__eyebrow {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: var(--sp-5);
+    text-shadow: 0 1px 12px rgba(20, 38, 27, 0.65);
+  }
+
+  .hero h1 {
+    color: var(--cream-50);
+    font-size: var(--fs-h1);
+    font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 144;
+    font-weight: 300;
+    max-width: 18ch;
+    text-shadow: 0 2px 30px rgba(20, 38, 27, 0.5);
+  }
+
+  .hero__sub {
+    margin-top: var(--sp-5);
+    max-width: 44ch;
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+    color: rgba(248, 245, 238, 0.86);
+  }
+
+  .hero__actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-6); }
+
+  .hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-4) var(--sp-5);
+    margin-top: var(--sp-6);
+    --fg-muted: rgba(248, 245, 238, 0.78);
+    --rule: rgba(248, 245, 238, 0.24);
+    --bg: rgba(20, 38, 27, 0.4);
+    --accent: var(--ember-bright);
+  }
+  .hero__phone {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    color: rgba(248, 245, 238, 0.86);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .hero__phone:hover { color: var(--ember); }
+
+  /* ---------------------------------------------------------- scroll cue */
+  .scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 1.5rem;
+    translate: -50% 0;
+    z-index: 4;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: rgba(248, 245, 238, 0.72);
+  }
+  @media (min-width: 48rem) and (min-height: 40rem) { .scroll-cue { display: flex; } }
+  .scroll-cue__ring :global(svg) { animation: cue-breathe 6s var(--ease) infinite; }
+  @keyframes cue-breathe {
+    0%, 100% { opacity: 0.55; scale: 1; }
+    50% { opacity: 1; scale: 1.08; }
+  }
+  .scroll-cue__label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .scroll-cue:hover { color: var(--ember); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__media :global(.hero__poster) { animation: none; }
+    .scroll-cue__ring :global(svg) { animation: none; opacity: 0.8; }
+  }
+</style>
+
+<script>
+  // Inject the film only where it is welcome: a wide-enough viewport, motion
+  // allowed, and the visitor not asking the browser to save data.
+  const holder = document.querySelector<HTMLElement>('[data-hero-video]');
+  if (holder) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const wide = matchMedia('(min-width: 48rem)').matches;
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const thrifty = conn?.saveData === true || /^(slow-2g|2g)$/.test(conn?.effectiveType ?? '');
+
+    if (!reduced && wide && !thrifty) {
+      const v = document.createElement('video');
+      v.autoplay = true;
+      v.muted = true;
+      v.defaultMuted = true;
+      v.loop = true;
+      v.playsInline = true;
+      v.preload = 'metadata';
+      v.setAttribute('aria-hidden', 'true');
+      v.tabIndex = -1;
+
+      const big = matchMedia('(min-width: 64rem)').matches;
+      const webm = document.createElement('source');
+      webm.src = '/video/hero.webm';
+      webm.type = 'video/webm';
+      const mp4 = document.createElement('source');
+      mp4.src = big ? '/video/hero.mp4' : '/video/hero-sm.mp4';
+      mp4.type = 'video/mp4';
+      if (big) v.append(webm);
+      v.append(mp4);
+
+      v.addEventListener('canplay', () => {
+        holder.hidden = false;
+        holder.setAttribute('data-playing', '');
+      }, { once: true });
+
+      holder.append(v);
+      v.play().catch(() => {
+        // Autoplay refused: the Ken Burns poster is already doing the job.
+        holder.remove();
+      });
+    }
+  }
+</script>

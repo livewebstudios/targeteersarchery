@@ -1,0 +1,279 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import Form from '~/components/Form.astro';
+import Field from '~/components/Field.astro';
+import Faq from '~/components/Faq.astro';
+import StatRing from '~/components/StatRing.astro';
+import GalleryBlock from '~/components/GalleryBlock.astro';
+import CampIcon from '~/components/icons/CampIcon.astro';
+import { business } from '~/data/business';
+import { faqSchema } from '~/components/seo/localBusiness';
+
+import heroImg from '~/assets/kids/camp-wide.jpg';
+import camp1 from '~/assets/kids/camp-01.jpg';
+import camp2 from '~/assets/kids/camp-02.jpg';
+import camp3 from '~/assets/kids/camp-03.jpg';
+import camp4 from '~/assets/kids/camp-04.jpg';
+import camp5 from '~/assets/kids/camp-05.jpg';
+import campTall from '~/assets/kids/camp-tall.jpg';
+import campWide2 from '~/assets/kids/camp-wide-2.jpg';
+import youthImg from '~/assets/leagues/youth-league.jpg';
+
+const programs = [
+  {
+    title: 'Summer camp',
+    body: 'Small groups, certified instruction, all equipment provided. A hundred and thirty kids come through over a summer and we still turn families away, so sign up early rather than in June.',
+  },
+  {
+    title: 'Youth league',
+    body: 'Friday Night Lights. Two lines, five or six o&rsquo;clock, eight weeks, from age seven. Where camp kids go when they want to keep going.',
+  },
+  {
+    title: 'Birthday parties',
+    body: 'On the range, with equipment, instruction and targets included. A deposit is required and it is non-refundable, so pick the date carefully.',
+  },
+  {
+    title: 'Private lessons',
+    body: 'One instructor, one kid, half an hour or an hour. The fastest way to fix a habit before it sets, and a good option for a child who finds a group overwhelming.',
+  },
+];
+
+const allFaqs = await getCollection('faq');
+const kidFaqs = allFaqs
+  .filter((f) => f.data.group === 'Lessons & Kids')
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((f) => ({ question: f.data.question, answer: f.data.answer.replace(/<!--[\s\S]*?-->/g, '').trim() }));
+
+const galleryItems = [
+  { image: camp1, alt: 'Campers on the shooting line' },
+  { image: campTall, alt: 'A young archer taking aim' },
+  { image: camp2, alt: 'A camp group at the range' },
+  { image: camp4, alt: 'Kids waiting their turn at camp' },
+  { image: campWide2, alt: 'Summer camp on the indoor range' },
+  { image: camp3, alt: 'An instructor working with a camper' },
+  { image: camp5, alt: 'A camper at full draw' },
+  { image: youthImg, alt: 'Youth league night' },
+];
+---
+<Base
+  title="Kids Archery Camp & Youth Programs | Targeteers Archery · Saddle Brook, NJ"
+  description="Kids archery camp, youth league and birthday parties in Saddle Brook, NJ. From age seven, equipment provided, USA Archery certified instruction. About 130 kids a summer."
+  keywords={['kids archery camp NJ', 'youth archery leagues NJ', 'archery birthday party North Jersey']}
+  ogImage="/og/kids.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Kids Camp', path: '/kids/' }]}
+  schema={faqSchema(kidFaqs)}
+>
+  <PageHero
+    eyebrow="Kids archery camp"
+    title="Every kid hits something on the first day."
+    lead="From age seven. Equipment provided, certified instruction, safety first and fun a very close second."
+    image={heroImg}
+    imageAlt="Kids on the line at Targeteers summer camp"
+  />
+
+  <Section tone="cream">
+    <div class="stats">
+      <StatRing value="130" label="Kids a summer" note="And we still turn families away at the door." />
+      <StatRing value="7" label="Minimum age" note="Old enough to hold a bow steady and follow a range command." />
+      <StatRing value="11" label="Indoor lanes" note="Air conditioned, which matters more in July than you would think." />
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <div class="intro">
+      <Reveal class="intro__copy">
+        <Eyebrow>Why seven</Eyebrow>
+        <h2>It is not an arbitrary number.</h2>
+        <p>
+          At seven, most kids can hold a light bow steady enough to be safe, follow a range command
+          reliably, and remember a sequence of steps from one arrow to the next. On a shooting line,
+          attention is the safety system.
+        </p>
+        <p>
+          If your five-year-old is desperate, bring them in to watch a session. Twenty minutes on
+          the bench behind the line tells you a lot, and it costs nothing.
+        </p>
+        <ArrowLink href="/insights/getting-your-kid-started-in-archery/">Getting a kid started, properly</ArrowLink>
+      </Reveal>
+      <Reveal class="intro__media" delay={2}>
+        <Image src={camp1} alt="Campers on the shooting line" widths={[560, 1000]}
+          sizes="(max-width: 60rem) 90vw, 28rem" loading="lazy" />
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="cream">
+    <SectionHead eyebrow="Programs" title="Four ways in." />
+    <ul class="programs">
+      {programs.map((p, i) => (
+        <li>
+          <Reveal delay={i}>
+            <article>
+              <CampIcon size={28} />
+              <h3>{p.title}</h3>
+              <p set:html={p.body} />
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <section class="parents tone-pine" aria-labelledby="parents-title">
+    <div class="wrap">
+      <div class="parents__head" data-reveal>
+        <Eyebrow>For parents</Eyebrow>
+        <h2 id="parents-title">Three things worth knowing.</h2>
+      </div>
+      <div class="parents__grid">
+        <Reveal delay={0}>
+          <h3>Do not buy a bow first</h3>
+          <p>
+            Please. Every summer somebody arrives with a big-box bow that is four inches off on
+            draw length because the box said "youth." A bow that does not fit teaches a child that
+            archery is frustrating, and that lesson is very hard to undo.
+          </p>
+        </Reveal>
+        <Reveal delay={1}>
+          <h3>Do not coach from the bench</h3>
+          <p>
+            Your child has one voice to listen to on the line, and there is a reason it is not
+            yours. Sit back and let them tell you about it in the car. That is when you get the
+            real version anyway.
+          </p>
+        </Reveal>
+        <Reveal delay={2}>
+          <h3>Watch what happens after a miss</h3>
+          <p>
+            Kids who are going to stay with this get curious after a bad arrow. They want to know
+            why. That is the tell, not the score.
+          </p>
+        </Reveal>
+      </div>
+    </div>
+  </section>
+
+  <Section tone="cream" id="reserve">
+    <div class="reserve">
+      <div class="reserve__copy flow">
+        <Reveal><Eyebrow>Reserve a spot</Eyebrow></Reveal>
+        <Reveal delay={1}><h2>Camp fills. Early is better than June.</h2></Reveal>
+        <Reveal delay={2}>
+          <p>
+            Send this and we will come back to you with current dates, sessions and pricing. If a
+            week is already full we will tell you straight rather than leaving you hanging.
+          </p>
+        </Reveal>
+        <Reveal delay={3}>
+          <figure class="reserve__figure">
+            <Image src={camp3} alt="An instructor working with a camper" widths={[520, 900]}
+              sizes="(max-width: 60rem) 90vw, 24rem" loading="lazy" />
+          </figure>
+        </Reveal>
+      </div>
+      <Reveal class="reserve__form" delay={2}>
+        <Form
+          action={business.formspree.kids}
+          subject="Kids camp and youth programs · targeteersarchery.com"
+          name="kids-reserve"
+          submitLabel="Ask about a spot"
+          note="Nothing is booked until we confirm and take a deposit."
+        >
+          <Field label="Parent or guardian name" name="parent" required autocomplete="name" />
+          <Field label="Email" name="email" type="email" required autocomplete="email" />
+          <Field label="Phone" name="phone" type="tel" required autocomplete="tel" />
+          <Field label="Program" name="program" as="select" required
+            options={['Summer camp', 'Youth league (Friday Night Lights)', 'Birthday party', 'Private lesson', 'Not sure, advise me']} />
+          <Field label="Child's first name" name="child" required />
+          <Field label="Child's age" name="child_age" type="number" min="7" required hint="Seven and up." />
+          <Field label="Preferred dates" name="dates" placeholder="e.g. the week of July 14" full />
+          <Field label="Anything we should know" name="notes" as="textarea" full
+            placeholder="Previous experience, siblings signing up together, anything that would help an instructor." />
+        </Form>
+      </Reveal>
+    </div>
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead eyebrow="What parents ask" title="The three questions, and the rest." />
+    <Faq items={kidFaqs} />
+  </Section>
+
+  <Section tone="cream">
+    <SectionHead eyebrow="Camp" title="What a week looks like." />
+    <GalleryBlock items={galleryItems} label="Summer camp photographs" />
+  </Section>
+
+  <ContactBand
+    title="Where it goes next."
+    body="A couple of lessons, then camp, then Friday Night Lights. Some of them are still shooting here twenty years later, with their own kids on the bench."
+    primary={{ label: 'See the youth league', href: '/leagues/' }}
+    secondary={{ label: 'Book a lesson', href: '/lessons/#book' }}
+  />
+</Base>
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--sp-7);
+  }
+
+  .intro { display: grid; gap: var(--sp-7); align-items: center; }
+  @media (min-width: 60rem) { .intro { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .intro__copy p { max-width: 48ch; margin-top: var(--sp-4); }
+  .intro__copy :global(.arrow-link) { margin-top: var(--sp-5); }
+  .intro__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+
+  .programs {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+  }
+  .programs article {
+    height: 100%;
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    display: grid;
+    gap: var(--sp-3);
+    align-content: start;
+  }
+  .programs :global(svg) { color: var(--pine-500); }
+  .programs h3 { font-size: var(--fs-h4); margin: 0; }
+  .programs p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+
+  .parents { background: var(--pine-900); color: var(--cream-50); padding-block: var(--section-y); --accent: var(--moss-200); }
+  .parents__head { margin-bottom: var(--sp-7); }
+  .parents__head h2 { color: var(--cream-50); }
+  .parents__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: var(--sp-6);
+  }
+  .parents__grid h3 { color: var(--cream-50); font-size: var(--fs-h4); margin-bottom: var(--sp-3); }
+  .parents__grid p { color: rgba(248, 245, 238, 0.74); font-size: var(--fs-small); line-height: 1.7; margin: 0; }
+
+  .reserve { display: grid; gap: var(--sp-8); align-items: start; }
+  @media (min-width: 60rem) { .reserve { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.2fr); gap: var(--sp-9); } }
+  .reserve__copy p { max-width: 40ch; margin-top: var(--sp-4); }
+  .reserve__figure { margin: var(--sp-6) 0 0; }
+  .reserve__figure :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+  .reserve__form {
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.25rem, 0.6rem + 2vw, 2.25rem);
+  }
+</style>

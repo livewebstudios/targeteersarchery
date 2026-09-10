@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# environment
+.env
+.env.production
+
+# os / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# netlify
+.netlify/
+
+# QA artefacts are regenerated, not tracked
+qa/*.png
+
+# local editor / agent config
+.claude/

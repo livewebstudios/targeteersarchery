@@ -1,0 +1,43 @@
+---
+interface Props { label: string; name: string; required?: boolean; value?: string; }
+const { label, name, required = false, value = 'yes' } = Astro.props;
+const id = `f-${name}`;
+---
+<p class="checkbox">
+  <input id={id} type="checkbox" name={name} value={value} required={required} />
+  <label for={id}><slot>{label}</slot></label>
+</p>
+
+<style>
+  .checkbox {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: start;
+    gap: 0.7rem;
+    margin: 0;
+  }
+  input {
+    appearance: none;
+    flex: none;
+    width: 1.15rem; height: 1.15rem;
+    margin-top: 0.22rem;
+    border: 1.5px solid var(--parchment);
+    border-radius: var(--radius-sm);
+    background: var(--cream-50);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+  }
+  input::after {
+    content: '';
+    width: 0.5rem; height: 0.5rem;
+    border-radius: 1px;
+    background: var(--cream-50);
+    scale: 0;
+    transition: scale var(--dur-fast) var(--ease);
+  }
+  input:checked { background: var(--ember-ink); border-color: var(--ember-ink); }
+  input:checked::after { scale: 1; }
+  label { font-size: var(--fs-small); line-height: 1.55; color: var(--fg-muted); cursor: pointer; }
+</style>

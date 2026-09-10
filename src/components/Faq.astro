@@ -1,0 +1,106 @@
+---
+export interface FaqItem { question: string; answer: string; group?: string; }
+interface Props {
+  items: FaqItem[];
+  grouped?: boolean;
+  /** 2 when the groups are the page's top-level structure under the h1. */
+  level?: 2 | 3;
+}
+const { items, grouped = false, level = 3 } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
+
+const groups = grouped
+  ? [...new Set(items.map((i) => i.group ?? 'General'))].map((g) => ({
+      name: g,
+      items: items.filter((i) => (i.group ?? 'General') === g),
+    }))
+  : [{ name: '', items }];
+---
+<div class="faq">
+  {groups.map((g) => (
+    <section class="faq__group" data-reveal>
+      {g.name && <Heading class="faq__group-title">{g.name}</Heading>}
+      <div class="faq__list">
+        {g.items.map((item) => (
+          <details class="faq__item">
+            <summary>
+              <span>{item.question}</span>
+              <span class="faq__mark" aria-hidden="true"></span>
+            </summary>
+            <div class="faq__answer"><p set:html={item.answer} /></div>
+          </details>
+        ))}
+      </div>
+    </section>
+  ))}
+</div>
+
+<style>
+  .faq { display: grid; gap: var(--sp-8); }
+  .faq__group-title {
+    font-family: var(--font-body);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--sp-4);
+  }
+  .faq__list { border-top: 1px solid var(--rule); }
+  .faq__item { border-bottom: 1px solid var(--rule); }
+
+  summary {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: var(--sp-5);
+    padding: 1.15rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-display);
+    font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 60;
+    font-size: var(--fs-h4);
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--fg);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { color: var(--accent); }
+
+  .faq__mark {
+    flex: none;
+    position: relative;
+    width: 1.25rem; height: 1.25rem;
+    margin-top: 0.35rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.55;
+    transition: rotate var(--dur) var(--ease), opacity var(--dur-fast) var(--ease);
+  }
+  .faq__mark::before, .faq__mark::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0.28rem;
+    height: 1.5px;
+    background: currentColor;
+    translate: 0 -50%;
+  }
+  .faq__mark::after { rotate: 90deg; transition: opacity var(--dur-fast) var(--ease); }
+  .faq__item[open] .faq__mark { rotate: 135deg; opacity: 1; }
+  .faq__item[open] .faq__mark::after { opacity: 0; }
+
+  .faq__answer {
+    overflow: hidden;
+    padding-bottom: 1.35rem;
+  }
+  .faq__answer p { max-width: 62ch; margin: 0; color: var(--fg-muted); }
+  .faq__item[open] .faq__answer { animation: faq-open var(--dur) var(--ease); }
+  @keyframes faq-open {
+    from { opacity: 0; translate: 0 -6px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq__item[open] .faq__answer { animation: none; }
+  }
+</style>

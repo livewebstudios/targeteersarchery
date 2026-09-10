@@ -1,0 +1,180 @@
+---
+import { Image } from 'astro:assets';
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import Section from '~/components/Section.astro';
+import Prose from '~/components/Prose.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import PostCard from '~/components/PostCard.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import TargetIcon from '~/components/icons/TargetIcon.astro';
+import { getPosts, readingTime, formatDate, categorySlug } from '~/utils/posts';
+import { business } from '~/data/business';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => {
+    const related = posts
+      .filter((p) => p.id !== post.id)
+      .sort((a, b) => {
+        const score = (x: typeof a) => (x.data.category === post.data.category ? 1 : 0);
+        return score(b) - score(a) || b.data.date.valueOf() - a.data.date.valueOf();
+      })
+      .slice(0, 3);
+    return { params: { slug: post.id }, props: { post, related } };
+  });
+}
+
+interface Props { post: CollectionEntry<'insights'>; related: CollectionEntry<'insights'>[]; }
+const { post, related } = Astro.props;
+const { Content } = await render(post);
+const { title, description, date, updated, category, image, imageAlt, author } = post.data;
+const minutes = readingTime(post.body ?? '');
+const siteUrl = Astro.site!.href;
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: date.toISOString(),
+  dateModified: (updated ?? date).toISOString(),
+  author: { '@type': 'Organization', name: author, url: siteUrl },
+  publisher: {
+    '@type': 'Organization',
+    name: business.name,
+    logo: { '@type': 'ImageObject', url: `${siteUrl}images/logoRGB.png` },
+  },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': new URL(Astro.url.pathname, siteUrl).href },
+  articleSection: category,
+  ...(image ? { image: new URL(image.src, siteUrl).href } : {}),
+};
+---
+<Base
+  title={`${title} | Targeteers Archery · Saddle Brook, NJ`}
+  description={description}
+  ogType="article"
+  ogImage={image ? image.src : undefined}
+  publishedTime={date.toISOString()}
+  modifiedTime={(updated ?? date).toISOString()}
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Insights', path: '/insights/' },
+    { name: title, path: `/insights/${post.id}/` },
+  ]}
+  schema={articleSchema}
+>
+  <article class="post">
+    <header class="post__head">
+      <div class="wrap-narrow">
+        <Eyebrow>
+          <a href={`/insights/category/${categorySlug(category)}/`}>{category}</a>
+        </Eyebrow>
+        <h1>{title}</h1>
+        <p class="post__meta">
+          <time datetime={date.toISOString()}>{formatDate(date)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{minutes} min read</span>
+          <span aria-hidden="true">·</span>
+          <span>{author}</span>
+        </p>
+      </div>
+    </header>
+
+    {image && (
+      <figure class="post__hero">
+        <div class="wrap">
+          <Image src={image} alt={imageAlt} widths={[520, 760, 1200, 1800]}
+            sizes="(max-width: 78rem) 100vw, 72rem" loading="eager" fetchpriority="high" />
+        </div>
+      </figure>
+    )}
+
+    <Section tone="cream" width="narrow">
+      <Prose class="post__body"><Content /></Prose>
+      {updated && (
+        <p class="post__updated">Updated {formatDate(updated)}.</p>
+      )}
+      <div class="post__foot">
+        <TargetIcon size={26} />
+        <p>
+          Written at the counter at 101 Route 46 West, Saddle Brook. Questions are welcome at
+          <a href={business.phoneHref}>{business.phone}</a>.
+        </p>
+      </div>
+    </Section>
+  </article>
+
+  <ContactBand
+    title="Talk to a pro."
+    body="Most of what is on this page started as a question somebody asked across the counter. Yours is welcome too."
+    primary={{ label: 'Call the shop', href: business.phoneHref }}
+    secondary={{ label: 'Book a lesson', href: '/lessons/#book' }}
+  />
+
+  {related.length > 0 && (
+    <Section tone="linen">
+      <div class="related__head" data-reveal>
+        <Eyebrow>Keep reading</Eyebrow>
+        <h2>More from the shop.</h2>
+      </div>
+      <div class="related">
+        {related.map((r, i) => <Reveal delay={i}><PostCard post={r} /></Reveal>)}
+      </div>
+      <p class="related__all"><ArrowLink href="/insights/">All insights</ArrowLink></p>
+    </Section>
+  )}
+</Base>
+
+<style>
+  .post__head { background: var(--cream-100); padding-block: calc(var(--section-y) * 0.85) var(--sp-7); }
+  .post__head h1 { max-width: 20ch; }
+  .post__head :global(.eyebrow a) { text-decoration: none; }
+  .post__head :global(.eyebrow a:hover) { text-decoration: underline; }
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55em;
+    margin-top: var(--sp-5);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--stone-400);
+  }
+
+  .post__hero { margin: 0; background: linear-gradient(var(--cream-100) 50%, var(--cream-50) 50%); }
+  .post__hero :global(img) {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+
+  .post__updated { margin-top: var(--sp-6); font-size: var(--fs-small); color: var(--stone-400); font-style: italic; }
+
+  .post__foot {
+    margin-top: var(--sp-8);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--cream-200);
+    display: flex;
+    gap: var(--sp-4);
+    align-items: start;
+    color: var(--ember);
+  }
+  .post__foot p { margin: 0; font-size: var(--fs-small); color: var(--bark-500); line-height: 1.65; }
+  .post__foot a { color: var(--ember); }
+
+  .related__head { margin-bottom: var(--sp-6); }
+  .related {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+  }
+  .related > :global(*) { display: flex; }
+  .related > :global(*) > :global(*) { width: 100%; }
+  .related__all { margin-top: var(--sp-7); }
+</style>

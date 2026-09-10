@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import Faq from '~/components/Faq.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import { faqSchema } from '~/components/seo/localBusiness';
+
+const GROUP_ORDER = ['The Range', 'Lessons & Kids', 'Tuning & Repairs', 'Buying a Bow', 'Hunting'];
+
+const entries = (await getCollection('faq')).sort((a, b) => {
+  const g = GROUP_ORDER.indexOf(a.data.group) - GROUP_ORDER.indexOf(b.data.group);
+  return g !== 0 ? g : a.data.order - b.data.order;
+});
+
+const items = entries.map((e) => ({
+  question: e.data.question,
+  answer: e.data.answer,
+  group: e.data.group,
+}));
+/* Comments in the source answers flag things Rob still has to confirm; they are
+   stripped before anything reaches the page or the schema. */
+const clean = items.map((i) => ({ ...i, answer: i.answer.replace(/<!--[\s\S]*?-->/g, '').trim() }));
+---
+<Base
+  title="Frequently Asked Questions | Targeteers Archery · Saddle Brook, NJ"
+  description="Answers about the indoor range, lessons and kids programs, bow tuning and repairs, buying a bow, and bowhunting in New Jersey. From Targeteers Archery in Saddle Brook."
+  keywords={['archery range rules NJ', 'how long does a bow tune-up take', 'archery FAQ North Jersey']}
+  ogImage="/og/faq.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'FAQ', path: '/faq/' }]}
+  schema={faqSchema(clean.map(({ question, answer }) => ({ question, answer })))}
+>
+  <PageHero
+    eyebrow="Questions"
+    title="The things people actually ask."
+    lead="Grouped by what you are trying to do. If yours is not here, call and ask. Nobody minds."
+    tone="cream"
+  />
+
+  <Section tone="cream">
+    <Faq items={clean} grouped level={2} />
+  </Section>
+
+  <ContactBand
+    title="Still wondering?"
+    body="Describe it in whatever words you have. Half the time we can answer it on the phone before you drive over."
+    primary={{ label: 'Call the shop', href: 'tel:+12018437788' }}
+    secondary={{ label: 'Send a message', href: '/contact/' }}
+  />
+</Base>

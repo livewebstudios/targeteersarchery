@@ -1,0 +1,27 @@
+{
+  "name": "Targeteers Archery Pro Shop",
+  "short_name": "Targeteers",
+  "description": "Family-owned archery pro shop and indoor range in Saddle Brook, New Jersey. Since 1957.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F5EE",
+  "theme_color": "#14261B",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

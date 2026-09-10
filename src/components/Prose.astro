@@ -1,0 +1,93 @@
+---
+interface Props { class?: string; }
+const { class: klass = '' } = Astro.props;
+---
+<div class={`prose ${klass}`}><slot /></div>
+
+<style>
+  .prose { max-width: var(--measure-prose); }
+  .prose > * + * { margin-top: 1.15em; }
+  .prose :global(h2) {
+    font-size: var(--fs-h3);
+    margin-top: 2.2em;
+    margin-bottom: 0.5em;
+    color: var(--fg, var(--bark-700));
+  }
+  .prose :global(h3) {
+    font-size: var(--fs-h4);
+    margin-top: 1.9em;
+    margin-bottom: 0.4em;
+    color: var(--fg, var(--bark-700));
+  }
+  .prose :global(p),
+  .prose :global(li) { color: var(--fg-muted, var(--bark-500)); }
+  .prose :global(a) { color: var(--accent-strong, var(--ember-deep)); text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+  .prose :global(a:hover) { text-decoration-color: currentColor; }
+  .prose :global(ul), .prose :global(ol) { padding-left: 1.15em; display: grid; gap: 0.5em; }
+  .prose :global(ul) { list-style: none; padding-left: 0; }
+  .prose :global(ul > li) { position: relative; padding-left: 1.75em; }
+  .prose :global(ul > li)::before {
+    content: '';
+    position: absolute;
+    left: 0.15em;
+    top: 0.62em;
+    width: 0.6em;
+    height: 0.6em;
+    border: 1.5px solid var(--accent, var(--ember));
+    border-radius: 999px;
+  }
+  .prose :global(ul > li)::after {
+    content: '';
+    position: absolute;
+    left: 0.36em;
+    top: 0.83em;
+    width: 0.18em;
+    height: 0.18em;
+    background: var(--accent, var(--ember));
+    border-radius: 999px;
+  }
+  .prose :global(blockquote) {
+    border-left: 2px solid var(--accent, var(--ember));
+    padding-left: 1.25em;
+    font-family: var(--font-display);
+    font-size: var(--fs-lead);
+    font-weight: 340;
+    line-height: 1.4;
+    color: var(--fg, var(--bark-700));
+  }
+  .prose :global(blockquote p) { color: inherit; }
+  .prose :global(hr) {
+    border: 0;
+    height: 1px;
+    background: var(--rule, var(--cream-200));
+    margin-block: 2.5em;
+  }
+  .prose :global(img) { border-radius: var(--radius-lg); margin-block: 2em; }
+  .prose :global(figure) { margin-block: 2em; }
+  .prose :global(figcaption) {
+    font-size: var(--fs-small);
+    color: var(--fg-faint, var(--stone-400));
+    margin-top: 0.75em;
+  }
+  .prose :global(strong) { color: var(--fg, var(--bark-700)); }
+  .prose :global(code) {
+    font-size: 0.9em;
+    background: var(--cream-100);
+    padding: 0.15em 0.4em;
+    border-radius: var(--radius-sm);
+  }
+  .prose :global(table) { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+  .prose :global(th), .prose :global(td) {
+    text-align: left;
+    padding: 0.7em 0.5em;
+    border-bottom: 1px solid var(--rule, var(--cream-200));
+  }
+  .prose :global(th) {
+    font-family: var(--font-body);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--fg-faint, var(--stone-400));
+  }
+</style>

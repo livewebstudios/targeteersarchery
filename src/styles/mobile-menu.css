@@ -1,0 +1,195 @@
+/* ==========================================================================
+   Mobile overlay menu (styles for the React island, so they live globally)
+   ========================================================================== */
+
+.menu-toggle {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.8;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+.menu-toggle:hover { opacity: 1; }
+@media (min-width: 86rem) { .menu-toggle { display: none; } }
+
+.menu-toggle__bars {
+  display: grid;
+  gap: 4px;
+  width: 18px;
+}
+.menu-toggle__bars span {
+  display: block;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: translate var(--dur-fast) var(--ease), rotate var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
+}
+.menu-toggle__bars[data-open] span:nth-child(1) { translate: 0 5.5px; rotate: 45deg; }
+.menu-toggle__bars[data-open] span:nth-child(2) { opacity: 0; }
+.menu-toggle__bars[data-open] span:nth-child(3) { translate: 0 -5.5px; rotate: -45deg; }
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-menu);
+  background: var(--cream-50);
+  color: var(--bark-900);
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  clip-path: circle(0% at calc(100% - 3.5rem) 3.5rem);
+  transition:
+    clip-path var(--dur-slow) var(--ease),
+    opacity var(--dur-fast) var(--ease),
+    visibility 0s linear var(--dur-slow);
+}
+.mobile-menu[data-open] {
+  opacity: 1;
+  visibility: visible;
+  clip-path: circle(150% at calc(100% - 3.5rem) 3.5rem);
+  transition:
+    clip-path var(--dur-slow) var(--ease),
+    opacity var(--dur-fast) var(--ease),
+    visibility 0s;
+}
+
+.mobile-menu__ring {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--parchment);
+  opacity: 0.4;
+  pointer-events: none;
+}
+.mobile-menu__ring svg {
+  width: min(120vw, 46rem);
+  height: auto;
+  rotate: -90deg;
+}
+.mobile-menu__ring circle {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.mobile-menu[data-open] .mobile-menu__ring circle {
+  animation: ring-draw var(--dur-slower) var(--ease) forwards;
+  animation-delay: calc(120ms + var(--i) * 130ms);
+}
+.mobile-menu__ring circle[fill] { stroke-dashoffset: 0; opacity: 0; }
+.mobile-menu[data-open] .mobile-menu__ring circle[fill] {
+  animation: ring-dot var(--dur) var(--ease) forwards;
+  animation-delay: calc(120ms + var(--i) * 130ms);
+}
+@keyframes ring-draw { to { stroke-dashoffset: 0; } }
+@keyframes ring-dot { to { opacity: 1; } }
+
+.mobile-menu__inner {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  padding: calc(var(--nav-h) + 2rem) var(--gutter) 3rem;
+  display: grid;
+  gap: var(--sp-6);
+}
+
+.mobile-menu__primary,
+.mobile-menu__more {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mobile-menu__primary li,
+.mobile-menu__more li {
+  opacity: 0;
+  translate: 0 14px;
+}
+.mobile-menu[data-open] .mobile-menu__primary li,
+.mobile-menu[data-open] .mobile-menu__more li,
+.mobile-menu[data-open] .mobile-menu__foot {
+  animation: menu-item var(--dur) var(--ease) forwards;
+  animation-delay: calc(180ms + var(--i) * 45ms);
+}
+@keyframes menu-item { to { opacity: 1; translate: 0 0; } }
+
+.mobile-menu__primary a {
+  display: block;
+  font-family: var(--font-display);
+  font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 96;
+  font-weight: 340;
+  font-size: clamp(1.75rem, 1.2rem + 2.6vw, 2.75rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.18em 0;
+  transition: color var(--dur-fast) var(--ease), padding-left var(--dur) var(--ease);
+}
+.mobile-menu__primary a:hover,
+.mobile-menu__primary a[aria-current='page'] { color: var(--ember); padding-left: 0.35em; }
+
+.mobile-menu__more {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem 1.5rem;
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--cream-200);
+}
+.mobile-menu__more a {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--bark-500);
+  padding: 0.4rem 0;
+  display: block;
+  transition: color var(--dur-fast) var(--ease);
+}
+.mobile-menu__more a:hover,
+.mobile-menu__more a[aria-current='page'] { color: var(--ember); }
+
+.mobile-menu__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-4);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--cream-200);
+  opacity: 0;
+  translate: 0 14px;
+}
+.mobile-menu__cta {
+  background: var(--ember-bright);
+  color: var(--bark-900);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.95rem 1.5rem;
+  border-radius: var(--radius);
+}
+.mobile-menu__phone {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  text-decoration: none;
+  color: var(--bark-700);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu { transition: opacity var(--dur-fast) linear, visibility 0s; clip-path: none; }
+  .mobile-menu[data-open] { clip-path: none; }
+  .mobile-menu__primary li,
+  .mobile-menu__more li,
+  .mobile-menu__foot { opacity: 1; translate: none; animation: none; }
+  .mobile-menu__ring circle { stroke-dashoffset: 0; }
+  .mobile-menu__ring circle[fill] { opacity: 1; }
+}

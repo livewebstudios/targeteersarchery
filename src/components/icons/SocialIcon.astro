@@ -1,0 +1,22 @@
+---
+interface Props { network: 'facebook' | 'instagram' | 'twitter'; size?: number; }
+const { network, size = 20 } = Astro.props;
+
+const paths: Record<Props['network'], string> = {
+  facebook:
+    'M14 8.6V6.9c0-.8.2-1.2 1.4-1.2h1.5V2.9c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2H8.6v3h2.4V19H14v-7.4h2.4l.4-3H14Z',
+  instagram:
+    'M12 4.6c2.4 0 2.7 0 3.6.05.9.04 1.3.18 1.6.3.4.16.7.35 1 .65.3.3.5.6.65 1 .12.3.26.7.3 1.6.05.9.05 1.2.05 3.6s0 2.7-.05 3.6c-.04.9-.18 1.3-.3 1.6a2.7 2.7 0 0 1-.65 1c-.3.3-.6.5-1 .65-.3.12-.7.26-1.6.3-.9.05-1.2.05-3.6.05s-2.7 0-3.6-.05c-.9-.04-1.3-.18-1.6-.3a2.7 2.7 0 0 1-1-.65 2.7 2.7 0 0 1-.65-1c-.12-.3-.26-.7-.3-1.6C4.6 14.7 4.6 14.4 4.6 12s0-2.7.05-3.6c.04-.9.18-1.3.3-1.6.16-.4.35-.7.65-1 .3-.3.6-.5 1-.65.3-.12.7-.26 1.6-.3C9.3 4.6 9.6 4.6 12 4.6Zm0 3.6a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Zm0 6.27a2.47 2.47 0 1 1 0-4.94 2.47 2.47 0 0 1 0 4.94Zm4.84-6.42a.89.89 0 1 1-1.78 0 .89.89 0 0 1 1.78 0Z',
+  twitter:
+    'M17.2 3.2h2.9l-6.3 7.2 7.4 9.8h-5.8l-4.5-5.9-5.2 5.9H2.8l6.7-7.7L2.4 3.2h5.9l4.1 5.4 4.8-5.4Zm-1 15.2h1.6L7.9 4.9H6.2l10 13.5Z',
+};
+
+const labels: Record<Props['network'], string> = {
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  twitter: 'X',
+};
+---
+<svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" role="img" aria-label={labels[network]}>
+  <path d={paths[network]} />
+</svg>

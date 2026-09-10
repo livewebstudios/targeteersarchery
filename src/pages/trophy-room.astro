@@ -1,0 +1,227 @@
+---
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import PageHero from '~/components/hero/PageHero.astro';
+import Section from '~/components/Section.astro';
+import SectionHead from '~/components/SectionHead.astro';
+import Reveal from '~/components/Reveal.astro';
+import Eyebrow from '~/components/Eyebrow.astro';
+import ArrowLink from '~/components/ArrowLink.astro';
+import ContactBand from '~/components/ContactBand.astro';
+import GalleryBlock from '~/components/GalleryBlock.astro';
+import StatRing from '~/components/StatRing.astro';
+import TrophyIcon from '~/components/icons/TrophyIcon.astro';
+
+import heroImg from '~/assets/hunting/big-woods.jpg';
+import mount1 from '~/assets/trophy/mount-01.jpg';
+import mount2 from '~/assets/trophy/mount-02.jpg';
+import mount3 from '~/assets/trophy/mount-03.jpg';
+import mount4 from '~/assets/trophy/mount-04.jpg';
+import visitors1 from '~/assets/trophy/visitors-01.jpg';
+import visitors2 from '~/assets/trophy/visitors-02.jpg';
+import visitors3 from '~/assets/trophy/visitors-03.jpg';
+import visitors4 from '~/assets/trophy/visitors-04.jpg';
+import visitors5 from '~/assets/trophy/visitors-05.jpg';
+import yukon from '~/assets/hunting/yukon.jpg';
+import bc from '~/assets/hunting/british-columbia.jpg';
+import sasquatch from '~/assets/trophy/sasquatch.jpg';
+
+/* Built to take any number of photographs — Rob is supplying real Trophy Room
+   shots and they drop straight into this array. */
+const galleryItems = [
+  { image: mount4, alt: 'Wild country on a family hunting trip' },
+  { image: mount1, alt: 'On a hunting trip in the north' },
+  { image: yukon, alt: 'The Yukon backcountry' },
+  { image: mount2, alt: 'Canada, on a family hunt' },
+  { image: bc, alt: 'British Columbia' },
+  { image: mount3, alt: 'Backcountry on a hunting trip' },
+  { image: visitors1, alt: 'Visitors in the Trophy Room' },
+  { image: visitors3, alt: 'A visit to the shop' },
+  { image: visitors2, alt: 'Guests at Targeteers Archery' },
+  { image: visitors5, alt: 'A group in the Trophy Room' },
+  { image: visitors4, alt: 'Visitors at the pro shop' },
+];
+---
+<Base
+  title="The Trophy Room | Targeteers Archery · Saddle Brook, NJ"
+  description="Over 200 mounts collected across three generations of one family's hunting, including a polar bear. Free to walk through during store hours in Saddle Brook, NJ."
+  keywords={['trophy room NJ', 'hunting mounts Saddle Brook', 'archery shop trophy room North Jersey']}
+  ogImage="/og/trophy-room.jpg"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Trophy Room', path: '/trophy-room/' }]}
+>
+  <PageHero
+    eyebrow="The Trophy Room"
+    title="Two hundred mounts. One polar bear."
+    lead="People come in for a string and leave forty minutes later, because they went in the back."
+    image={heroImg}
+    imageAlt="Autumn woods at first light"
+    focus="50% 60%"
+  />
+
+  <Section tone="bark">
+    <div class="intro">
+      <Reveal class="intro__copy">
+        <p class="lead">
+          It is not a display case. It is a room, and it holds a little over two hundred mounts
+          collected across three generations of one family hunting.
+        </p>
+        <p>
+          North American big game, mostly, because that is what this family has spent its time
+          chasing. British Columbia. The Yukon. A great deal of ground in between.
+        </p>
+        <p>
+          Walk it in order and it reads as a rough map of sixty-plus years: what was legal, what was
+          reachable, and what a family that ran a bow shop could get to between seasons. Some of
+          these animals were taken with equipment that would look primitive next to what is on our
+          wall now, which is worth remembering the next time you are agonising over arrow spine.
+        </p>
+      </Reveal>
+      <Reveal class="intro__stats" delay={2}>
+        <StatRing value="200+" label="Mounts" note="Nobody counted precisely. It is more than two hundred." />
+        <StatRing value="1" label="Polar bear" note="You are not imagining how big it is." />
+        <StatRing value="3" label="Generations" note="Nothing here was planned. It accumulated." />
+      </Reveal>
+    </div>
+  </Section>
+
+  <section class="bear tone-pine" aria-labelledby="bear-title">
+    <div class="wrap bear__inner">
+      <Reveal>
+        <TrophyIcon size={36} />
+        <Eyebrow>The one everybody stops at</Eyebrow>
+        <h2 id="bear-title">Yes, there is a polar bear.</h2>
+        <p class="lead">
+          It is the reason a certain number of people drive to Saddle Brook with no intention
+          whatsoever of buying archery equipment.
+        </p>
+        <!-- CONFIRM: Rob to supply the year, the location and who took it before we tell
+             this story properly. Nothing about it is invented here. -->
+        <p class="bear__note">
+          Come and stand next to it. That is genuinely the whole pitch.
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <Section tone="cream">
+    <SectionHead
+      eyebrow="Plan a visit"
+      title="Free to walk through, during store hours."
+      lead="Bring your questions. Somebody here was probably standing there when it happened."
+    />
+    <div class="visit-grid">
+      <Reveal delay={0}>
+        <article class="visit-card">
+          <h3>School groups</h3>
+          <p>
+            For a lot of kids it is the first time they have stood close to a moose. We will find
+            you a time when the range is quiet enough to talk over.
+          </p>
+        </article>
+      </Reveal>
+      <Reveal delay={1}>
+        <article class="visit-card">
+          <h3>Scout troops</h3>
+          <p>
+            Pairs well with a badge session on the range. Book the two together and you have an
+            evening rather than a stop.
+          </p>
+        </article>
+      </Reveal>
+      <Reveal delay={2}>
+        <article class="visit-card">
+          <h3>Just walking in</h3>
+          <p>
+            Come during store hours and go look. It costs nothing.
+            <!-- CONFIRM: whether walk-ins can go through unaccompanied at all hours. -->
+          </p>
+        </article>
+      </Reveal>
+    </div>
+    <p class="visit-link"><ArrowLink href="/groups/">Bring the troop</ArrowLink></p>
+  </Section>
+
+  <Section tone="linen">
+    <SectionHead eyebrow="The room" title="Sixty years of it." />
+    <GalleryBlock items={galleryItems} layout="masonry" label="Trophy Room photographs" />
+    <p class="gallery-note" data-reveal>
+      More Trophy Room photographs are on the way. Rob is going through the walls with a camera.
+    </p>
+  </Section>
+
+  <!-- ------------------------------------------------------------ sasquatch -->
+  <Section tone="cream">
+    <div class="sasquatch">
+      <Reveal class="sasquatch__media">
+        <Image src={sasquatch} alt="The life-size Sasquatch statue by the door of the pro shop"
+          widths={[420, 760]} sizes="(max-width: 48rem) 70vw, 20rem" loading="lazy" />
+      </Reveal>
+      <Reveal class="sasquatch__copy" delay={2}>
+        <Eyebrow>Also on staff</Eyebrow>
+        <h2>He works the door.</h2>
+        <p>
+          Does not say much. Never calls out. Has been here longer than some of the bows.
+        </p>
+      </Reveal>
+    </div>
+  </Section>
+
+  <ContactBand
+    title="Come see for yourself."
+    body="Store hours, no charge, no appointment. Fifteen minutes from most of Bergen County and considerably more interesting than a shop tour."
+    primary={{ label: 'Get directions', href: '/contact/' }}
+    secondary={{ label: 'Plan a group visit', href: '/groups/' }}
+  />
+</Base>
+
+<style>
+  .intro { display: grid; gap: var(--sp-8); align-items: start; }
+  @media (min-width: 60rem) { .intro { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--sp-9); } }
+  .intro__copy p { max-width: 52ch; }
+  .intro__copy p + p { margin-top: var(--sp-4); }
+  .intro__stats { display: grid; gap: var(--sp-5); }
+
+  .bear {
+    background: var(--pine-900);
+    color: var(--cream-50);
+    padding-block: calc(var(--section-y) * 1.1);
+    --accent: var(--ember-bright);
+    text-align: center;
+  }
+  .bear__inner > :global(div) { max-width: 44rem; margin-inline: auto; }
+  .bear :global(svg) { color: var(--ember); margin-inline: auto; margin-bottom: var(--sp-5); }
+  .bear :global(.eyebrow) { justify-content: center; }
+  .bear :global(.eyebrow)::before { display: none; }
+  .bear h2 { color: var(--cream-50); }
+  .bear .lead { margin-top: var(--sp-4); margin-inline: auto; color: rgba(248, 245, 238, 0.82); }
+  .bear__note { margin-top: var(--sp-5); font-size: var(--fs-small); color: rgba(248, 245, 238, 0.58); font-style: italic; }
+
+  .visit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: clamp(1rem, 0.4rem + 1.6vw, 1.75rem);
+  }
+  .visit-card {
+    height: 100%;
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+  }
+  .visit-card h3 { font-size: var(--fs-h4); margin: 0 0 var(--sp-3); }
+  .visit-card p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
+  .visit-link { margin-top: var(--sp-7); }
+
+  .gallery-note { margin-top: var(--sp-6); font-size: var(--fs-small); color: var(--stone-400); font-style: italic; }
+
+  .sasquatch { display: grid; gap: var(--sp-6); align-items: center; justify-items: center; text-align: center; }
+  @media (min-width: 48rem) {
+    .sasquatch { grid-template-columns: auto minmax(0, 1fr); text-align: left; justify-items: start; gap: var(--sp-8); }
+  }
+  .sasquatch__media :global(img) {
+    width: min(16rem, 60vw);
+    height: auto;
+    border-radius: var(--radius-lg);
+  }
+  .sasquatch__copy p { margin-top: var(--sp-4); max-width: 40ch; }
+</style>

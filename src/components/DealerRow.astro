@@ -1,0 +1,46 @@
+---
+import { brands } from '~/data/business';
+interface Props { heading?: string; }
+const { heading = 'Authorized dealer' } = Astro.props;
+---
+<div class="dealers" data-reveal>
+  <p class="dealers__heading">{heading}</p>
+  <ul class="dealers__list">
+    {brands.map((b) => (
+      <li><a href={b.url} target="_blank" rel="noopener">{b.name}</a></li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .dealers { border-top: 1px solid var(--rule); padding-top: var(--sp-5); }
+  .dealers__heading {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 var(--sp-5);
+  }
+  .dealers__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4) var(--sp-6);
+    align-items: baseline;
+  }
+  .dealers__list a {
+    font-family: var(--font-display);
+    font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 60;
+    font-size: clamp(1.125rem, 0.9rem + 0.9vw, 1.625rem);
+    font-weight: 380;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    color: var(--fg);
+    opacity: 0.68;
+    transition: opacity var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  }
+  .dealers__list a:hover { opacity: 1; color: var(--accent); }
+</style>

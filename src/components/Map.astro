@@ -1,0 +1,86 @@
+---
+import { business, addressLine } from '~/data/business';
+import PinRingIcon from './icons/PinRingIcon.astro';
+
+/**
+ * Click-to-load map. Nothing is requested from Google until the visitor asks
+ * for it, which keeps the page free of third-party requests by default.
+ */
+const embed = `https://www.google.com/maps?q=${encodeURIComponent(
+  `${business.name}, ${addressLine}`,
+)}&output=embed`;
+---
+<div class="map" data-map data-embed={embed}>
+  <button class="map__load" type="button" data-map-load>
+    <PinRingIcon size={30} />
+    <span class="map__title">{business.address.street}</span>
+    <span class="map__sub">{business.address.city}, {business.address.regionName} {business.address.postal}</span>
+    <span class="map__cta">Load the map</span>
+  </button>
+  <noscript>
+    <a class="map__fallback" href={business.mapsUrl} target="_blank" rel="noopener">
+      Open {business.address.street}, {business.address.city} in Google Maps
+    </a>
+  </noscript>
+</div>
+
+<style>
+  .map {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background:
+      repeating-linear-gradient(45deg, var(--cream-100) 0 12px, var(--cream-50) 12px 24px);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  @media (min-width: 48rem) { .map { aspect-ratio: 16 / 10; } }
+
+  .map__load {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.35rem;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    text-align: center;
+    padding: var(--sp-5);
+    color: var(--bark-700);
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .map__load:hover { background: color-mix(in srgb, var(--cream-50) 55%, transparent); }
+  .map__load :global(svg) { color: var(--ember); margin-bottom: var(--sp-2); }
+  .map__title { font-family: var(--font-display); font-size: var(--fs-h4); }
+  .map__sub { font-size: var(--fs-small); color: var(--bark-500); }
+  .map__cta {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember);
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 0.2em;
+  }
+  .map :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .map__fallback { display: grid; place-items: center; height: 100%; padding: var(--sp-5); }
+</style>
+
+<script>
+  for (const map of document.querySelectorAll<HTMLElement>('[data-map]')) {
+    const btn = map.querySelector<HTMLButtonElement>('[data-map-load]');
+    btn?.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = map.dataset.embed ?? '';
+      frame.loading = 'lazy';
+      frame.title = 'Map to Targeteers Archery Pro Shop';
+      frame.referrerPolicy = 'no-referrer-when-downgrade';
+      frame.allowFullscreen = true;
+      map.append(frame);
+      btn.remove();
+    }, { once: true });
+  }
+</script>
