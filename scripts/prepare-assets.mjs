@@ -146,7 +146,12 @@ const JOBS = [
   ['galleries/arrows/arrows-05.jpg',         'shop/arrows-04.jpg',      { treatment: 'neutral', width: 900, height: 1200 }],
   ['galleries/arrows/arrows-06.jpg',         'shop/arrows-05.jpg',      { treatment: 'neutral', width: 1000, height: 1000 }],
   ['uploads/2020/11/slider-arrows.jpg',      'shop/arrows-wide.jpg',    { treatment: 'neutral', width: 1920, height: 800 }],
-  ['uploads/2020/11/bowstring_header.jpg',   'shop/strings-header.jpg', { treatment: 'neutral', width: 2000, height: 684 }],
+  // Real custom arrows and the service bench, for the services page cards.
+  ['galleries/arrows/arrows-06.jpg',         'shop/custom-arrows.jpg',  { treatment: 'neutral', width: 1280, height: 1280 }],
+  ['galleries/arrows/arrows-02.jpg',         'shop/custom-arrows-2.jpg',{ treatment: 'neutral', width: 1280, height: 1280 }],
+  ['uploads/2020/11/store-pic015.jpg',       'shop/arrow-rack.jpg',     { treatment: 'neutral', width: 1044, height: 1004 }],
+  ['uploads/2020/11/store-pic016.jpg',       'shop/workbench.jpg',      { treatment: 'neutral', width: 1270, height: 1224 }],
+  ['galleries/bows/066_66.JPG',              'shop/bow-rack-tall.jpg',  { treatment: 'neutral', width: 900, height: 1200 }],
   ['uploads/2020/11/notched-arrow.jpg',      'shop/notched-arrow.jpg',  { treatment: 'neutral', width: 1080, height: 550 }],
   ['uploads/2020/11/target-arrow01.jpg',     'shop/arrow-in-target.jpg',{ treatment: 'neutral', width: 1080, height: 550 }],
   ['uploads/2021/03/services.jpg',           'shop/services-wide.jpg',  { treatment: 'neutral', width: 1920, height: 800 }],

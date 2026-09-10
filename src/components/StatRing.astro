@@ -4,9 +4,10 @@ const { value, label, note } = Astro.props;
 ---
 <div class="stat" data-reveal>
   <svg class="stat__ring" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-    <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="0.7" opacity=".28" />
-    <circle cx="50" cy="50" r="34" stroke="currentColor" stroke-width="0.7" opacity=".2" />
-    <circle cx="50" cy="50" r="22" stroke="currentColor" stroke-width="0.7" opacity=".14" />
+    <circle cx="50" cy="50" r="47" stroke="currentColor" stroke-width="0.5" opacity=".55" />
+    <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="0.5" opacity=".42" />
+    <circle cx="50" cy="50" r="23" stroke="currentColor" stroke-width="0.5" opacity=".3" />
+    <circle cx="50" cy="50" r="11" stroke="currentColor" stroke-width="0.5" opacity=".2" />
   </svg>
   <p class="stat__value num">{value}</p>
   <p class="stat__label">{label}</p>
@@ -14,16 +15,21 @@ const { value, label, note } = Astro.props;
 </div>
 
 <style>
-  .stat { position: relative; padding: var(--sp-5) 0; }
+  .stat { position: relative; padding: var(--sp-6) 0 var(--sp-5); isolation: isolate; }
   .stat__ring {
     position: absolute;
-    top: 50%; left: -2.5rem;
-    translate: 0 -50%;
-    width: 11rem; height: 11rem;
+    top: -1.5rem;
+    left: -3.5rem;
+    width: 15rem;
+    height: 15rem;
     color: var(--accent, var(--ember));
+    opacity: 0.45;
     pointer-events: none;
     z-index: -1;
   }
+  /* On the dark bands a cream ring at full strength competes with the numeral. */
+  .tone-pine .stat__ring,
+  .tone-bark .stat__ring { opacity: 0.3; }
   .stat__value { font-size: clamp(3rem, 1.6rem + 4.6vw, 6rem); color: var(--fg); margin: 0; }
   .stat__label {
     margin: var(--sp-3) 0 0;

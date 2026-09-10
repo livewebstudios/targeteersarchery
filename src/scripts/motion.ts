@@ -15,7 +15,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const isDesktop = () => window.matchMedia('(min-width: 48rem)').matches;
 
 let lenis: Lenis | null = null;
 let rafId = 0;
@@ -94,39 +93,6 @@ function initHero() {
   }
 }
 
-/* --------------------------------------------------- the "Since 1957" rings */
-function initRingsDraw() {
-  const scope = document.querySelector<HTMLElement>('[data-rings]');
-  if (!scope) return;
-  const rings = gsap.utils.toArray<SVGCircleElement>('[data-ring]', scope);
-  const dot = scope.querySelector('[data-ring-dot]');
-  const arrow = scope.querySelector('[data-ring-arrow]');
-  const chapters = gsap.utils.toArray<HTMLElement>('[data-ring-chapter]', scope);
-  if (!rings.length) return;
-
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: scope,
-      start: 'top top',
-      end: '+=340%',
-      pin: true,
-      scrub: 0.9,
-      anticipatePin: 1,
-    },
-  });
-
-  rings.forEach((ring, i) => {
-    tl.to(ring, { strokeDashoffset: 0, duration: 1, ease: 'power1.inOut' }, i * 1);
-    const chapter = chapters[i];
-    if (chapter) {
-      tl.fromTo(chapter, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.35 }, i * 1 + 0.12);
-      if (i < rings.length - 1) tl.to(chapter, { opacity: 0, y: -18, duration: 0.3 }, i * 1 + 0.82);
-    }
-  });
-  if (dot) tl.fromTo(dot, { scale: 0, transformOrigin: 'center' }, { scale: 1, duration: 0.4 }, rings.length - 0.4);
-  if (arrow) tl.fromTo(arrow, { xPercent: 120, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.7, ease: 'power2.out' }, rings.length - 0.3);
-}
-
 /* ------------------------------------------------------------------- setup */
 function start() {
   initReveal();
@@ -147,7 +113,6 @@ function start() {
 
   initHero();
   initParallax();
-  if (isDesktop()) initRingsDraw();
   ScrollTrigger.refresh();
 }
 

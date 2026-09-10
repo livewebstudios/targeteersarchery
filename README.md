@@ -36,6 +36,7 @@ Node 20 or newer.
 | Staff cards on the About page | `src/content/team/` |
 | Mathews / Hoyt / SITKA landing-page copy | `src/content/brands/` |
 | Dealer carousel brands and links | `brands` in `src/data/business.ts` |
+| The "Since 1957" milestone band | `milestones` in `src/pages/index.astro` |
 | Dealer logo files | `src/assets/brands/` — see the README in there |
 | Old-URL redirects | `public/_redirects` |
 

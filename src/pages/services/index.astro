@@ -16,24 +16,33 @@ import StringIcon from '~/components/icons/StringIcon.astro';
 import ArrowIcon from '~/components/icons/ArrowIcon.astro';
 
 import heroImg from '~/assets/shop/services-wide.jpg';
-import stringsImg from '~/assets/shop/strings-header.jpg';
-import arrowsImg from '~/assets/shop/arrows-wide.jpg';
+import benchImg from '~/assets/story/rob-at-the-bench.jpg';
+import arrowRackImg from '~/assets/shop/arrow-rack.jpg';
+import workbenchImg from '~/assets/shop/workbench.jpg';
+import stringsImg from '~/assets/shop/custom-arrows.jpg';
+import arrowsImg from '~/assets/shop/custom-arrows-2.jpg';
 
 const pillars = [
   {
     icon: 'wrench',
+    image: benchImg,
+    imageAlt: 'Working on a bow at the Targeteers service bench',
     title: 'Bow tuning & fitting',
     body: 'Draw length and draw weight set to your body rather than the box. Paper tune, cam timing, center shot, nock height, rest and peep. Then it gets shot on our range, because a bow that tunes clean on paper and shoots badly at twenty yards has not been tuned.',
     link: { href: '/services/bow-tuning/', label: 'The full tuning process' },
   },
   {
     icon: 'string',
+    image: arrowRackImg,
+    imageAlt: 'Racks of custom-fletched arrows in the shop',
     title: 'Custom strings & arrows',
     body: 'Custom strings are what this shop has always specialized in. Built to your bow and your draw, pre-stretched, served properly, peep tied in and shot in. Arrows cut, squared, fletched and spined to the setup you are actually shooting.',
     link: { href: '/insights/custom-strings-what-changes/', label: 'What changes with custom strings' },
   },
   {
     icon: 'arrow',
+    image: workbenchImg,
+    imageAlt: 'Bows and tools on the repair bench',
     title: 'Repairs',
     body: 'Cams, cables, rests, sights, crossbow strings and cocking devices. Not satisfied with the factory parts? We have the tools and the materials to build you something that is yours. If it can be fixed, it gets fixed here.',
     link: { href: '/faq/', label: 'Common service questions' },
@@ -76,15 +85,22 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
       {pillars.map((p, i) => (
         <li>
           <Reveal delay={i}>
-            <article>
-              <span class="pillars__icon">
-                {p.icon === 'wrench' && <WrenchRingIcon size={32} />}
-                {p.icon === 'string' && <StringIcon size={32} />}
-                {p.icon === 'arrow' && <ArrowIcon size={32} />}
-              </span>
-              <h2>{p.title}</h2>
-              <p>{p.body}</p>
-              <ArrowLink href={p.link.href}>{p.link.label}</ArrowLink>
+            <article class="pillar">
+              <div class="pillar__media">
+                <Image src={p.image} alt={p.imageAlt} widths={[420, 760, 1100]}
+                  sizes="(max-width: 48rem) 92vw, (max-width: 72rem) 46vw, 24rem"
+                  loading={i === 0 ? 'eager' : 'lazy'} />
+                <span class="pillar__icon">
+                  {p.icon === 'wrench' && <WrenchRingIcon size={26} />}
+                  {p.icon === 'string' && <StringIcon size={26} />}
+                  {p.icon === 'arrow' && <ArrowIcon size={26} />}
+                </span>
+              </div>
+              <div class="pillar__body">
+                <h2>{p.title}</h2>
+                <p>{p.body}</p>
+                <ArrowLink href={p.link.href}>{p.link.label}</ArrowLink>
+              </div>
             </article>
           </Reveal>
         </li>
@@ -115,10 +131,10 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
   <Section tone="cream">
     <div class="detail">
       <Reveal class="detail__media">
-        <Image src={stringsImg} alt="String material in the shop" widths={[600, 1000, 1600]}
-          sizes="(max-width: 60rem) 92vw, 32rem" loading="lazy" />
+        <Image src={stringsImg} alt="Custom-fletched arrows built in the shop"
+          widths={[520, 760, 1100]} sizes="(max-width: 60rem) 92vw, 32rem" loading="lazy" />
       </Reveal>
-      <div class="detail__copy">
+      <div class="detail__copy flow">
         <Reveal><Eyebrow>We specialize in this</Eyebrow></Reveal>
         <Reveal delay={1}><h2>Custom strings, built for your bow.</h2></Reveal>
         <Reveal delay={2}>
@@ -146,10 +162,10 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
   <Section tone="linen">
     <div class="detail detail--flip">
       <Reveal class="detail__media">
-        <Image src={arrowsImg} alt="Custom arrows built in the shop" widths={[600, 1000, 1600]}
-          sizes="(max-width: 60rem) 92vw, 32rem" loading="lazy" />
+        <Image src={arrowsImg} alt="A set of custom arrows, cut and fletched to one setup"
+          widths={[520, 760, 1100]} sizes="(max-width: 60rem) 92vw, 32rem" loading="lazy" />
       </Reveal>
-      <div class="detail__copy">
+      <div class="detail__copy flow">
         <Reveal><Eyebrow>Arrows</Eyebrow></Reveal>
         <Reveal delay={1}><h2>Cut, squared and matched to what you shoot.</h2></Reveal>
         <Reveal delay={2}>
@@ -187,12 +203,54 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
     list-style: none; margin: 0; padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-    gap: var(--sp-7);
+    gap: clamp(1.25rem, 0.5rem + 2vw, 2.25rem);
   }
-  .pillars article { display: grid; gap: var(--sp-4); align-content: start; }
-  .pillars__icon { color: var(--ember); }
-  .pillars h2 { font-size: var(--fs-h3); margin: 0; }
-  .pillars p { margin: 0; line-height: 1.7; }
+  .pillars > li { display: flex; }
+  .pillars > li > :global(*) { width: 100%; }
+
+  .pillar {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--cream-100);
+    border: 1px solid var(--cream-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: translate var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .pillar:hover { translate: 0 -4px; box-shadow: var(--shadow); border-color: var(--parchment); }
+
+  .pillar__media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--cream-200); }
+  .pillar__media :global(img) {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: scale var(--dur-slow) var(--ease);
+  }
+  .pillar:hover .pillar__media :global(img) { scale: 1.03; }
+
+  .pillar__icon {
+    position: absolute;
+    left: var(--sp-4);
+    bottom: var(--sp-4);
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    background: var(--cream-50);
+    color: var(--ember);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .pillar__body {
+    flex: 1;
+    display: grid;
+    align-content: start;
+    gap: var(--sp-3);
+    padding: var(--sp-5) var(--sp-5) var(--sp-6);
+  }
+  .pillar h2 { font-size: var(--fs-h4); margin: 0; }
+  .pillar p { margin: 0; font-size: var(--fs-small); line-height: 1.7; }
+  .pillar :global(.arrow-link) { margin-top: var(--sp-2); }
 
   .process {
     background: var(--pine-900);
@@ -218,7 +276,13 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
     .detail { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-9); }
     .detail--flip .detail__media { order: 2; }
   }
-  .detail__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
+  .detail__media :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
   .detail__copy p { max-width: 46ch; }
   .detail__copy h2, .detail__copy p + p { margin-top: var(--sp-4); }
   .detail__copy :global(.arrow-link) { margin-top: var(--sp-5); }

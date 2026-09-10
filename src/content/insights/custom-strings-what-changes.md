@@ -3,8 +3,8 @@ title: "Custom strings: what actually changes when they are built for you"
 description: "Strings are the most replaced and least understood part of a bow. What goes into building a set properly, and what you feel afterward."
 date: 2026-04-17
 category: "Tuning & Gear"
-image: "../../assets/shop/strings-header.jpg"
-imageAlt: "Bowstring material in the shop"
+image: "../../assets/story/rob-at-the-bench.jpg"
+imageAlt: "Building a string at the Targeteers bench"
 ---
 
 We make custom strings here. It is the thing this shop has always specialized in, and it is the

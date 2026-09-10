@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import HeroFilm from '~/components/hero/HeroFilm.astro';
-import RingsDraw from '~/components/RingsDraw.astro';
+import Milestones from '~/components/Milestones.astro';
 import Section from '~/components/Section.astro';
 import SectionHead from '~/components/SectionHead.astro';
 import Card from '~/components/Card.astro';
@@ -32,12 +32,12 @@ import trophyImg from '~/assets/trophy/mount-04.jpg';
 
 const posts = (await getPosts()).slice(0, 3);
 
-const chapters = [
-  { year: '1957', line: 'A bow shop opens on Route 46 in Saddle Brook.' },
-  { year: '3', line: 'Three generations of one family behind the same counter.' },
-  { year: '11', line: 'Eleven indoor lanes, air conditioned, out to 27 yards.' },
-  { year: '130', line: 'A hundred and thirty kids come through camp every summer.' },
-  { year: '69', line: 'Sixty-nine years of doing it the same way. On purpose.' },
+const milestones = [
+  { value: '1957', label: 'A bow shop opens on Route 46 in Saddle Brook.' },
+  { value: '3', label: 'Generations of one family behind the same counter.' },
+  { value: '11', label: 'Indoor lanes, air conditioned, out to 27 yards.' },
+  { value: '130', label: 'Kids come through camp every summer.' },
+  { value: '69', label: 'Years of doing it the same way. On purpose.' },
 ];
 ---
 <Base
@@ -49,7 +49,11 @@ const chapters = [
 >
   <HeroFilm />
 
-  <RingsDraw chapters={chapters} />
+  <Milestones
+    id="since"
+    title="Sixty-nine years on Route 46."
+    items={milestones}
+  />
 
   <!-- ------------------------------------------------------ what we do -->
   <Section tone="cream" id="what-we-do">

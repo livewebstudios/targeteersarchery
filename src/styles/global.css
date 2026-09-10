@@ -41,6 +41,11 @@ input, button, textarea, select { font: inherit; color: inherit; }
 
 p, li, dd { text-wrap: pretty; }
 
+/* Adjacent paragraphs in ordinary flow need air between them. Any component
+   that lays its paragraphs out with grid or flex, or sets its own margin on a
+   paragraph class, overrides this by specificity. */
+p + p { margin-top: var(--sp-4); }
+
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 96;
