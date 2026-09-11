@@ -112,7 +112,7 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
     <div class="wrap">
       <div class="process__head" data-reveal>
         <Eyebrow>How it goes</Eyebrow>
-        <h2 id="process-title">Five steps, every time.</h2>
+        <h2 id="process-title" class="shot-head">Five steps, every time.</h2>
       </div>
       <ol class="process__steps">
         {steps.map((s, i) => (
@@ -128,7 +128,7 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
     </div>
   </section>
 
-  <Section tone="cream">
+  <Section tone="cream" id="strings">
     <div class="detail">
       <Reveal class="detail__media">
         <Image src={stringsImg} alt="Custom-fletched arrows built in the shop"
@@ -136,7 +136,7 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
       </Reveal>
       <div class="detail__copy flow">
         <Reveal><Eyebrow>We specialize in this</Eyebrow></Reveal>
-        <Reveal delay={1}><h2>Custom strings, built for your bow.</h2></Reveal>
+        <Reveal delay={1}><h2 class="shot-head">Custom strings, built for your bow.</h2></Reveal>
         <Reveal delay={2}>
           <p>
             A string is the most replaced and least understood part of a bow. As it stretches, draw
@@ -159,7 +159,7 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
     </div>
   </Section>
 
-  <Section tone="linen">
+  <Section tone="linen" id="arrows">
     <div class="detail detail--flip">
       <Reveal class="detail__media">
         <Image src={arrowsImg} alt="A set of custom arrows, cut and fletched to one setup"
@@ -167,7 +167,7 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
       </Reveal>
       <div class="detail__copy flow">
         <Reveal><Eyebrow>Arrows</Eyebrow></Reveal>
-        <Reveal delay={1}><h2>Cut, squared and matched to what you shoot.</h2></Reveal>
+        <Reveal delay={1}><h2 class="shot-head">Cut, squared and matched to what you shoot.</h2></Reveal>
         <Reveal delay={2}>
           <p>
             Bring the bow. Arrow spine is a function of draw weight and draw length, and guessing at
@@ -184,7 +184,7 @@ const cleanFaqs = serviceFaqs.map((f) => ({ ...f, answer: f.answer.replace(/<!--
     </div>
   </Section>
 
-  <Section tone="cream">
+  <Section tone="cream" id="questions">
     <SectionHead eyebrow="Questions" title="What people ask at the counter." />
     <Faq items={cleanFaqs} />
     <p class="faq-more"><ArrowLink href="/faq/">All frequently asked questions</ArrowLink></p>

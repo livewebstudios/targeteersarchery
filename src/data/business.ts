@@ -118,6 +118,10 @@ export const addressLine = `${business.address.street}, ${business.address.city}
  * manufacturers' own sites.
  */
 export const brands = [
+  /* The shop's own mark leads the row: Targeteers is the authorized dealer the
+     heading is talking about. An internal `url` is what marks a tile as ours,
+     so it opens in this tab and keeps its own colours on the dark bands. */
+  { name: 'Targeteers Archery', slug: 'targeteers', url: '/' },
   { name: 'Hoyt', slug: 'hoyt', url: 'https://hoyt.com' },
   { name: 'Mathews Archery', slug: 'mathews', url: 'https://mathewsinc.com' },
   { name: 'Bowtech', slug: 'bowtech', url: 'https://bowtecharchery.com' },

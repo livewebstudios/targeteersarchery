@@ -97,6 +97,32 @@
   --dur-slow: 900ms;
   --dur-slower: 1200ms;
 
+  /* ------------------------------------------------------------- shot arrow
+     The arrow that flies into each section heading. Kept as its own small set
+     so the shaft can invert on the dark bands without touching anything else. */
+  --arrow-shaft-hi: #6e5a46;
+  --arrow-shaft: #322619;
+  --arrow-shaft-lo: #1b140e;
+  --arrow-gleam: #f8f5ee;
+  --arrow-steel-hi: #efeae1;
+  --arrow-steel: #a9a296;
+  --arrow-steel-lo: #5d564d;
+  --arrow-vane: #b7412e;
+  --arrow-vane-lo: #8e3122;
+  --arrow-vane-edge: #7d4a0c;
+  --arrow-wrap: #c8862b;
+  --arrow-nock: #3a2e23;
+  --arrow-nock-slot: #c8862b;
+
+  /* ------------------------------------------------------------------- aura
+     The drifting blobs behind the plain bands. Colours are pulled off the
+     target face itself, the red ring and the cyan ring, with a third warm
+     tone from the palette so the pair never reads as a flag. All three sit at
+     single-digit opacity: this is a tint on paper, not a colour field. */
+  --aura-red: rgba(183, 65, 46, 0.1);
+  --aura-blue: rgba(42, 104, 126, 0.11);
+  --aura-warm: rgba(200, 134, 43, 0.07);
+
   /* ------------------------------------------------------------------ chrome */
   --nav-h: 7rem;
   --nav-h-shrunk: 5rem;
@@ -118,6 +144,17 @@
   --rule: rgba(248, 245, 238, 0.16);
   --accent: var(--sage-300);
   --ember: var(--ember-bright);
+  /* Carbon disappears on pine, so the shaft reads as a pale anodised one. */
+  --arrow-shaft-hi: #f1ebdf;
+  --arrow-shaft: #cfc4ae;
+  --arrow-shaft-lo: #9d907a;
+  --arrow-gleam: #ffffff;
+  --arrow-nock: #d9cbae;
+  --arrow-vane-edge: #c8862b;
+  /* Barely-there on the dark bands: the ground is already doing the work. */
+  --aura-red: rgba(183, 65, 46, 0.16);
+  --aura-blue: rgba(93, 170, 196, 0.12);
+  --aura-warm: rgba(200, 134, 43, 0.08);
   --accent-strong: var(--ember-bright);
 }
 

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Targeteers Archery">
-  <rect width="64" height="64" rx="12" fill="#14261B"/>
-  <g fill="none" stroke="#F8F5EE" stroke-width="3.4">
-    <circle cx="32" cy="32" r="23"/>
-    <circle cx="32" cy="32" r="15.5"/>
-    <circle cx="32" cy="32" r="8"/>
-  </g>
-  <circle cx="32" cy="32" r="4.4" fill="#B7412E"/>
-</svg>

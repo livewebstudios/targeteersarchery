@@ -27,15 +27,16 @@ Node 20 or newer.
 | You want to change… | Edit this |
 |---|---|
 | Phone, address, email, hours, socials, Formspree IDs, GA4 ID, Mailchimp URL | `src/data/business.ts` |
-| Nav links, the MORE menu, footer columns | `src/data/nav.ts` |
-| Colours, type scale, spacing, motion timing | `src/styles/tokens.css` |
+| Nav groups, dropdown panels, sub-nav links, footer columns | `src/data/nav.ts` |
+| Colours, type scale, spacing, motion timing, arrow colours | `src/styles/tokens.css` |
+| Dealer carousel tiles, including the shop's own | `brands` in `src/data/business.ts` |
+| Favicon and app icons | `public/images/cropped-target.png`, then `node scripts/make-icons.mjs` |
 | Blog posts | `src/content/insights/` — or `/admin/`, see below |
 | Calendar highlights | `src/content/events/` |
 | League seasons | `src/content/leagues/` |
 | FAQ entries | `src/content/faq/` |
 | Staff cards on the About page | `src/content/team/` |
 | Mathews / Hoyt / SITKA landing-page copy | `src/content/brands/` |
-| Dealer carousel brands and links | `brands` in `src/data/business.ts` |
 | The "Since 1957" milestone band | `milestones` in `src/pages/index.astro` |
 | Dealer logo files | `src/assets/brands/` — see the README in there |
 | Old-URL redirects | `public/_redirects` |
@@ -116,6 +117,120 @@ Two logos did survive in the old site's media, if you want them wired sooner:
 Hoyt (clean, with transparency) and Bowtech (low resolution, and carrying an
 old tagline). Both are in the working folder at
 `assets/extracted-media/uploads/2020/11/`.
+
+---
+
+## Navigation
+
+Everything is defined in `src/data/nav.ts`. The site has six top-level groups
+plus a plain Contact link:
+
+`PRO SHOP · SERVICES · LESSONS & KIDS · RANGE & LEAGUES · ABOUT · CONTACT`
+
+Each group carries one or two columns of links (label, href, one-line blurb)
+and an optional dark feature tile. Labels render ALL CAPS everywhere. To add a
+page to the nav, add it to the right group's `columns` and, if its URL sits
+outside the group's own path, add that path to the group's `extra` array so the
+sub-nav knows the page belongs there.
+
+Three surfaces read that one file:
+
+| Surface | Component | Shows up |
+|---|---|---|
+| Mega dropdown panels | `src/components/nav/Nav.astro` | 72rem and up. Hover opens, click keeps open, Escape closes |
+| Sticky sub-nav strip | `src/components/nav/SubNav.astro` | Below 104rem, inside the sticky header, scrolls sideways on a phone and centres the page you are on |
+| Fixed vertical sub-nav rail | `src/components/nav/SubRail.astro` | 104rem and up, in the right margin, fades in once the hero is past |
+| Overlay menu | `src/components/nav/MobileMenu.astro` | Below 72rem. Every group expanded, no accordions |
+
+The rail is rendered from `Base.astro` rather than from inside the header,
+because the header carries a `backdrop-filter` and that would make it the
+containing block for a fixed child. Pages inside a group get `has-subnav` on
+`<body>`, which pulls `--wrap-wide` in at 104rem so no wide band ever runs
+underneath the rail.
+
+Anchor links in the panels (`/pro-shop/#carry`, `/services/#strings`,
+`/lessons/#book`) point at `id`s on the relevant `<Section>`. If you rename a
+section id, fix the nav entry too.
+
+---
+
+## If a page renders blank below the hero
+
+Almost always the dev server, not the site. Scroll reveals start at
+`opacity: 0` and are un-hidden by `src/scripts/motion.ts`; if that module fails
+to load, everything it was going to reveal stays invisible.
+
+The usual cause is Vite's pre-bundled dependency cache going stale after new
+imports are added, while a long-running `astro dev` keeps serving the old URLs.
+The console shows `504 (Outdated Optimize Dep)` for lenis, gsap or
+gsap/ScrollTrigger. Reloading does not clear it. Restart the dev server:
+
+```bash
+rm -rf node_modules/.vite && npm run dev
+```
+
+Two guards keep this from ever reaching a visitor. `Base.astro` puts a `.js`
+class on `<html>` inline in the head, so the hidden start state only applies
+when scripting is available at all; and a 2-second timer adds `.motion-failed`
+if `motion.ts` never set `data-motion-ready`, which puts every reveal and every
+section arrow back on screen. A missing animation is an acceptable failure. A
+blank page is not.
+
+---
+
+## The target mark and the shot arrow
+
+**The target mark.** Every icon the browser shows comes from the client's own
+target face at `public/images/cropped-target.png`. Replace that file and run:
+
+```bash
+node scripts/make-icons.mjs
+```
+
+That rewrites the favicon, the .ico, the Apple touch icon, the 192 and 512 app
+icons, a padded maskable icon, and `site.webmanifest`. The same file is
+available on the page through `TargetMark.astro`, which is used for the small
+filled marks: team avatars, the post mark, the Hours heading. The large
+decorative ring backdrops on the footer, contact band, milestones and About
+wall stay on `TargetIcon.astro`, which is line art in `currentColor` and sits
+inside the cream palette rather than fighting it.
+
+**The shot arrow.** An arrow flies into every section heading on the site, 80
+of them across 21 routes. It is one CSS rule, `.shot-head` in `global.css`,
+driving a `::before` on the heading itself. To give a new heading an arrow, add
+that class. Nothing else.
+
+The arrow art is two static SVGs in `public/images/`, generated by:
+
+```bash
+node scripts/make-arrow.mjs
+```
+
+Two files because a `background-image` cannot read CSS custom properties, and
+the shaft has to change: carbon on cream, pale anodised on the dark bands and
+on the photo panels. `SectionHead` renders the class automatically; pass
+`arrow={false}` to turn it off.
+
+Two placements:
+
+| Where | Placement |
+|---|---|
+| `SectionHead` at 90rem and up | Out in the page margin, point resting just short of the first word |
+| Everything else, and all widths under 90rem | Its own line above the heading, whole arrow visible |
+
+That split matters. A heading inside a two-column block or a half-width panel
+has no page margin to fly through, so the margin placement would put the arrow
+on top of the neighbouring photograph or clip it to a stub. Only headings that
+sit at the edge of the content column get it. A heading that does sit there but
+is not a `SectionHead` can opt in with `.shot-head--margin`.
+
+The flight fires from `.is-revealed` on the heading or any ancestor, so every
+arrow needs a revealing block around it. `scripts/` has no check for this; the
+way to verify after adding headings is to load each route, add `is-revealed`
+everywhere, and look for a `.shot-head` with no `.is-revealed` ancestor.
+
+Colours are the `--arrow-*` tokens. Under `prefers-reduced-motion`, and under
+the `.motion-failed` failsafe, the arrow is simply there with no flight.
 
 ---
 

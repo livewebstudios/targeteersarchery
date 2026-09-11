@@ -95,6 +95,9 @@ function initHero() {
 
 /* ------------------------------------------------------------------- setup */
 function start() {
+  /* Tells the failsafe in Base.astro that this module made it. Without the
+     flag the page un-hides itself after a moment rather than staying blank. */
+  document.documentElement.setAttribute('data-motion-ready', '');
   initReveal();
   if (reduced()) return;
 

@@ -20,7 +20,7 @@ Thumbs.db
 .netlify/
 
 # QA artefacts are regenerated, not tracked
-qa/*.png
+qa/
 
 # local editor / agent config
 .claude/

@@ -1,21 +1,48 @@
-/** Favicons and app icons, generated from the TargetIcon mark. */
+/**
+ * Favicons and app icons, generated from the client's target mark at
+ * public/images/cropped-target.png.
+ *
+ *   node scripts/make-icons.mjs
+ *
+ * The source is a 512px target face on transparency. Standard icons keep that
+ * transparency; the maskable icon gets a cream plate and a 20% safe-zone inset
+ * so Android's circle crop never clips the outer ring.
+ */
 import sharp from 'sharp';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const PUB = path.resolve(process.cwd(), 'public');
-const svg = await readFile(path.join(PUB, 'favicon.svg'));
+const SRC = path.join(PUB, 'images', 'cropped-target.png');
+const src = await readFile(SRC);
 
-const rounded = (size) =>
-  sharp(Buffer.from(svg.toString()), { density: 400 }).resize(size, size).png({ compressionLevel: 9 });
+const at = (size) =>
+  sharp(src).resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png({ compressionLevel: 9 });
 
-await rounded(180).toFile(path.join(PUB, 'apple-touch-icon.png'));
-await rounded(192).toFile(path.join(PUB, 'icon-192.png'));
-await rounded(512).toFile(path.join(PUB, 'icon-512.png'));
+await at(180).toFile(path.join(PUB, 'apple-touch-icon.png'));
+await at(192).toFile(path.join(PUB, 'icon-192.png'));
+await at(512).toFile(path.join(PUB, 'icon-512.png'));
+await at(32).toFile(path.join(PUB, 'favicon-32.png'));
+
+/* A small copy for the page itself: the mark that sits at the head of every
+   eyebrow. 64px covers a 1em mark at 3x without shipping the 70KB original. */
+await at(64).toFile(path.join(PUB, 'images', 'target-mark.png'));
+
+/* Maskable: the mark inset inside its own safe zone, on the cream ground. */
+const MASK = 512;
+const inner = await sharp(src).resize(Math.round(MASK * 0.6), Math.round(MASK * 0.6)).toBuffer();
+await sharp({
+  create: { width: MASK, height: MASK, channels: 4, background: '#F8F5EE' },
+})
+  .composite([{ input: inner, gravity: 'centre' }])
+  .png({ compressionLevel: 9 })
+  .toFile(path.join(PUB, 'icon-maskable-512.png'));
 
 /* A 32x32 PNG carried in an .ico container, for old browsers that ask for
-   /favicon.ico by convention. */
-const png = await rounded(32).toBuffer();
+   /favicon.ico by convention. Flattened onto cream, since .ico alpha is
+   unreliable in the browsers that still want one. */
+const png = await sharp(src).resize(32, 32).flatten({ background: '#F8F5EE' }).png().toBuffer();
 const ico = Buffer.alloc(22 + png.length);
 ico.writeUInt16LE(0, 0); ico.writeUInt16LE(1, 2); ico.writeUInt16LE(1, 4);
 ico.writeUInt8(32, 6); ico.writeUInt8(32, 7); ico.writeUInt8(0, 8); ico.writeUInt8(0, 9);
@@ -39,11 +66,11 @@ await writeFile(
       icons: [
         { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
         { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
-        { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        { src: '/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
       ],
     },
     null,
     2,
   ) + '\n',
 );
-console.log('icons written');
+console.log('icons written from', path.relative(process.cwd(), SRC));

@@ -7,13 +7,22 @@ interface Props {
   align?: 'start' | 'center';
   level?: 2 | 3;
   class?: string;
+  /** Off for the rare heading that should not be shot at. */
+  arrow?: boolean;
 }
-const { eyebrow, title, lead, align = 'start', level = 2, class: klass = '' } = Astro.props;
+const {
+  eyebrow, title, lead, align = 'start', level = 2, class: klass = '', arrow = true,
+} = Astro.props;
 const Heading = `h${level}` as 'h2' | 'h3';
 ---
+<!--
+  The arrow is the shared .shot-head rule in global.css, not markup of its own,
+  so a section heading written by hand elsewhere gets the same treatment from
+  the same class.
+-->
 <header class={`section-head align-${align} ${klass}`} data-reveal>
   {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-  <Heading>{title}</Heading>
+  <Heading class={arrow ? 'shot-head' : undefined}>{title}</Heading>
   {lead && <p class="lead">{lead}</p>}
   <slot />
 </header>
@@ -23,6 +32,5 @@ const Heading = `h${level}` as 'h2' | 'h3';
   .section-head .lead { margin-top: var(--sp-4); }
   .align-center { margin-inline: auto; text-align: center; }
   .align-center :global(.eyebrow) { justify-content: center; }
-  .align-center :global(.eyebrow)::before { display: none; }
   .align-center .lead { margin-inline: auto; }
 </style>

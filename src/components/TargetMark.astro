@@ -1,0 +1,34 @@
+---
+import { Image } from 'astro:assets';
+import target from '~/assets/brand/target.png';
+
+interface Props {
+  /** Rendered size in px. Square. */
+  size?: number;
+  class?: string;
+  /** Give it a label when the mark carries meaning rather than decoration. */
+  title?: string;
+}
+const { size = 24, class: klass = '', title } = Astro.props;
+---
+<!--
+  The client's own target face, used wherever a small filled mark is wanted:
+  team avatars, the post mark, the Hours heading. The large decorative ring
+  backdrops stay on TargetIcon, which is line art in currentColor and belongs
+  to the cream palette rather than fighting it.
+-->
+<Image
+  class={`target-mark ${klass}`}
+  src={target}
+  alt={title ?? ''}
+  width={size}
+  height={size}
+  densities={[1, 2]}
+  loading="lazy"
+  decoding="async"
+  aria-hidden={title ? undefined : 'true'}
+/>
+
+<style>
+  .target-mark { display: block; flex: none; width: auto; height: auto; }
+</style>

@@ -11,6 +11,7 @@ import Eyebrow from '~/components/Eyebrow.astro';
 import ContactBand from '~/components/ContactBand.astro';
 import GalleryBlock from '~/components/GalleryBlock.astro';
 import TargetIcon from '~/components/icons/TargetIcon.astro';
+import TargetMark from '~/components/TargetMark.astro';
 import ArrowLink from '~/components/ArrowLink.astro';
 import { business } from '~/data/business';
 
@@ -130,7 +131,7 @@ const awards = [
       </Reveal>
       <div class="rob__copy flow">
         <Reveal><Eyebrow>Meet Rob</Eyebrow></Reveal>
-        <Reveal delay={1}><h2>Rob Cerone Jr.</h2></Reveal>
+        <Reveal delay={1}><h2 class="shot-head">Rob Cerone Jr.</h2></Reveal>
         <Reveal delay={2}>
           <p class="lead">
             Third generation behind this counter, and in the archery business since 1970.
@@ -168,7 +169,7 @@ const awards = [
     <div class="wall__rings" aria-hidden="true"><TargetIcon size={520} strokeWidth={0.4} /></div>
     <div class="wrap wall__inner">
       <Reveal class="wall__copy">
-        <h2 id="wall-title">For the ones who taught us to aim true.</h2>
+        <h2 id="wall-title" class="shot-head">For the ones who taught us to aim true.</h2>
         <p>
           Every bow that leaves this shop is looked over twice. That habit didn&rsquo;t start with us.
           It started with a grandfather who opened the doors in 1957 and a father who kept them
@@ -190,7 +191,7 @@ const awards = [
       </Reveal>
 
       <Reveal class="wall__mark" delay={4}>
-        <TargetIcon size={30} strokeWidth={1.2} />
+        <TargetMark size={30} />
         <!-- CONFIRM: founder's and father's names and years for the tribute line.
              Until Rob supplies them this stays as "Est. 1957" — see handoff §5.2. -->
         <p>Est. 1957</p>
@@ -230,7 +231,7 @@ const awards = [
         <li>
           <Reveal delay={i}>
             <article class="team__card">
-              <div class="team__avatar" aria-hidden="true"><TargetIcon size={40} strokeWidth={1.1} /></div>
+              <div class="team__avatar" aria-hidden="true"><TargetMark size={40} /></div>
               <h3>{member.data.name}</h3>
               <p class="team__role">{member.data.role}</p>
               <p class="team__bio">{member.data.bio.replace(/<!--[\s\S]*?-->/g, '').trim()}</p>

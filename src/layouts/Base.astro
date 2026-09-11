@@ -13,6 +13,8 @@ import Seo from '~/components/seo/Seo.astro';
 import type { SeoProps } from '~/components/seo/Seo.astro';
 import JsonLd from '~/components/seo/JsonLd.astro';
 import { localBusinessSchema, breadcrumbSchema } from '~/components/seo/localBusiness';
+import { groupFor } from '~/data/nav';
+import SubRail from '~/components/nav/SubRail.astro';
 
 export interface Props extends SeoProps {
   /** The hero page lets the nav float over the film. */
@@ -30,6 +32,11 @@ const {
   ...seo
 } = Astro.props;
 
+/* Pages inside a nav group get the sticky sub-nav, which needs the wide bands
+   to stop short of the right rail on very wide screens. */
+const subNavGroup = groupFor(Astro.url.pathname);
+const bodyClasses = [bodyClass, subNavGroup ? 'has-subnav' : ''].filter(Boolean).join(' ');
+
 const siteUrl = Astro.site!.href;
 const graph: Record<string, unknown>[] = [localBusinessSchema(siteUrl)];
 if (breadcrumbs?.length) graph.push(breadcrumbSchema(siteUrl, breadcrumbs));
@@ -43,11 +50,26 @@ if (schema) graph.push(...(Array.isArray(schema) ? schema : [schema]));
     <meta name="theme-color" content="#14261B" />
     <meta name="format-detection" content="telephone=no" />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
     <link rel="alternate icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title="Targeteers Archery · Insights" href="/rss.xml" />
+
+    <script is:inline>
+      /* Scroll reveals hide content until the motion bundle runs. Two guards,
+         because a blank page is a far worse failure than a missing animation:
+         .js means scripting is available at all, and the timer un-hides
+         everything if motion.ts never reported in (blocked, offline, failed
+         chunk, stale dev-server cache). */
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!document.documentElement.hasAttribute('data-motion-ready')) {
+          document.documentElement.classList.add('motion-failed');
+        }
+      }, 2000);
+    </script>
 
     <Seo {...seo} />
     <JsonLd data={graph} />
@@ -55,12 +77,13 @@ if (schema) graph.push(...(Array.isArray(schema) ? schema : [schema]));
     <ClientRouter fallback="swap" />
   </head>
 
-  <body class={bodyClass}>
+  <body class={bodyClasses}>
     <a class="skip-link" href="#main">Skip to content</a>
     <Nav overHero={overHero} />
     <main id="main">
       <slot />
     </main>
+    {subNavGroup && <SubRail group={subNavGroup} current={Astro.url.pathname} />}
     <Footer />
 
     <script>

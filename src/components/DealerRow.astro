@@ -37,7 +37,10 @@ function logoFor(slug: string): ImageMetadata | undefined {
   return hit?.[1].default;
 }
 
-const items = brands.map((b) => ({ ...b, logo: logoFor(b.slug) }));
+/* An internal url marks the shop's own tile: same tab, and no cream knockout
+   on the dark bands, because that logo is the one thing in the row that should
+   always look like itself. */
+const items = brands.map((b) => ({ ...b, logo: logoFor(b.slug), own: b.url.startsWith('/') }));
 const hasAnyLogo = items.some((i) => i.logo);
 // Two passes make the loop seamless; a third keeps very wide screens full.
 const passes = [0, 1, 2];
@@ -59,14 +62,15 @@ const passes = [0, 1, 2];
             <li>
               <a
                 href={b.url}
-                target="_blank"
-                rel="noopener"
+                target={b.own ? undefined : '_blank'}
+                rel={b.own ? undefined : 'noopener'}
                 tabindex={pass === 0 ? undefined : -1}
-                aria-label={pass === 0 ? `${b.name} (opens in a new tab)` : undefined}
+                aria-label={pass === 0 && !b.own ? `${b.name} (opens in a new tab)` : undefined}
               >
                 {b.logo ? (
                   <Image
                     class="dealers__logo"
+                    data-own={b.own ? '' : undefined}
                     src={b.logo}
                     alt={pass === 0 ? b.name : ''}
                     widths={[220, 440]}
@@ -215,10 +219,14 @@ const passes = [0, 1, 2];
     max-height: 3.25rem;
     object-fit: contain;
   }
+  .dealers__logo[data-own] { max-width: 13rem; max-height: 4rem; }
   /* Real logos come in every colour there is. On the dark bands they get
      knocked back to cream so the row still reads as one row. */
   .tone-pine .dealers__logo,
   .tone-bark .dealers__logo { filter: brightness(0) invert(1); opacity: 0.9; }
+  /* Our own lockup is the exception: it carries white keylines already. */
+  .tone-pine .dealers__logo[data-own],
+  .tone-bark .dealers__logo[data-own] { filter: none; opacity: 1; }
   .tone-pine .dealers__list a:hover .dealers__logo,
   .tone-bark .dealers__list a:hover .dealers__logo { opacity: 1; }
 

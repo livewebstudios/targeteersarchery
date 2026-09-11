@@ -1,21 +1,31 @@
 ---
-import type { NavLink } from '~/data/nav';
+import type { NavGroup, NavLink } from '~/data/nav';
+import { subNavLinks, activeHref } from '~/data/nav';
 
 interface Props {
-  primary: NavLink[];
-  more: NavLink[];
+  groups: NavGroup[];
+  contact: NavLink;
+  cta: NavLink;
   phone: string;
   phoneHref: string;
   current: string;
 }
-const { primary, more, phone, phoneHref, current } = Astro.props;
-const isCurrent = (href: string) => current === href;
+const { groups, contact, cta, phone, phoneHref, current } = Astro.props;
+const activeInGroup = new Map(
+  groups.map((g) => [g.id, activeHref([...subNavLinks(g), { label: g.label, href: g.href }], current)]),
+);
+const contactActive = current.startsWith(contact.href);
+/** Stagger index runs continuously through every group so the reveal reads as one sweep. */
+let step = 0;
 ---
 <!--
   Full-screen cream overlay menu. Deliberately not a React island: it is on
   every page, and a hamburger does not justify shipping a UI framework to
   someone on a phone in a parking lot. Focus is trapped while open, Escape
   closes it, and the page underneath is locked.
+
+  Every group is expanded. No accordions: a parent looking for kids camp on a
+  phone should see it without tapping a disclosure first.
 -->
 <button
   type="button"
@@ -40,23 +50,28 @@ const isCurrent = (href: string) => current === href;
 
   <div class="mobile-menu__inner">
     <nav aria-label="Main menu">
-      <ul class="mobile-menu__primary">
-        {primary.map((link, i) => (
-          <li style={`--i:${i}`}>
-            <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>{link.label}</a>
-          </li>
-        ))}
-      </ul>
-      <ul class="mobile-menu__more">
-        {more.map((link, i) => (
-          <li style={`--i:${i + primary.length}`}>
-            <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>{link.label}</a>
-          </li>
-        ))}
-      </ul>
+      {groups.map((group) => (
+        <section class="m-group" style={`--i:${step++}`}>
+          <a class="m-group__title" href={group.href} aria-current={activeInGroup.get(group.id) === group.href ? 'page' : undefined}>
+            {group.label}
+          </a>
+          <ul class="m-group__links">
+            {group.columns.flatMap((column) => column.links).map((link) => (
+              <li>
+                <a href={link.href} aria-current={activeInGroup.get(group.id) === link.href ? 'page' : undefined}>{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <section class="m-group" style={`--i:${step++}`}>
+        <a class="m-group__title" href={contact.href} aria-current={contactActive ? 'page' : undefined}>
+          {contact.label}
+        </a>
+      </section>
     </nav>
-    <div class="mobile-menu__foot" style={`--i:${primary.length + more.length}`}>
-      <a class="mobile-menu__cta" href="/lessons/#book">Book a lesson</a>
+    <div class="mobile-menu__foot" style={`--i:${step++}`}>
+      <a class="mobile-menu__cta" href={cta.href}>{cta.label}</a>
       <a class="mobile-menu__phone" href={phoneHref}>{phone}</a>
     </div>
   </div>

@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import PageHero from '~/components/hero/PageHero.astro';
 import Section from '~/components/Section.astro';
@@ -12,6 +13,11 @@ import { faqSchema } from '~/components/seo/localBusiness';
 import ClockRingIcon from '~/components/icons/ClockRingIcon.astro';
 
 import heroImg from '~/assets/shop/notched-arrow.jpg';
+import benchImg from '~/assets/story/rob-at-the-bench.jpg';
+import drawImg from '~/assets/range/on-the-line.jpg';
+import targetImg from '~/assets/shop/arrow-in-target.jpg';
+import lanesImg from '~/assets/range/lanes-wide.jpg';
+import toolsImg from '~/assets/shop/workbench.jpg';
 
 const faqs = [
   { question: 'How long does a tune-up take?', answer: 'Same day or next day when the shop is quiet. In the four weeks before bow season, plan on longer. That is our busiest stretch of the year. Come in early and you will not be waiting behind eleven other people with the same idea.' },
@@ -62,6 +68,11 @@ const faqs = [
             a peep that rotated. Finding that first saves an hour of chasing.
           </p>
 
+          <figure class="step-shot">
+            <Image src={benchImg} alt="Working on a bow at the Targeteers service bench"
+              widths={[480, 760, 1100]} sizes="(max-width: 64rem) 90vw, 34rem" loading="lazy" decoding="async" />
+            <figcaption>Everything starts on the bench, with the bow measured as it arrived.</figcaption>
+          </figure>
           <h2>2. Draw length and draw weight, set to you</h2>
           <p>
             Draw length comes off your actual anchor, not a wingspan chart. Too long and you cannot
@@ -74,6 +85,11 @@ const faqs = [
             way to build a habit that takes a year to unlearn.
           </p>
 
+          <figure class="step-shot">
+            <Image src={drawImg} alt="An archer at full draw with a compound bow"
+              widths={[480, 760, 1100]} sizes="(max-width: 64rem) 90vw, 34rem" loading="lazy" decoding="async" />
+            <figcaption>Draw length comes off your actual anchor, not a chart.</figcaption>
+          </figure>
           <h2>3. Cam timing</h2>
           <p>
             On a two-cam bow, both cams need to roll over together. When they drift apart, the
@@ -109,6 +125,11 @@ const faqs = [
             Changing two things at once means you learn nothing from either.
           </p>
 
+          <figure class="step-shot">
+            <Image src={targetImg} alt="An arrow in the centre of a target face"
+              widths={[480, 760, 1100]} sizes="(max-width: 64rem) 90vw, 34rem" loading="lazy" decoding="async" />
+            <figcaption>Paper is diagnostic. What the arrow does downrange is the verdict.</figcaption>
+          </figure>
           <h2>6. Broadhead tuning, for hunters</h2>
           <p>
             A field point is a smooth cone with nothing to steer with, so it will fly acceptably off
@@ -133,6 +154,11 @@ const faqs = [
             diagnostic. Twenty yards is the verdict.
           </p>
 
+          <figure class="step-shot step-shot--wide">
+            <Image src={lanesImg} alt="Archers shooting on the indoor lanes at Targeteers"
+              widths={[480, 760, 1100]} sizes="(max-width: 64rem) 90vw, 44rem" loading="lazy" decoding="async" />
+            <figcaption>Every bow gets shot at distance on our own lanes before it goes back.</figcaption>
+          </figure>
           <h2>8. The second look</h2>
           <p>
             Every bow gets looked over twice before it goes back out the door. Bolts, cables,
@@ -143,6 +169,11 @@ const faqs = [
             and it is the reason a lot of people have been bringing bows here for thirty years.
           </p>
 
+          <figure class="step-shot">
+            <Image src={toolsImg} alt="Bows and tools on the repair bench"
+              widths={[480, 760, 1100]} sizes="(max-width: 64rem) 90vw, 34rem" loading="lazy" decoding="async" />
+            <figcaption>Bolts, cables, serving, rest, sight, peep, nock fit. Twice.</figcaption>
+          </figure>
           <h2>What it costs</h2>
           <p>
             It depends on what the bow needs, and we will tell you before we do it. Nobody here is
@@ -189,7 +220,7 @@ const faqs = [
   </Section>
 
   <Section tone="linen">
-    <div class="faq-head" data-reveal><Eyebrow>Questions</Eyebrow><h2>Tuning, answered.</h2></div>
+    <div class="faq-head" data-reveal><Eyebrow>Questions</Eyebrow><h2 class="shot-head">Tuning, answered.</h2></div>
     <Faq items={faqs} />
   </Section>
 
@@ -202,6 +233,27 @@ const faqs = [
 </Base>
 
 <style>
+  /* Photographs break up what is otherwise eight headings of solid text. They
+     sit inside the prose column and, on a wide screen, the wide one is allowed
+     to push past it. */
+  .step-shot { margin-block: 2.4em; }
+  .step-shot :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+  .step-shot figcaption {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--stone-400);
+  }
+  @media (min-width: 64rem) {
+    .step-shot--wide { width: min(44rem, calc(100% + 8rem)); }
+  }
+
   .layout { display: grid; gap: var(--sp-7); align-items: start; }
   @media (min-width: 64rem) { .layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--sp-9); } }
   .layout__aside { display: grid; gap: var(--sp-5); }

@@ -17,6 +17,7 @@ import Newsletter from '~/components/Newsletter.astro';
 import Map from '~/components/Map.astro';
 import OpenNowPill from '~/components/OpenNowPill.astro';
 import TargetIcon from '~/components/icons/TargetIcon.astro';
+import TargetMark from '~/components/TargetMark.astro';
 import { getPosts } from '~/utils/posts';
 import { business, addressLine } from '~/data/business';
 
@@ -115,7 +116,7 @@ const milestones = [
     <div class="wrap shop-band__inner">
       <Reveal>
         <Eyebrow>The pro shop</Eyebrow>
-        <h2 id="shop-band-title">100s of bows on the wall.<br />Zero pressure.</h2>
+        <h2 id="shop-band-title" class="shot-head">100s of bows on the wall.<br />Zero pressure.</h2>
         <p class="lead">
           Nobody here works on commission and nobody is going to talk you into the wrong bow. Tell
           us what you actually want to do with it and we will put two or three in your hands.
@@ -141,7 +142,7 @@ const milestones = [
       </Reveal>
       <div class="story__copy flow">
         <Reveal><Eyebrow>The family story</Eyebrow></Reveal>
-        <Reveal delay={1}><h2>Three generations. One counter.</h2></Reveal>
+        <Reveal delay={1}><h2 class="shot-head">Three generations. One counter.</h2></Reveal>
         <Reveal delay={2}>
           <p>
             A bow shop opened on Route 46 in 1957. Rob bought it from his father in the nineties,
@@ -171,9 +172,9 @@ const milestones = [
       <Image src={campImg} alt="Kids on the line at summer camp" widths={[480, 760, 1200, 1800]}
         sizes="(max-width: 48rem) 100vw, 50vw" loading="lazy" />
       <div class="split__scrim" aria-hidden="true"></div>
-      <div class="split__copy">
+      <div class="split__copy" data-reveal>
         <Eyebrow>Kids Archery Camp</Eyebrow>
-        <h2>130 kids a summer. Every one of them hits something.</h2>
+        <h2 class="shot-head">130 kids a summer. Every one of them hits something.</h2>
         <p>From age seven. Equipment provided, certified instruction, safety first and fun a very close second.</p>
         <Button href="/kids/" variant="primary">Kids camp &amp; youth</Button>
       </div>
@@ -182,9 +183,9 @@ const milestones = [
       <Image src={groupsImg} alt="A group evening on the range" widths={[480, 760, 1200, 1800]}
         sizes="(max-width: 48rem) 100vw, 50vw" loading="lazy" />
       <div class="split__scrim" aria-hidden="true"></div>
-      <div class="split__copy">
+      <div class="split__copy" data-reveal>
         <Eyebrow>Groups &amp; Events</Eyebrow>
-        <h2>Troops, teams, parties and speaker nights.</h2>
+        <h2 class="shot-head">Troops, teams, parties and speaker nights.</h2>
         <p>Equipment, range time, instruction and targets. We have put a lot of people on this line who had never held a bow.</p>
         <Button href="/groups/" variant="primary">Plan a group</Button>
       </div>
@@ -200,7 +201,7 @@ const milestones = [
     <div class="wrap trophy__inner">
       <Reveal>
         <Eyebrow>The Trophy Room</Eyebrow>
-        <h2 id="trophy-title">Two hundred mounts. One polar bear.<br />Come see for yourself.</h2>
+        <h2 id="trophy-title" class="shot-head">Two hundred mounts. One polar bear.<br />Come see for yourself.</h2>
         <ArrowLink href="/trophy-room/">Walk the room</ArrowLink>
       </Reveal>
     </div>
@@ -225,7 +226,7 @@ const milestones = [
     <div class="visit">
       <div class="visit__copy">
         <Reveal><Eyebrow>Visit</Eyebrow></Reveal>
-        <Reveal delay={1}><h2>101 Route 46 West, Saddle Brook.</h2></Reveal>
+        <Reveal delay={1}><h2 class="shot-head">101 Route 46 West, Saddle Brook.</h2></Reveal>
         <Reveal delay={2}>
           <p class="lead">
             Fifteen minutes from most of Bergen County, with ample parking and a Sasquatch by the
@@ -247,7 +248,7 @@ const milestones = [
         </Reveal>
         <Reveal delay={5}>
           <div class="visit__hours">
-            <h3 class="visit__hours-title"><TargetIcon size={16} /> Hours</h3>
+            <h3 class="visit__hours-title"><TargetMark size={18} /> Hours</h3>
             <HoursTable />
           </div>
         </Reveal>

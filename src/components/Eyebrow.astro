@@ -17,12 +17,14 @@ const { as: Tag = 'p', class: klass = '' } = Astro.props;
     align-items: center;
     gap: 0.75em;
   }
+  /* The shop's target face leads every eyebrow, which puts the mark at the head
+     of almost every section on the site. A 7KB PNG as a background rather than
+     an <img> per instance: one cached request, no extra markup. */
   .eyebrow::before {
     content: '';
-    width: 1.75rem;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.55;
+    width: 1em;
+    height: 1em;
     flex: none;
+    background: url('/images/target-mark.png') center / contain no-repeat;
   }
 </style>

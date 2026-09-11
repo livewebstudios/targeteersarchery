@@ -1,20 +1,24 @@
 ---
 import { Image } from 'astro:assets';
 import logoRGB from '~/assets/brand/logoRGB.png';
-import { primaryNav, moreNav } from '~/data/nav';
+import { navGroups, contactLink, navCta, groupFor, subNavLinks, activeHref } from '~/data/nav';
 import { business, addressLine } from '~/data/business';
 import MobileMenu from './MobileMenu.astro';
 import OpenNowPill from '../OpenNowPill.astro';
 import PhoneIcon from '../icons/PhoneIcon.astro';
 import ChevronDownIcon from '../icons/ChevronDownIcon.astro';
+import ArrowIcon from '../icons/ArrowIcon.astro';
 import SocialIcon from '../icons/SocialIcon.astro';
+import SubNav from './SubNav.astro';
 
 interface Props { overHero?: boolean; }
 const { overHero = false } = Astro.props;
 const current = Astro.url.pathname;
-const isCurrent = (href: string) =>
-  href === '/' ? current === '/' : current.startsWith(href);
-const moreActive = moreNav.some((l) => isCurrent(l.href));
+const activeGroup = groupFor(current);
+/** The link to mark inside each panel, resolved by path so deep pages still light up. */
+const activeInGroup = new Map(
+  navGroups.map((g) => [g.id, activeHref(subNavLinks(g), current)]),
+);
 ---
 
 <header class="site-nav" data-nav data-over-hero={overHero ? '' : undefined}>
@@ -39,29 +43,58 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
       <Image src={logoRGB} alt="Targeteers Archery" widths={[440, 880, 1320]} sizes="(max-width: 48rem) 180px, (max-width: 64rem) 220px, 280px" loading="eager" />
     </a>
 
-    <nav class="site-nav__links" aria-label="Main">
+    <nav class="site-nav__links" aria-label="Main" data-mega-root>
       <ul>
-        {primaryNav.map((link) => (
-          <li>
-            <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>{link.label}</a>
+        {navGroups.map((group) => (
+          <li class="mega" data-mega-item>
+            <button
+              type="button"
+              class="mega__toggle"
+              id={`mega-btn-${group.id}`}
+              aria-expanded="false"
+              aria-controls={`mega-${group.id}`}
+              data-mega-toggle={group.id}
+              data-active={activeGroup?.id === group.id ? '' : undefined}
+            >
+              {group.label} <ChevronDownIcon size={13} />
+            </button>
+
+            <div class="mega__panel" id={`mega-${group.id}`} aria-labelledby={`mega-btn-${group.id}`} data-mega-panel={group.id} hidden>
+              <div class="mega__inner wrap-wide">
+                <div class="mega__cols">
+                  {group.columns.map((column) => (
+                    <div class="mega__col">
+                      <p class="mega__heading">{column.heading}</p>
+                      <ul>
+                        {column.links.map((link) => (
+                          <li>
+                            <a href={link.href} aria-current={activeInGroup.get(group.id) === link.href ? 'page' : undefined}>
+                              <span class="mega__label">{link.label}</span>
+                              {link.blurb && <span class="mega__blurb">{link.blurb}</span>}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+
+                {group.feature && (
+                  <a class="mega__feature" href={group.feature.href}>
+                    <span class="mega__feature-eyebrow">{group.feature.eyebrow}</span>
+                    <span class="mega__feature-title">{group.feature.title}</span>
+                    <span class="mega__feature-body">{group.feature.body}</span>
+                    <span class="mega__feature-cta">{group.feature.cta} <ArrowIcon size={14} /></span>
+                  </a>
+                )}
+              </div>
+            </div>
           </li>
         ))}
-        <li class="site-nav__more">
-          <button type="button" aria-expanded="false" aria-controls="more-menu" data-more-toggle data-active={moreActive ? '' : undefined}>
-            More <ChevronDownIcon size={14} />
-          </button>
-          <div class="more-menu" id="more-menu" hidden>
-            <ul>
-              {moreNav.map((link) => (
-                <li>
-                  <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>
-                    <span class="more-menu__label">{link.label}</span>
-                    <span class="more-menu__blurb">{link.blurb}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <li>
+          <a class="site-nav__plain" href={contactLink.href} aria-current={current.startsWith(contactLink.href) ? 'page' : undefined}>
+            {contactLink.label}
+          </a>
         </li>
       </ul>
     </nav>
@@ -70,16 +103,20 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
       <a class="site-nav__phone" href={business.phoneHref} aria-label={`Call ${business.phone}`}>
         <PhoneIcon size={18} />
       </a>
-      <a class="site-nav__cta" href="/lessons/#book">Book a Lesson</a>
+      <a class="site-nav__cta" href={navCta.href}>{navCta.label}</a>
       <MobileMenu
-        primary={primaryNav}
-        more={moreNav}
+        groups={navGroups}
+        contact={contactLink}
+        cta={navCta}
         phone={business.phone}
         phoneHref={business.phoneHref}
         current={current}
       />
     </div>
   </div>
+
+  {activeGroup && <SubNav group={activeGroup} current={current} />}
+
   <div class="site-nav__progress" aria-hidden="true">
     <svg viewBox="0 0 36 36" fill="none">
       <circle cx="18" cy="18" r="15.5" stroke="currentColor" stroke-width="2" opacity=".22" />
@@ -102,7 +139,6 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
     transition: height var(--dur) var(--ease), opacity var(--dur) var(--ease);
   }
   @media (min-width: 64rem) { .utility { display: block; } }
-  /* On scroll the header tightens: the utility bar rolls away and the nav shrinks. */
   .site-nav[data-scrolled] .utility { height: 0; opacity: 0; }
   .utility__inner {
     display: flex;
@@ -148,7 +184,6 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
     backdrop-filter: none;
     color: var(--cream-50);
   }
-  /* The utility bar keeps its own dark ground even where the nav is see-through. */
   .site-nav[data-over-hero] .utility { background: rgba(20, 38, 27, 0.72); backdrop-filter: blur(8px); }
   .site-nav[data-over-hero]::before {
     content: '';
@@ -166,6 +201,16 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
     color: var(--bark-900);
   }
   .site-nav[data-scrolled]::before { opacity: 0; }
+  /* An open panel needs an opaque, un-tinted header behind it whatever the
+     hero is doing underneath. */
+  .site-nav[data-mega-open] {
+    background: var(--cream-50);
+    backdrop-filter: none;
+    color: var(--bark-900);
+    border-bottom-color: var(--cream-200);
+  }
+  .site-nav[data-mega-open]::before { opacity: 0; }
+  .site-nav[data-mega-open] .utility { background: var(--pine-900); }
 
   .site-nav__inner {
     display: flex;
@@ -173,7 +218,6 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
     gap: var(--sp-5);
     height: var(--nav-h);
     transition: height var(--dur) var(--ease);
-    position: relative;
   }
   .site-nav[data-scrolled] .site-nav__inner { height: var(--nav-h-shrunk); }
 
@@ -184,30 +228,32 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
     transition: height var(--dur) var(--ease);
   }
   @media (min-width: 48rem) { .site-nav__logo :global(img) { height: 4rem; } }
-  @media (min-width: 64rem) { .site-nav__logo :global(img) { height: 5rem; } }
+  @media (min-width: 72rem) { .site-nav__logo :global(img) { height: 4.5rem; } }
+  @media (min-width: 86rem) { .site-nav__logo :global(img) { height: 5rem; } }
   .site-nav[data-scrolled] .site-nav__logo :global(img) { height: 3.25rem; }
-  /* The lockup carries its own white keylines, so it sits straight on the hero
-     footage. A soft shadow gives it separation without a plate behind it. */
-  .site-nav[data-over-hero]:not([data-scrolled]) .site-nav__logo :global(img) {
+  .site-nav[data-over-hero]:not([data-scrolled]):not([data-mega-open]) .site-nav__logo :global(img) {
     filter: drop-shadow(0 2px 14px rgba(20, 38, 27, 0.55));
   }
 
+  /* Six grouped items plus the logo and the CTA need about 72rem, where the
+     old flat ten needed 86rem. Below that the overlay menu takes over. */
   .site-nav__links { display: none; margin-inline-start: auto; }
-  @media (min-width: 86rem) { .site-nav__links { display: block; } }
+  @media (min-width: 72rem) { .site-nav__links { display: block; } }
   .site-nav__links > ul {
     display: flex;
     align-items: center;
-    gap: clamp(0.75rem, 0.1rem + 0.8vw, 1.35rem);
+    gap: clamp(0.6rem, -0.4rem + 1.5vw, 1.6rem);
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  .site-nav__links a,
-  .site-nav__more button {
+
+  .mega__toggle,
+  .site-nav__plain {
     display: inline-flex;
     align-items: center;
     gap: 0.3em;
-    font-size: 0.75rem;
+    font-size: clamp(0.68rem, 0.6rem + 0.16vw, 0.75rem);
     font-weight: 600;
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
@@ -221,8 +267,10 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
     white-space: nowrap;
     transition: color var(--dur-fast) var(--ease);
   }
-  .site-nav__links a::after,
-  .site-nav__more button::after {
+  .mega__toggle :global(svg) { transition: rotate var(--dur-fast) var(--ease); opacity: 0.7; }
+  .mega__toggle[aria-expanded='true'] :global(svg) { rotate: 180deg; }
+  .mega__toggle::after,
+  .site-nav__plain::after {
     content: '';
     position: absolute;
     left: 0; right: 0; bottom: 0;
@@ -232,48 +280,112 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
     transform-origin: left;
     transition: scale var(--dur) var(--ease);
   }
-  .site-nav__links a:hover::after,
-  .site-nav__more button:hover::after,
-  .site-nav__links a[aria-current='page']::after,
-  .site-nav__more button[data-active]::after { scale: 1 1; }
-  .site-nav__links a:hover, .site-nav__more button:hover { color: var(--ember); }
+  .mega__toggle:hover::after,
+  .site-nav__plain:hover::after,
+  .site-nav__plain[aria-current='page']::after,
+  .mega__toggle[data-active]::after,
+  .mega__toggle[aria-expanded='true']::after { scale: 1 1; }
+  .mega__toggle:hover,
+  .site-nav__plain:hover { color: var(--ember); }
 
-  .site-nav__more { position: relative; }
-  .more-menu {
+  /* -------------------------------------------------------- mega panels */
+  .mega { position: static; }
+  .mega__panel {
     position: absolute;
-    top: calc(100% + 1.1rem);
-    right: 0;
-    min-width: 21rem;
+    inset-inline: 0;
+    top: 100%;
     background: var(--cream-50);
     color: var(--bark-900);
-    border: 1px solid var(--cream-200);
-    border-radius: var(--radius-lg);
+    border-top: 1px solid var(--cream-200);
     box-shadow: var(--shadow-lg);
-    padding: 0.6rem;
     opacity: 0;
-    translate: 0 -8px;
+    translate: 0 -10px;
     transition: opacity var(--dur-fast) var(--ease), translate var(--dur-fast) var(--ease);
   }
-  .more-menu[data-open] { opacity: 1; translate: 0 0; }
-  .more-menu ul { list-style: none; margin: 0; padding: 0; }
-  .more-menu a {
+  .mega__panel[data-open] { opacity: 1; translate: 0 0; }
+  .mega__inner {
+    display: grid;
+    gap: var(--sp-7);
+    /* Inline padding comes from .wrap-wide; a shorthand here would beat it. */
+    padding-block: var(--sp-6) var(--sp-7);
+    align-items: start;
+  }
+  @media (min-width: 74rem) {
+    .mega__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 20rem); }
+  }
+  .mega__cols {
+    display: grid;
+    /* Columns keep a readable width instead of stretching to fill the bar. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 17rem));
+    justify-content: start;
+    gap: var(--sp-5) var(--sp-7);
+  }
+  .mega__heading {
+    margin: 0 0 var(--sp-3);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--cream-200);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--stone-400);
+  }
+  .mega__col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; }
+  .mega__col a {
     display: grid;
     gap: 0.1rem;
-    padding: 0.6rem 0.75rem;
+    padding: 0.5rem 0.65rem;
+    margin-inline: -0.65rem;
     border-radius: var(--radius);
-    text-transform: none;
-    letter-spacing: 0;
+    text-decoration: none;
+    color: inherit;
     transition: background var(--dur-fast) var(--ease);
   }
-  .more-menu a::after { display: none; }
-  .more-menu a:hover { background: var(--cream-100); color: inherit; }
-  .more-menu__label {
+  .mega__col a:hover { background: var(--cream-100); }
+  .mega__col a[aria-current='page'] { background: var(--cream-100); }
+  .mega__label {
     font-size: 0.72rem;
     font-weight: 600;
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
   }
-  .more-menu__blurb { font-size: 0.8rem; color: var(--bark-500); line-height: 1.4; }
+  .mega__col a:hover .mega__label { color: var(--ember); }
+  .mega__blurb { font-size: 0.8rem; color: var(--bark-500); line-height: 1.4; }
+
+  .mega__feature {
+    display: grid;
+    gap: var(--sp-2);
+    align-content: start;
+    padding: var(--sp-5);
+    border-radius: var(--radius-lg);
+    background: var(--pine-900);
+    color: var(--cream-50);
+    text-decoration: none;
+    transition: translate var(--dur-fast) var(--ease);
+  }
+  .mega__feature:hover { translate: 0 -2px; }
+  .mega__feature-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember-bright);
+  }
+  .mega__feature-title { font-family: var(--font-display); font-size: var(--fs-h4); line-height: var(--lh-snug); }
+  .mega__feature-body { font-size: var(--fs-small); line-height: 1.6; color: rgba(248, 245, 238, 0.76); }
+  .mega__feature-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: var(--sp-2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--ember-bright);
+  }
+  .mega__feature:hover .mega__feature-cta :global(svg) { translate: 3px 0; }
+  .mega__feature-cta :global(svg) { transition: translate var(--dur-fast) var(--ease); }
 
   .site-nav__actions {
     display: flex;
@@ -281,7 +393,7 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
     gap: var(--sp-3);
     margin-inline-start: auto;
   }
-  @media (min-width: 86rem) { .site-nav__actions { margin-inline-start: var(--sp-5); } }
+  @media (min-width: 72rem) { .site-nav__actions { margin-inline-start: var(--sp-5); } }
 
   .site-nav__phone {
     display: none;
@@ -326,22 +438,19 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
   }
   .site-nav[data-menu-open]::before { opacity: 0; }
   .site-nav[data-menu-open] .utility { display: none; }
-  /* The overlay is a descendant of the header, so lifting the bar has to happen
-     inside the header's own stacking context, not just against the page. */
   .site-nav[data-menu-open] .site-nav__inner {
     position: relative;
     z-index: calc(var(--z-menu) + 1);
+    height: var(--nav-h);
   }
   .site-nav[data-menu-open] .site-nav__logo {
     position: relative;
     z-index: calc(var(--z-menu) + 2);
   }
   .site-nav[data-menu-open] .site-nav__logo :global(img) { filter: none; }
-  /* The overlay carries its own call and book links. */
   .site-nav[data-menu-open] .site-nav__cta,
   .site-nav[data-menu-open] .site-nav__phone { display: none; }
   .site-nav[data-menu-open] .site-nav__progress { opacity: 0; }
-  .site-nav[data-menu-open] .site-nav__inner { height: var(--nav-h); }
 
   .site-nav__progress {
     position: absolute;
@@ -354,61 +463,137 @@ const moreActive = moreNav.some((l) => isCurrent(l.href));
     pointer-events: none;
   }
   .site-nav[data-scrolled] .site-nav__progress { opacity: 1; }
+  .site-nav[data-mega-open] .site-nav__progress { opacity: 0; }
   .site-nav__progress svg { width: 100%; height: 100%; rotate: -90deg; }
   .site-nav__progress [data-progress-ring] {
     stroke-dasharray: 1;
     stroke-dashoffset: calc(1 - var(--scroll-progress, 0));
   }
   @media (max-width: 47.99rem) { .site-nav__progress { display: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mega__panel { transition-duration: 1ms; translate: none; }
+  }
 </style>
 
 <script>
-  const nav = document.querySelector<HTMLElement>('[data-nav]');
-  const ring = document.querySelector<SVGCircleElement>('[data-progress-ring]');
-
-  let ticking = false;
-  function update() {
-    ticking = false;
+  function wireNav() {
+    const nav = document.querySelector<HTMLElement>('[data-nav]');
+    const ring = document.querySelector<SVGCircleElement>('[data-progress-ring]');
     if (!nav) return;
-    const y = window.scrollY;
-    nav.toggleAttribute('data-scrolled', y > 24);
-    if (ring) {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const p = max > 0 ? Math.min(1, y / max) : 0;
-      ring.style.setProperty('--scroll-progress', String(p));
-    }
-  }
-  addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(update);
-  }, { passive: true });
-  update();
 
-  // MORE dropdown: click to open, Escape or an outside click to close.
-  const toggle = document.querySelector<HTMLButtonElement>('[data-more-toggle]');
-  const menu = document.getElementById('more-menu');
-  if (toggle && menu) {
-    const close = () => {
+    let ticking = false;
+    function update() {
+      ticking = false;
+      const y = window.scrollY;
+      nav!.toggleAttribute('data-scrolled', y > 24);
+      if (ring) {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const p = max > 0 ? Math.min(1, y / max) : 0;
+        ring.style.setProperty('--scroll-progress', String(p));
+      }
+    }
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    update();
+
+    /* ------------------------------------------------------- mega panels
+       One panel open at a time. Pointer opens on hover with a short close
+       delay so a diagonal trip from the label to the panel does not drop it;
+       keyboard and touch use click. */
+    const root = nav.querySelector<HTMLElement>('[data-mega-root]');
+    if (!root) return;
+    const toggles = [...root.querySelectorAll<HTMLButtonElement>('[data-mega-toggle]')];
+    const panels = new Map<string, HTMLElement>();
+    for (const el of root.querySelectorAll<HTMLElement>('[data-mega-panel]')) {
+      panels.set(el.dataset.megaPanel!, el);
+    }
+
+    let openId: string | null = null;
+    /* Hover opens a panel, so a click on a label that hover already opened must
+       not immediately close it again. Only a click on a click-opened panel
+       closes. */
+    let openedBy: 'hover' | 'click' = 'hover';
+    let closeTimer = 0;
+    let hideTimer = 0;
+
+    function close(id: string) {
+      const panel = panels.get(id);
+      const toggle = toggles.find((t) => t.dataset.megaToggle === id);
+      if (!panel || !toggle) return;
       toggle.setAttribute('aria-expanded', 'false');
-      menu.removeAttribute('data-open');
-      setTimeout(() => { if (toggle.getAttribute('aria-expanded') === 'false') menu.hidden = true; }, 240);
-    };
-    const open = () => {
-      menu.hidden = false;
-      requestAnimationFrame(() => menu.setAttribute('data-open', ''));
+      panel.removeAttribute('data-open');
+      window.clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(() => {
+        if (toggle.getAttribute('aria-expanded') === 'false') panel.hidden = true;
+      }, 240);
+      if (openId === id) openId = null;
+      if (!openId) nav!.removeAttribute('data-mega-open');
+    }
+
+    function open(id: string, source: 'hover' | 'click' = 'hover') {
+      window.clearTimeout(closeTimer);
+      openedBy = source;
+      if (openId && openId !== id) close(openId);
+      const panel = panels.get(id);
+      const toggle = toggles.find((t) => t.dataset.megaToggle === id);
+      if (!panel || !toggle) return;
+      window.clearTimeout(hideTimer);
+      panel.hidden = false;
+      // Flush layout so the panel has a start value to transition from. A
+      // rAF would do the same, but not in a background tab.
+      void panel.offsetWidth;
+      panel.setAttribute('data-open', '');
       toggle.setAttribute('aria-expanded', 'true');
+      openId = id;
+      nav!.setAttribute('data-mega-open', '');
+    }
+
+    function closeAll() {
+      if (openId) close(openId);
+    }
+    const scheduleClose = () => {
+      window.clearTimeout(closeTimer);
+      closeTimer = window.setTimeout(closeAll, 180);
     };
-    toggle.addEventListener('click', () => {
-      toggle.getAttribute('aria-expanded') === 'true' ? close() : open();
+
+    for (const toggle of toggles) {
+      const id = toggle.dataset.megaToggle!;
+      const panel = panels.get(id);
+      toggle.addEventListener('click', () => {
+        if (openId === id && openedBy === 'click') close(id);
+        else open(id, 'click');
+      });
+      // Hover is an enhancement only: fine pointers get it, touch does not.
+      if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        toggle.addEventListener('pointerenter', () => open(id, 'hover'));
+        toggle.addEventListener('pointerleave', scheduleClose);
+        panel?.addEventListener('pointerenter', () => window.clearTimeout(closeTimer));
+        panel?.addEventListener('pointerleave', scheduleClose);
+      }
+      toggle.addEventListener('focus', () => open(id));
+    }
+
+    root.addEventListener('focusout', (e) => {
+      if (!root.contains(e.relatedTarget as Node)) closeAll();
     });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || !openId) return;
+      const toggle = toggles.find((t) => t.dataset.megaToggle === openId);
+      closeAll();
+      toggle?.focus();
+    });
     document.addEventListener('click', (e) => {
       if (!(e.target instanceof Node)) return;
-      if (!menu.contains(e.target) && !toggle.contains(e.target)) close();
+      if (!root.contains(e.target)) closeAll();
     });
-    menu.addEventListener('focusout', (e) => {
-      if (!menu.contains(e.relatedTarget as Node) && e.relatedTarget !== toggle) close();
-    });
+    addEventListener('scroll', () => { if (openId) closeAll(); }, { passive: true });
   }
+
+  wireNav();
+  document.addEventListener('astro:after-swap', wireNav);
 </script>

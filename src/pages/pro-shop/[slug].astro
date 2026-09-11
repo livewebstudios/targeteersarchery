@@ -107,7 +107,7 @@ const faqs = faqsByBrand[brand.data.slug] ?? [];
 
   {faqs.length > 0 && (
     <Section tone="linen">
-      <div class="faq-head"><Eyebrow>Questions</Eyebrow><h2>{brand.data.name}, answered.</h2></div>
+      <div class="faq-head" data-reveal><Eyebrow>Questions</Eyebrow><h2 class="shot-head">{brand.data.name}, answered.</h2></div>
       <Faq items={faqs} />
     </Section>
   )}

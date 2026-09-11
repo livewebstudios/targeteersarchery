@@ -63,7 +63,7 @@ const details = [
 
     <div class="apply" data-reveal>
       <div>
-        <h2>How to apply</h2>
+        <h2 class="shot-head">How to apply</h2>
         <ul>{details.map((d) => <li set:html={d} />)}</ul>
       </div>
       <Button href={`mailto:${business.email}?subject=Careers%20enquiry`} variant="primary">

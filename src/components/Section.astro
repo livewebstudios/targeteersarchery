@@ -7,6 +7,8 @@ interface Props {
   /** Extra top/bottom air for the set-piece bands. */
   size?: 'default' | 'tight' | 'tall';
   as?: 'section' | 'div' | 'article' | 'aside';
+  /** Drifting colour behind a plain band. On by default where the ground is bare. */
+  aura?: boolean;
 }
 const {
   tone = 'cream',
@@ -15,7 +17,11 @@ const {
   width = 'default',
   size = 'default',
   as: Tag = 'section',
+  aura,
 } = Astro.props;
+/* The plain cream and linen bands are the ones with nothing on them, so they
+   are the ones that get the aura unless a page turns it off. */
+const showAura = aura ?? (tone === 'cream' || tone === 'linen');
 
 const WRAPPERS: Record<NonNullable<Props['width']>, string> = {
   default: 'wrap',
@@ -26,10 +32,56 @@ const WRAPPERS: Record<NonNullable<Props['width']>, string> = {
 const wrapClass = WRAPPERS[width];
 ---
 <Tag id={id} class={`section tone-${tone} size-${size} ${klass}`}>
-  {wrapClass ? <div class={wrapClass}><slot /></div> : <slot />}
+  {showAura && (
+    <div class="aura" aria-hidden="true"><div class="aura__drift" /></div>
+  )}
+  {wrapClass ? <div class={`${wrapClass} section__inner`}><slot /></div> : <div class="section__inner"><slot /></div>}
 </Tag>
 
 <style>
+  /* ----------------------------------------------------------------- aura
+     Three soft blobs drifting slowly behind a plain band, so two bare
+     sections in a row are not two flat rectangles. The clip lives on .aura
+     and the movement on .aura__drift, which keeps the transform GPU-composited
+     and stops it pushing the page sideways. Nothing here clips the section
+     itself, because several pages have position: sticky inside one. */
+  .aura {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .aura__drift {
+    position: absolute;
+    inset: -18%;
+    background:
+      radial-gradient(34% 42% at 16% 26%, var(--aura-red), transparent 68%),
+      radial-gradient(40% 48% at 84% 66%, var(--aura-blue), transparent 70%),
+      radial-gradient(28% 34% at 52% 96%, var(--aura-warm), transparent 66%);
+    animation: aura-drift 72s var(--ease) infinite alternate;
+    will-change: transform;
+  }
+  /* Neighbouring bands drift out of phase, so a run of them never pulses
+     together. */
+  .section:nth-of-type(even) .aura__drift {
+    animation-duration: 88s;
+    animation-direction: alternate-reverse;
+    /* rotate is free here; the keyframes only touch translate and scale, so a
+       half turn mirrors the blob layout without being overridden. */
+    rotate: 180deg;
+  }
+  @keyframes aura-drift {
+    from { translate: 0 0; scale: 1; }
+    50% { translate: 2.5% -1.5%; scale: 1.08; }
+    to { translate: -2% 1.2%; scale: 1.03; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .aura__drift { animation: none; }
+  }
+
+  .section__inner { position: relative; z-index: 1; }
+
   .section {
     position: relative;
     background: var(--bg);

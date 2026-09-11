@@ -9,7 +9,7 @@ import Eyebrow from '~/components/Eyebrow.astro';
 import PostCard from '~/components/PostCard.astro';
 import ContactBand from '~/components/ContactBand.astro';
 import ArrowLink from '~/components/ArrowLink.astro';
-import TargetIcon from '~/components/icons/TargetIcon.astro';
+import TargetMark from '~/components/TargetMark.astro';
 import { getPosts, readingTime, formatDate, categorySlug } from '~/utils/posts';
 import { business } from '~/data/business';
 
@@ -98,7 +98,7 @@ const articleSchema = {
         <p class="post__updated">Updated {formatDate(updated)}.</p>
       )}
       <div class="post__foot">
-        <TargetIcon size={26} />
+        <TargetMark size={26} />
         <p>
           Written at the counter at 101 Route 46 West, Saddle Brook. Questions are welcome at
           <a href={business.phoneHref}>{business.phone}</a>.
@@ -118,7 +118,7 @@ const articleSchema = {
     <Section tone="linen">
       <div class="related__head" data-reveal>
         <Eyebrow>Keep reading</Eyebrow>
-        <h2>More from the shop.</h2>
+        <h2 class="shot-head">More from the shop.</h2>
       </div>
       <div class="related">
         {related.map((r, i) => <Reveal delay={i}><PostCard post={r} /></Reveal>)}

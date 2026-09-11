@@ -2,7 +2,7 @@
 import Base from '~/layouts/Base.astro';
 import Section from '~/components/Section.astro';
 import Button from '~/components/Button.astro';
-import { primaryNav } from '~/data/nav';
+import { navGroups, contactLink } from '~/data/nav';
 ---
 <Base
   title="Page Not Found | Targeteers Archery · Saddle Brook, NJ"
@@ -38,7 +38,7 @@ import { primaryNav } from '~/data/nav';
         have existed. Either way, here is where everything actually is.
       </p>
       <nav class="nf__links" aria-label="Site sections">
-        {primaryNav.map((l) => <a href={l.href}>{l.label}</a>)}
+        {[...navGroups, contactLink].map((l) => <a href={l.href}>{l.label}</a>)}
       </nav>
       <div class="nf__actions">
         <Button href="/" variant="primary">Back to the home page</Button>

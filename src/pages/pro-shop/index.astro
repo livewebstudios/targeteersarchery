@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import PageHero from '~/components/hero/PageHero.astro';
 import Section from '~/components/Section.astro';
@@ -25,16 +26,55 @@ import arrows4 from '~/assets/shop/arrows-04.jpg';
 import showroom1 from '~/assets/shop/showroom-01.jpg';
 import showroom2 from '~/assets/shop/showroom-06.jpg';
 import showroom3 from '~/assets/shop/showroom-07.jpg';
+import deptCompound from '~/assets/shop/bows-01.jpg';
+import deptCrossbow from '~/assets/shop/bows-03.jpg';
+import deptTrad from '~/assets/shop/showroom-04.jpg';
+import deptArrows from '~/assets/shop/custom-arrows.jpg';
+import deptBroadheads from '~/assets/shop/showroom-01.jpg';
+import deptApparel from '~/assets/shop/showroom-02.jpg';
 import hoytImg from '~/assets/story/rob-hoyt.jpg';
 import sitkaImg from '~/assets/hunting/hunter-sunset.jpg';
 
 const departments = [
-  { title: 'Compound bows', body: 'Hoyt, Mathews and Bowtech, in every draw length and weight worth stocking. Fitted to your measurements and tuned before it leaves.' },
-  { title: 'Crossbows', body: 'TenPoint and Ravin. Cocking devices, scopes mounted and sighted in, bolts cut to length. If holding a draw is your barrier, this is the answer.' },
-  { title: 'Recurve & traditional', body: 'Where nearly everybody should start, and where a lot of people come back to. Takedowns, tabs, gloves, and the simplicity that teaches form fast.' },
-  { title: 'Arrows & custom strings', body: 'Easton and Carbon Express shafts, cut squared and fletched to your setup. Custom strings are what this shop has always specialized in, built for your bow rather than pulled off a peg.' },
-  { title: 'Broadheads & accessories', body: 'Fixed and mechanical heads, rests, sights, releases, quivers, stabilizers, targets. A full wall of it, and somebody who can tell you which ones matter for what you do.' },
-  { title: 'Apparel & youth gear', body: 'SITKA layering systems for northeast seasons, plus youth bows and kit sized for kids who are actually going to grow. Draw it on before you buy it.' },
+  {
+    title: 'Compound bows',
+    body: 'Hoyt, Mathews and Bowtech, in every draw length and weight worth stocking. Fitted to your measurements and tuned before it leaves.',
+    image: deptCompound,
+    imageAlt: 'A rack of compound bows on the wall at Targeteers',
+  },
+  {
+    title: 'Crossbows',
+    /* CONFIRM: no crossbow photograph exists in the extracted media. This is a
+       general bow-rack shot and the alt text says only what it shows. Ask Rob
+       for a crossbow picture and swap deptCrossbow when it arrives. */
+    body: 'TenPoint and Ravin. Cocking devices, scopes mounted and sighted in, bolts cut to length. If holding a draw is your barrier, this is the answer.',
+    image: deptCrossbow,
+    imageAlt: 'Bows racked along the shop wall',
+  },
+  {
+    title: 'Recurve & traditional',
+    body: 'Where nearly everybody should start, and where a lot of people come back to. Takedowns, tabs, gloves, and the simplicity that teaches form fast.',
+    image: deptTrad,
+    imageAlt: 'Recurve limbs and traditional bows hanging in the showroom',
+  },
+  {
+    title: 'Arrows & custom strings',
+    body: 'Easton and Carbon Express shafts, cut squared and fletched to your setup. Custom strings are what this shop has always specialized in, built for your bow rather than pulled off a peg.',
+    image: deptArrows,
+    imageAlt: 'A set of custom-fletched arrows built in the shop',
+  },
+  {
+    title: 'Broadheads & accessories',
+    body: 'Fixed and mechanical heads, rests, sights, releases, quivers, stabilizers, targets. A full wall of it, and somebody who can tell you which ones matter for what you do.',
+    image: deptBroadheads,
+    imageAlt: 'The broadhead and accessory wall, packed from floor to ceiling',
+  },
+  {
+    title: 'Apparel & youth gear',
+    body: 'SITKA layering systems for northeast seasons, plus youth bows and kit sized for kids who are actually going to grow. Draw it on before you buy it.',
+    image: deptApparel,
+    imageAlt: 'Camouflage apparel on the racks in the Targeteers showroom',
+  },
 ];
 
 const galleryItems = [
@@ -100,13 +140,19 @@ const galleryItems = [
     <div class="dealers-wrap"><DealerRow /></div>
   </Section>
 
-  <Section tone="linen">
+  <Section tone="linen" id="carry">
     <SectionHead eyebrow="What we carry" title="Six walls, roughly." />
     <ul class="departments">
       {departments.map((d, i) => (
         <li>
           <Reveal delay={i}>
             <article>
+              <figure class="departments__figure">
+                <Image src={d.image} alt={d.imageAlt}
+                  widths={[320, 480, 720]}
+                  sizes="(max-width: 40rem) 90vw, (max-width: 64rem) 44vw, 22rem"
+                  loading="lazy" decoding="async" />
+              </figure>
               <h3>{d.title}</h3>
               <p>{d.body}</p>
               <ArrowLink href="/contact/">Ask a pro</ArrowLink>
@@ -117,7 +163,7 @@ const galleryItems = [
     </ul>
   </Section>
 
-  <Section tone="cream">
+  <Section tone="cream" id="brands">
     <SectionHead eyebrow="Brands" title="Three worth their own page." />
     <div class="brand-grid">
       <Reveal delay={0}>
@@ -138,7 +184,7 @@ const galleryItems = [
     </div>
   </Section>
 
-  <Section tone="linen">
+  <Section tone="linen" id="why">
     <SectionHead eyebrow="Why a pro shop" title="What the box does not come with." />
     <ol class="why">
       <li><Reveal delay={0}><h3>It fits you</h3><p>Draw length off your actual anchor, draw weight you can hold on arrow forty, a grip that puts your hand in the same place every time.</p></Reveal></li>
@@ -149,7 +195,7 @@ const galleryItems = [
     <p class="why__link"><ArrowLink href="/insights/why-we-dont-sell-online/">Why we don&rsquo;t sell online</ArrowLink></p>
   </Section>
 
-  <Section tone="cream">
+  <Section tone="cream" id="showroom">
     <SectionHead eyebrow="The showroom" title="What it actually looks like." />
     <GalleryBlock items={galleryItems} label="Pro shop photographs" />
   </Section>
@@ -190,6 +236,24 @@ const galleryItems = [
     gap: var(--sp-6) var(--sp-7);
   }
   .departments article { display: grid; gap: var(--sp-3); align-content: start; padding-top: var(--sp-4); border-top: 1px solid var(--rule); }
+  .departments__figure {
+    margin: 0 0 var(--sp-1);
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--cream-200);
+    aspect-ratio: 4 / 3;
+  }
+  .departments__figure :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* A slow settle on hover, in keeping with the rest of the page. */
+    transition: scale var(--dur-slow) var(--ease);
+  }
+  .departments article:hover .departments__figure :global(img) { scale: 1.03; }
+  @media (prefers-reduced-motion: reduce) {
+    .departments article:hover .departments__figure :global(img) { scale: 1; }
+  }
   .departments h3 { font-size: var(--fs-h4); margin: 0; }
   .departments p { margin: 0; font-size: var(--fs-small); line-height: 1.65; }
 
