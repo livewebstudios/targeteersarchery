@@ -89,34 +89,44 @@ on its own pause button, and under `prefers-reduced-motion` it stops being a
 carousel and renders as a plain wrapped row. Only the first pass is exposed to
 screen readers and the tab order.
 
-**It currently shows cream wordmarks, not logos.** Manufacturer logo files were
-not in the material handed over, and hotlinking them from the brands' own sites
-is off the table. The component already looks for a real logo per brand:
+**Every tile now carries a real mark.** The component matches a file here to
+each brand's `slug` in `src/data/business.ts`:
 
 ```
-src/assets/brands/hoyt.svg
-src/assets/brands/mathews.svg
-src/assets/brands/bowtech.svg
-src/assets/brands/tenpoint.svg
-src/assets/brands/ravin.svg
-src/assets/brands/sitka.svg
-src/assets/brands/easton.svg
-src/assets/brands/carbon-express.svg
+src/assets/brands/targeteers.png      the shop's own, leads the row
+src/assets/brands/hoyt.png            from the previous site's media
+src/assets/brands/mathews.svg         mathewsinc.com
+src/assets/brands/bowtech.png         bowtecharchery.com
+src/assets/brands/tenpoint.png        tenpointcrossbows.com
+src/assets/brands/ravin.svg           ravincrossbows.com
+src/assets/brands/sitka.svg           sitkagear.com
+src/assets/brands/easton.png          eastonarchery.com
+src/assets/brands/carbon-express.png  feradyne.com
 ```
 
-Drop those files in, rebuild, and each tile switches from the wordmark to the
-real mark. No code change. The filename has to match the brand's `slug` in
-`src/data/business.ts`. On the dark bands, logos are knocked back to cream so
-the row still reads as one row.
+Drop a replacement in under the same slug, rebuild, and the tile picks it up.
+No code change. On the dark bands logos are knocked back to cream so the row
+reads as one row; the Targeteers tile is exempt, because an internal `url` in
+`business.ts` is what marks a tile as ours.
 
-Get the files from each manufacturer's dealer portal rather than off their
-public site: the portal versions are the approved lockups and come with the
-usage terms.
+**These came off the manufacturers' public sites, on the client's instruction
+as an authorized dealer, and four needed work to be usable.** Public sites
+serve the variant their own header needs, which is rarely the one you want:
 
-Two logos did survive in the old site's media, if you want them wired sooner:
-Hoyt (clean, with transparency) and Bowtech (low resolution, and carrying an
-old tagline). Both are in the working folder at
-`assets/extracted-media/uploads/2020/11/`.
+| Brand | What was published | What was done |
+|---|---|---|
+| Mathews | White SVG, for a dark header | Fills swapped to ink |
+| Carbon Express | White PNG, 894px | Greys mapped to ink |
+| Bowtech | White PNG carrying the retired "Refuse to Follow" line | Slogan cropped off, greys mapped to ink, the red swoosh left alone |
+| Easton | A promo lockup with "Made in USA" and a flag under the wordmark | Cropped to the wordmark |
+| SITKA | Inline SVG in the page, and it is the animal mark alone, no wordmark | Extracted, `currentColor` set to ink |
+| Hoyt, Ravin, TenPoint | Usable as published | Trimmed only |
+
+Worth replacing with dealer-portal files when convenient. The portal versions
+are the approved lockups, they come with the usage terms, and they will not be
+a header variant that had to be recoloured. The SITKA tile in particular is the
+symbol without the wordmark, and the Hoyt mark is an older lockup that came off
+the previous site rather than the portal.
 
 ---
 
