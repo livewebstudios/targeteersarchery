@@ -39,7 +39,8 @@
   --sky-mist: #a9bfc7;
 
   /* ------------------------------------------------------------ typography */
-  --font-display: 'Fraunces Variable', 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-display: 'Familjen Grotesk Variable', 'Familjen Grotesk', ui-sans-serif, system-ui,
+    -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   --font-body: 'Instrument Sans Variable', 'Instrument Sans', ui-sans-serif, system-ui,
     -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
 
