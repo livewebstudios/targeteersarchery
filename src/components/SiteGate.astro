@@ -17,6 +17,22 @@ import logoRGB from '~/assets/brand/logoRGB.png';
 import { business, addressLine, hours, hoursLabel } from '~/data/business';
 
 const isoToday = ((new Date().getDay() + 6) % 7) + 1;
+
+/* Seven rows pushed the admin field below the fold on a laptop. Collapsing
+   runs of identical days gets it to four and reads better anyway. */
+type Row = { days: string; label: string; today: boolean };
+const rows: Row[] = [];
+for (const h of hours) {
+  const label = hoursLabel(h);
+  const last = rows[rows.length - 1];
+  const today = h.day === isoToday;
+  if (last && last.label === label) {
+    last.days = `${last.days.split(' \u2013 ')[0]} \u2013 ${h.label}`;
+    last.today = last.today || today;
+  } else {
+    rows.push({ days: h.label, label, today });
+  }
+}
 ---
 
 <script is:inline>
@@ -34,12 +50,15 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
 
 <div id="site-gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
   <div class="gate__panel">
-    <Image class="gate__logo" src={logoRGB} alt="Targeteers Archery" widths={[440, 880]} sizes="260px" loading="eager" />
+    <div class="gate__intro">
+      <Image class="gate__logo" src={logoRGB} alt="Targeteers Archery" widths={[440, 880]} sizes="240px" loading="eager" />
 
-    <p class="gate__eyebrow">Coming soon</p>
-    <h1 class="gate__title" id="gate-title">The new site is under construction.</h1>
-    <p class="gate__lead">The shop is open and the range is running. Call us or stop in.</p>
+      <p class="gate__eyebrow">Coming soon</p>
+      <h1 class="gate__title" id="gate-title">The new site is under construction.</h1>
+      <p class="gate__lead">The shop is open and the range is running. Call us or stop in.</p>
+    </div>
 
+    <div class="gate__details">
     <div class="gate__facts">
       <div class="gate__fact">
         <p class="gate__label">Phone</p>
@@ -55,10 +74,10 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
       <p class="gate__label">Hours</p>
       <table>
         <tbody>
-          {hours.map((h) => (
-            <tr data-today={h.day === isoToday ? '' : undefined}>
-              <th scope="row">{h.label}</th>
-              <td>{hoursLabel(h)}</td>
+          {rows.map((r) => (
+            <tr data-today={r.today ? '' : undefined}>
+              <th scope="row">{r.days}</th>
+              <td>{r.label}</td>
             </tr>
           ))}
         </tbody>
@@ -82,7 +101,11 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
       </div>
       <p class="gate__error" id="gate-error" role="status" hidden>That is not it. Try again.</p>
     </div>
+    </div>
   </div>
+
+  {/* Pinned to the corner so the field is reachable on any screen height. */}
+  <button type="button" class="gate__jump" data-gate-jump hidden>Admin</button>
 </div>
 
 <style is:global>
@@ -111,8 +134,9 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
 
   #site-gate .gate__panel {
     width: min(38rem, 100%);
+    max-height: calc(100dvh - 2rem);
     margin: auto;
-    padding: clamp(1.75rem, 1rem + 3vw, 3rem);
+    padding: clamp(1.5rem, 0.9rem + 2.2vw, 2.5rem);
     border: 1px solid rgba(248, 245, 238, 0.16);
     border-radius: var(--radius-lg, 10px);
     background: rgba(20, 38, 27, 0.72);
@@ -120,11 +144,12 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
     text-align: center;
   }
 
+
   #site-gate .gate__logo {
-    width: 260px;
-    max-width: 70%;
+    width: 210px;
+    max-width: 62%;
     height: auto;
-    margin: 0 auto var(--sp-5, 1.5rem);
+    margin: 0 auto var(--sp-4, 1rem);
   }
 
   #site-gate .gate__eyebrow {
@@ -160,8 +185,8 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
   #site-gate .gate__facts {
     display: grid;
     gap: var(--sp-4, 1rem);
-    margin-top: var(--sp-6, 2rem);
-    padding-top: var(--sp-5, 1.5rem);
+    margin-top: var(--sp-5, 1.5rem);
+    padding-top: var(--sp-4, 1rem);
     border-top: 1px solid rgba(248, 245, 238, 0.16);
   }
   @media (min-width: 34rem) {
@@ -191,8 +216,8 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
   #site-gate .gate__value a:hover { color: var(--ember-hover, #dda043); }
 
   #site-gate .gate__hours {
-    margin-top: var(--sp-5, 1.5rem);
-    padding-top: var(--sp-5, 1.5rem);
+    margin-top: var(--sp-4, 1rem);
+    padding-top: var(--sp-4, 1rem);
     border-top: 1px solid rgba(248, 245, 238, 0.16);
   }
   #site-gate .gate__hours table {
@@ -216,8 +241,9 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
   }
 
   #site-gate .gate__form {
-    margin-top: var(--sp-6, 2rem);
-    padding-top: var(--sp-5, 1.5rem);
+    margin-top: var(--sp-4, 1rem);
+    padding-top: var(--sp-4, 1rem);
+    scroll-margin: var(--sp-6, 2rem);
     border-top: 1px solid rgba(248, 245, 238, 0.16);
   }
   #site-gate .gate__row {
@@ -264,6 +290,59 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
     color: var(--ember-hover, #dda043);
   }
   #site-gate .gate__error[hidden] { display: none; }
+
+  #site-gate .gate__jump {
+    position: fixed;
+    right: var(--sp-4, 1rem);
+    bottom: var(--sp-4, 1rem);
+    padding: 0.4rem 0.7rem;
+    border: 1px solid rgba(248, 245, 238, 0.2);
+    border-radius: var(--radius, 4px);
+    background: rgba(20, 38, 27, 0.7);
+    color: var(--sage-300, #9db59a);
+    font: inherit;
+    font-size: var(--fs-eyebrow, 0.8125rem);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow, 0.14em);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  #site-gate .gate__jump:hover {
+    color: var(--cream-50, #f8f5ee);
+    border-color: var(--ember-bright, #c8862b);
+  }
+  #site-gate .gate__jump:focus-visible {
+    outline: 2px solid var(--ember-bright, #c8862b);
+    outline-offset: 2px;
+  }
+  #site-gate .gate__jump[hidden] { display: none; }
+  @media (min-width: 58rem) and (min-height: 30rem) {
+    #site-gate .gate__panel {
+      width: min(58rem, 100%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: clamp(2rem, 1rem + 3vw, 3rem);
+      text-align: left;
+    }
+    #site-gate .gate__logo { margin-left: 0; }
+    #site-gate .gate__details {
+      padding-left: clamp(2rem, 1rem + 3vw, 3rem);
+      border-left: 1px solid rgba(248, 245, 238, 0.16);
+    }
+    /* The rules between blocks are redundant once a column rule divides them. */
+    #site-gate .gate__facts,
+    #site-gate .gate__hours,
+    #site-gate .gate__form {
+      border-top: 0;
+      padding-top: 0;
+    }
+    #site-gate .gate__facts { grid-template-columns: 1fr; margin-top: 0; gap: var(--sp-4, 1rem); }
+    #site-gate .gate__hours table { width: 100%; margin: 0; }
+    #site-gate .gate__hours { margin-top: var(--sp-5, 1.5rem); }
+    #site-gate .gate__form { margin-top: var(--sp-5, 1.5rem); }
+    #site-gate .gate__row { justify-content: flex-start; }
+  }
 </style>
 
 <script is:inline>
@@ -300,6 +379,26 @@ const isoToday = ((new Date().getDay() + 6) % 7) + 1;
       }
 
       button.addEventListener('click', attempt);
+
+      /* The corner shortcut only earns its place when the field has scrolled
+         out of view. On a screen tall enough to show the whole panel it would
+         just sit on top of the Enter button. */
+      var jump = document.querySelector('[data-gate-jump]');
+      if (jump) {
+        jump.addEventListener('click', function () {
+          box.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          input.focus({ preventScroll: true });
+        });
+
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver(function (entries) {
+            jump.hidden = entries[0].isIntersecting;
+          }, { root: document.getElementById('site-gate'), threshold: 0.85 }).observe(box);
+        } else {
+          jump.hidden = false;
+        }
+      }
+
       input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') { e.preventDefault(); attempt(); }
       });
