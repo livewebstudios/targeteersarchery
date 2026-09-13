@@ -1,0 +1,316 @@
+---
+/**
+ * TEMPORARY pre-launch gate. Covers every page built on Base.astro so no one
+ * browses the site before Rob signs off. The shop details stay visible so a
+ * customer who lands here still gets the phone, the address and the hours.
+ *
+ * Typing the admin password drops a cookie (`tgt_gate`) and the gate stays
+ * down for a week on that browser.
+ *
+ * This is a curtain, not a lock. The page HTML is still in the source and the
+ * password lives in the client bundle, so treat it as "keeps visitors out",
+ * not as security. Delete this component, its import and its one line in
+ * Base.astro on launch day.
+ */
+import { Image } from 'astro:assets';
+import logoRGB from '~/assets/brand/logoRGB.png';
+import { business, addressLine, hours, hoursLabel } from '~/data/business';
+
+const isoToday = ((new Date().getDay() + 6) % 7) + 1;
+---
+
+<script is:inline>
+  /* Runs before the gate paints, so an unlocked browser never sees a flash of
+     it. Re-runs after every view transition, which resets <html>'s classes. */
+  (function () {
+    function applyGate() {
+      var open = document.cookie.indexOf('tgt_gate=open') > -1;
+      document.documentElement.classList.toggle('gate-off', open);
+    }
+    applyGate();
+    document.addEventListener('astro:after-swap', applyGate);
+  })();
+</script>
+
+<div id="site-gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+  <div class="gate__panel">
+    <Image class="gate__logo" src={logoRGB} alt="Targeteers Archery" widths={[440, 880]} sizes="260px" loading="eager" />
+
+    <p class="gate__eyebrow">Coming soon</p>
+    <h1 class="gate__title" id="gate-title">The new site is under construction.</h1>
+    <p class="gate__lead">The shop is open and the range is running. Call us or stop in.</p>
+
+    <div class="gate__facts">
+      <div class="gate__fact">
+        <p class="gate__label">Phone</p>
+        <p class="gate__value"><a href={business.phoneHref}>{business.phone}</a></p>
+      </div>
+      <div class="gate__fact">
+        <p class="gate__label">Address</p>
+        <p class="gate__value">{addressLine}</p>
+      </div>
+    </div>
+
+    <div class="gate__hours">
+      <p class="gate__label">Hours</p>
+      <table>
+        <tbody>
+          {hours.map((h) => (
+            <tr data-today={h.day === isoToday ? '' : undefined}>
+              <th scope="row">{h.label}</th>
+              <td>{hoursLabel(h)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    {/* Deliberately not a <form>. Astro's ClientRouter intercepts form
+        submissions and swaps the page out from under the handler. */}
+    <div class="gate__form" data-gate-form>
+      <label class="gate__label" for="gate-pass">Admin</label>
+      <div class="gate__row">
+        <input
+          type="password"
+          id="gate-pass"
+          name="gate-pass"
+          autocomplete="current-password"
+          spellcheck="false"
+          aria-describedby="gate-error"
+        />
+        <button type="button" data-gate-enter>Enter</button>
+      </div>
+      <p class="gate__error" id="gate-error" role="status" hidden>That is not it. Try again.</p>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  /* Default state is closed. Only the cookie check opens it, so a browser with
+     JavaScript off sees the gate and nothing else. */
+  html:not(.gate-off) { overflow: hidden; }
+  html:not(.gate-off) body { overflow: hidden; }
+  html:not(.gate-off) body > *:not(#site-gate) { display: none !important; }
+  html.gate-off #site-gate { display: none !important; }
+
+  #site-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    display: grid;
+    place-items: center;
+    overflow-y: auto;
+    padding: var(--sp-5, 1.5rem);
+    background: var(--pine-900, #14261b);
+    background-image:
+      radial-gradient(60rem 40rem at 50% -10%, rgba(200, 134, 43, 0.16), transparent 70%),
+      radial-gradient(48rem 36rem at 100% 110%, rgba(58, 107, 74, 0.35), transparent 70%);
+    color: var(--cream-50, #f8f5ee);
+    font-family: var(--font-body, system-ui, sans-serif);
+  }
+
+  #site-gate .gate__panel {
+    width: min(38rem, 100%);
+    margin: auto;
+    padding: clamp(1.75rem, 1rem + 3vw, 3rem);
+    border: 1px solid rgba(248, 245, 238, 0.16);
+    border-radius: var(--radius-lg, 10px);
+    background: rgba(20, 38, 27, 0.72);
+    backdrop-filter: blur(6px);
+    text-align: center;
+  }
+
+  #site-gate .gate__logo {
+    width: 260px;
+    max-width: 70%;
+    height: auto;
+    margin: 0 auto var(--sp-5, 1.5rem);
+  }
+
+  #site-gate .gate__eyebrow {
+    margin: 0 0 var(--sp-3, 0.75rem);
+    font-family: var(--font-display, inherit);
+    font-size: var(--fs-eyebrow, 0.8125rem);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow, 0.14em);
+    text-transform: uppercase;
+    color: var(--ember-hover, #dda043);
+  }
+
+  #site-gate .gate__title {
+    margin: 0 0 var(--sp-3, 0.75rem);
+    font-family: var(--font-display, inherit);
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+    font-weight: 600;
+    line-height: var(--lh-snug, 1.18);
+    letter-spacing: -0.01em;
+    /* global.css sets a dark --fg on every heading; the gate sits on pine. */
+    color: var(--cream-50, #f8f5ee);
+    text-wrap: balance;
+  }
+
+  #site-gate .gate__lead {
+    margin: 0 auto;
+    max-width: 30rem;
+    font-size: var(--fs-body, 1rem);
+    line-height: var(--lh-body, 1.65);
+    color: var(--moss-200, #c9d3be);
+  }
+
+  #site-gate .gate__facts {
+    display: grid;
+    gap: var(--sp-4, 1rem);
+    margin-top: var(--sp-6, 2rem);
+    padding-top: var(--sp-5, 1.5rem);
+    border-top: 1px solid rgba(248, 245, 238, 0.16);
+  }
+  @media (min-width: 34rem) {
+    #site-gate .gate__facts { grid-template-columns: 1fr 1fr; }
+  }
+
+  #site-gate .gate__label {
+    margin: 0 0 var(--sp-2, 0.5rem);
+    font-family: var(--font-display, inherit);
+    font-size: var(--fs-eyebrow, 0.8125rem);
+    font-weight: 600;
+    letter-spacing: var(--ls-eyebrow, 0.14em);
+    text-transform: uppercase;
+    color: var(--sage-300, #9db59a);
+  }
+
+  #site-gate .gate__value {
+    margin: 0;
+    font-size: var(--fs-body, 1rem);
+    line-height: 1.5;
+  }
+  #site-gate .gate__value a {
+    color: var(--cream-50, #f8f5ee);
+    text-decoration-color: var(--ember-bright, #c8862b);
+    text-underline-offset: 3px;
+  }
+  #site-gate .gate__value a:hover { color: var(--ember-hover, #dda043); }
+
+  #site-gate .gate__hours {
+    margin-top: var(--sp-5, 1.5rem);
+    padding-top: var(--sp-5, 1.5rem);
+    border-top: 1px solid rgba(248, 245, 238, 0.16);
+  }
+  #site-gate .gate__hours table {
+    width: min(24rem, 100%);
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+  #site-gate .gate__hours th,
+  #site-gate .gate__hours td {
+    padding: 0.45rem 0;
+    font-size: var(--fs-small, 0.875rem);
+    font-weight: 400;
+    color: var(--moss-200, #c9d3be);
+  }
+  #site-gate .gate__hours th { text-align: left; }
+  #site-gate .gate__hours td { text-align: right; font-variant-numeric: tabular-nums; }
+  #site-gate .gate__hours tr[data-today] th,
+  #site-gate .gate__hours tr[data-today] td {
+    color: var(--cream-50, #f8f5ee);
+    font-weight: 600;
+  }
+
+  #site-gate .gate__form {
+    margin-top: var(--sp-6, 2rem);
+    padding-top: var(--sp-5, 1.5rem);
+    border-top: 1px solid rgba(248, 245, 238, 0.16);
+  }
+  #site-gate .gate__row {
+    display: flex;
+    gap: var(--sp-2, 0.5rem);
+    justify-content: center;
+  }
+  #site-gate .gate__row input {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 18rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid rgba(248, 245, 238, 0.28);
+    border-radius: var(--radius, 4px);
+    background: rgba(20, 38, 27, 0.6);
+    color: var(--cream-50, #f8f5ee);
+    font: inherit;
+    font-size: 1rem;
+  }
+  #site-gate .gate__row input:focus-visible {
+    outline: 2px solid var(--ember-bright, #c8862b);
+    outline-offset: 2px;
+  }
+  #site-gate .gate__row button {
+    padding: 0.7rem 1.25rem;
+    border: 0;
+    border-radius: var(--radius, 4px);
+    background: var(--ember-bright, #c8862b);
+    color: var(--bark-900, #1e1711);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--dur-fast, 240ms) var(--ease, ease);
+  }
+  #site-gate .gate__row button:hover { background: var(--ember-hover, #dda043); }
+  #site-gate .gate__row button:focus-visible {
+    outline: 2px solid var(--cream-50, #f8f5ee);
+    outline-offset: 2px;
+  }
+
+  #site-gate .gate__error {
+    margin: var(--sp-3, 0.75rem) 0 0;
+    font-size: var(--fs-small, 0.875rem);
+    color: var(--ember-hover, #dda043);
+  }
+  #site-gate .gate__error[hidden] { display: none; }
+</style>
+
+<script is:inline>
+  (function () {
+    function wire() {
+      var box = document.querySelector('[data-gate-form]');
+      if (!box || box.dataset.wired) return;
+      box.dataset.wired = '1';
+
+      var input = box.querySelector('#gate-pass');
+      var button = box.querySelector('[data-gate-enter]');
+      var error = box.querySelector('#gate-error');
+
+      function attempt() {
+        /* Base64 of the shared password. Obfuscation only: anyone reading the
+           bundle can decode it. Fine for a few days of pre-launch cover. */
+        var ok = false;
+        try {
+          ok = btoa(String(input.value).trim().toLowerCase()) === 'dEByZ2V0';
+        } catch (err) {
+          ok = false;
+        }
+
+        if (!ok) {
+          error.hidden = false;
+          input.value = '';
+          input.focus();
+          return;
+        }
+
+        var secure = location.protocol === 'https:' ? '; secure' : '';
+        document.cookie = 'tgt_gate=open; path=/; max-age=604800; samesite=lax' + secure;
+        document.documentElement.classList.add('gate-off');
+      }
+
+      button.addEventListener('click', attempt);
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); attempt(); }
+      });
+      input.addEventListener('input', function () { error.hidden = true; });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', wire);
+    } else {
+      wire();
+    }
+    document.addEventListener('astro:page-load', wire);
+  })();
+</script>

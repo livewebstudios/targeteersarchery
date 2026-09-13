@@ -15,6 +15,7 @@ import JsonLd from '~/components/seo/JsonLd.astro';
 import { localBusinessSchema, breadcrumbSchema } from '~/components/seo/localBusiness';
 import { groupFor } from '~/data/nav';
 import SubRail from '~/components/nav/SubRail.astro';
+import SiteGate from '~/components/SiteGate.astro';
 
 export interface Props extends SeoProps {
   /** The hero page lets the nav float over the film. */
@@ -78,6 +79,9 @@ if (schema) graph.push(...(Array.isArray(schema) ? schema : [schema]));
   </head>
 
   <body class={bodyClasses}>
+    {/* TEMPORARY pre-launch gate. Remove this line and the import on launch day. */}
+    <SiteGate />
+
     <a class="skip-link" href="#main">Skip to content</a>
     <Nav overHero={overHero} />
     <main id="main">
