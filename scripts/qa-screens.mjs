@@ -5,8 +5,13 @@
  *   npm run build && npx astro preview --port 4322 &
  *   node scripts/qa-screens.mjs
  *
- * Writes build/qa/<page>-<width>.png. Reduced motion is forced so the pinned
+ * Writes qa/<page>-<width>.png. Reduced motion is forced so the pinned
  * sections render as their static fallbacks rather than mid-animation.
+ *
+ * The pre-launch gate covers every page, so the gate cookie is set first.
+ *
+ *   node scripts/qa-screens.mjs --demos   # only /demos/ and the three demos,
+ *                                         # at 390 and 1440
  */
 import puppeteer from 'puppeteer-core';
 import { mkdir } from 'node:fs/promises';
@@ -15,10 +20,22 @@ import path from 'node:path';
 const BASE = process.env.QA_BASE ?? 'http://localhost:4322';
 const OUT = path.resolve(process.cwd(), 'qa');
 const CHROME =
-  process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  process.env.CHROME_PATH ??
+  (process.platform === 'win32'
+    ? 'C:/Program Files/Google/Chrome/Application/chrome.exe'
+    : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome');
 
-const WIDTHS = [375, 768, 1280, 1920];
-const PAGES = [
+const DEMOS = process.argv.includes('--demos');
+
+const DEMO_PAGES = [
+  ['demos', '/demos/'],
+  ['demo-1-base-camp', '/demos/1-base-camp/'],
+  ['demo-2-trailhead', '/demos/2-trailhead/'],
+  ['demo-3-long-shot', '/demos/3-long-shot/'],
+];
+
+const WIDTHS = DEMOS ? [390, 1440] : [375, 768, 1280, 1920];
+const SITE_PAGES = [
   ['home', '/'],
   ['about', '/about/'],
   ['pro-shop', '/pro-shop/'],
@@ -41,6 +58,7 @@ const PAGES = [
   ['careers', '/careers/'],
   ['404', '/404/'],
 ];
+const PAGES = DEMOS ? DEMO_PAGES : SITE_PAGES;
 
 await mkdir(OUT, { recursive: true });
 
@@ -52,6 +70,8 @@ const browser = await puppeteer.launch({
 
 const page = await browser.newPage();
 await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+// Past the pre-launch gate, the same way a visitor with the password is.
+await page.setCookie({ name: 'tgt_gate', value: 'open', url: BASE });
 
 let shots = 0;
 for (const [name, route] of PAGES) {
@@ -83,4 +103,4 @@ for (const [name, route] of PAGES) {
 }
 
 await browser.close();
-console.log(`${shots} screenshots written to build/qa/`);
+console.log(`${shots} screenshots written to qa/`);

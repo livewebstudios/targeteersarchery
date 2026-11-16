@@ -1,0 +1,684 @@
+---
+/**
+ * Demo 3: THE LONG SHOT.
+ * One arrow is loosed at the top of the page and lands in the target at the
+ * bottom. Seven full-screen stations, each a single answer, over seven
+ * scenes that run from blue hour to last light. Clear glass, hard 6px edges,
+ * Barlow Condensed heavy italic caps.
+ *
+ * No scroll-jacking and no pinning: plain 100svh sections, a fixed backdrop
+ * crossfade, and an arrow on a fixed rail whose position is scrubbed to the
+ * scroll. It reaches the target exactly when station 6 reaches the top.
+ */
+import '@fontsource/barlow-condensed/latin-700-italic.css';
+import '@fontsource/barlow-condensed/latin-800-italic.css';
+import { Image, Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import DemoBase from '~/layouts/DemoBase.astro';
+import DemoNav from '~/components/demo/DemoNav.astro';
+import DemoFooter from '~/components/demo/DemoFooter.astro';
+import FactList from '~/components/demo/FactList.astro';
+import BrandArrow from '~/components/demo/BrandArrow.astro';
+import OpenNowPill from '~/components/OpenNowPill.astro';
+import HoursTable from '~/components/HoursTable.astro';
+import Form from '~/components/Form.astro';
+import Field from '~/components/Field.astro';
+import ArrowRightIcon from '~/components/icons/ArrowRightIcon.astro';
+import PhoneIcon from '~/components/icons/PhoneIcon.astro';
+import { task, imageFor, type Task } from '~/data/home';
+import { business, brands, addressLine } from '~/data/business';
+
+import ridge from '~/assets/demo-scenes/ridge.jpg';
+import meadow from '~/assets/demo-scenes/meadow.jpg';
+import timber from '~/assets/demo-scenes/timber.jpg';
+import valley from '~/assets/demo-scenes/valley.jpg';
+import canopy from '~/assets/demo-scenes/canopy.jpg';
+import hardwoods from '~/assets/demo-scenes/hardwoods.jpg';
+import dusk from '~/assets/demo-scenes/dusk.jpg';
+import trophyImg from '~/assets/trophy/mount-04.jpg';
+
+const scenes = [ridge, meadow, timber, valley, canopy, hardwoods, dusk];
+
+/* The panels carry one sentence: the first one of each task's body. */
+const firstSentence = (t: Task) => t.body.split(/(?<=\.)\s/)[0];
+
+type Station = {
+  n: number;
+  name: string;
+  tasks: Task[];
+  side: 'left' | 'right';
+  photo?: { src: ImageMetadata; alt: string };
+};
+const stations: Station[] = [
+  { n: 1, name: 'THE RANGE', tasks: [task('shoot')], side: 'left' },
+  { n: 2, name: 'THE BENCH', tasks: [task('service')], side: 'right' },
+  { n: 3, name: 'THE WALL', tasks: [task('gear')], side: 'left' },
+  { n: 4, name: 'THE LINE', tasks: [task('lessons'), task('kids')], side: 'left' },
+  {
+    n: 5, name: 'THE HUNT', tasks: [task('hunt')], side: 'right',
+    photo: { src: trophyImg, alt: 'Snow-covered spruce in mountain hunting country' },
+  },
+];
+const railLabels = ['THE DRAW', 'THE RANGE', 'THE BENCH', 'THE WALL', 'THE LINE', 'THE HUNT', 'THE TARGET'];
+
+const logoFiles = import.meta.glob<{ default: ImageMetadata }>('~/assets/brands/*.{svg,png}', { eager: true });
+const dealerMarks = brands
+  .filter((b) => !b.url.startsWith('/'))
+  .map((b) => ({ ...b, logo: Object.entries(logoFiles).find(([p]) => p.split('/').pop()?.replace(/\.[^.]+$/, '') === b.slug)?.[1].default }))
+  .filter((b) => b.logo);
+
+/* Hand-written public path, kept relative (LWS path rule). */
+const depth = Astro.url.pathname.split('/').filter(Boolean).length;
+const rel = '../'.repeat(depth);
+const home = '/demos/3-long-shot/';
+---
+<DemoBase
+  demo={3}
+  glass="clear"
+  title="The Long Shot · Home page demo 3 | Targeteers Archery"
+  description="Archery for life. North Jersey's family-owned archery pro shop and indoor range in Saddle Brook, since 1957."
+  ogImage="/og/home.jpg"
+>
+  <!-- ------------------------------------------------------------ backdrop -->
+  <div class="d-backdrop ls-backdrop" slot="backdrop" aria-hidden="true" data-ls-backdrop>
+    {scenes.map((s, i) => (
+      <div class="ls-layer" data-scene={String(i)} data-active={i === 0 ? '' : undefined}>
+        <Picture src={s} alt="" formats={['avif', 'webp']} widths={[800, 1200, 1600, 1920]} sizes="100vw"
+          loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} />
+      </div>
+    ))}
+    <div class="d-backdrop__scrim ls-scrim"></div>
+  </div>
+
+  <DemoNav slot="nav" variant="clear" home={home} />
+
+  <!-- ------------------------------------------------------------- the rail
+       Fixed, outside every glass parent. Seven ticks, one per station. -->
+  <nav class="ls-rail" aria-label="Stations" data-ls-rail>
+    <span class="ls-rail__line" aria-hidden="true"></span>
+    <span class="ls-rail__fill" aria-hidden="true" data-rail-fill></span>
+    <ol class="ls-rail__ticks">
+      {railLabels.map((label, i) => (
+        <li class={`ls-tick ${i === 6 ? 'ls-tick--target' : ''}`} data-tick={String(i)}>
+          <a href={`#s${i}`} aria-label={i === 0 ? 'Top: the draw' : `Station ${i} of 6: ${label.toLowerCase()}`}>
+            {i === 6 ? (
+              <span class="ls-target" data-target>
+                <img src={`${rel}images/cropped-target.png`} alt="" width="512" height="512" loading="lazy" decoding="async" />
+                <span class="ls-pulse ls-pulse--y"></span>
+                <span class="ls-pulse ls-pulse--r"></span>
+                <span class="ls-pulse ls-pulse--b"></span>
+              </span>
+            ) : (
+              <span class="ls-ring"></span>
+            )}
+          </a>
+        </li>
+      ))}
+    </ol>
+    <span class="ls-rail__arrow" aria-hidden="true" data-rail-arrow>
+      <span class="ls-rail__kick"><span class="ls-rail__shake" data-rail-kick><BrandArrow tone="light" /></span></span>
+    </span>
+  </nav>
+
+  <!-- ---------------------------------------------------- 0: THE DRAW (hero) -->
+  <section class="ls-station ls-hero" id="s0" data-station="0" aria-labelledby="ls-title">
+    <div class="d-wrap ls-stage">
+      <div class="ls-hero__copy">
+        <p class="ls-kicker">SADDLE BROOK, NEW JERSEY · SINCE 1957</p>
+        <h1 id="ls-title" class="ls-display">ARCHERY FOR LIFE.</h1>
+        <p class="ls-hero__sub">North Jersey's family-owned archery pro shop and indoor range. Saddle Brook, since 1957.</p>
+        <div class="ls-hero__actions">
+          <a class="d-btn d-btn--orange ls-btn" href={business.phoneHref} data-primary>
+            <PhoneIcon size={16} /><span>CALL THE SHOP</span>
+          </a>
+          <OpenNowPill />
+        </div>
+      </div>
+      <a class="ls-cue" href="#s1" data-ls-cue>
+        <span>LOOSE THE ARROW</span>
+        <span class="ls-cue__line" aria-hidden="true"></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------- 1 to 5: stations -->
+  {stations.map((s) => (
+    <section class={`ls-station ls-station--${s.side}`} id={`s${s.n}`} data-station={String(s.n)} aria-labelledby={`ls-s${s.n}-title`}>
+      <div class="d-wrap ls-stage">
+        {s.tasks.length === 1 ? (
+          <div class="ls-unit">
+            <figure class="ls-photo">
+              <Image src={s.photo?.src ?? imageFor(s.tasks[0])} alt={s.photo?.alt ?? s.tasks[0].imageAlt}
+                widths={[360, 560, 800]} sizes="(max-width: 48rem) 80vw, 18rem" loading="lazy" />
+            </figure>
+            <article class="ls-panel glass-clear" data-reveal>
+              <p class="ls-kicker">0{s.n} / 06 · {s.name}</p>
+              <h2 class="shot-head ls-h2" id={`ls-s${s.n}-title`}>{s.tasks[0].title}</h2>
+              <p class="ls-panel__line">{firstSentence(s.tasks[0])}</p>
+              <FactList facts={s.tasks[0].facts} limit={4} />
+              <a class="d-btn d-btn--outline ls-btn" href={s.tasks[0].primary.href}>
+                <span>{s.tasks[0].primary.label}</span><ArrowRightIcon size={16} />
+              </a>
+            </article>
+            {s.n === 3 && (
+              <ul class="ls-marks" aria-label="Authorized dealer">
+                {dealerMarks.map((b) => (
+                  <li>
+                    <a href={b.url} target="_blank" rel="noopener" aria-label={`${b.name} (opens in a new tab)`}>
+                      <Image class="ls-mark" data-slug={b.slug} src={b.logo!} alt={b.name} widths={[160, 320]} sizes="6rem" loading="lazy" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ) : (
+          <div class="ls-pair">
+            <h2 class="visually-hidden" id={`ls-s${s.n}-title`}>{s.name}: lessons, kids and groups</h2>
+            {s.tasks.map((t, i) => (
+              <div class="ls-unit ls-unit--pair">
+                <figure class="ls-photo">
+                  <Image src={imageFor(t)} alt={t.imageAlt} widths={[360, 560, 800]} sizes="(max-width: 48rem) 80vw, 16rem" loading="lazy" />
+                </figure>
+                <article class="ls-panel glass-clear" data-reveal data-stagger={String(i)} aria-labelledby={`ls-${t.id}-title`}>
+                  <p class="ls-kicker">0{s.n} / 06 · {i === 0 ? 'LESSONS' : 'KIDS & GROUPS'}</p>
+                  <h3 class="shot-head ls-h2" id={`ls-${t.id}-title`}>{t.title}</h3>
+                  <p class="ls-panel__line">{firstSentence(t)}</p>
+                  <FactList facts={t.facts} limit={4} />
+                  <a class="d-btn d-btn--outline ls-btn" href={t.primary.href}>
+                    <span>{t.primary.label}</span><ArrowRightIcon size={16} />
+                  </a>
+                </article>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  ))}
+
+  <!-- -------------------------------------------------------- 6: THE TARGET -->
+  <section class="ls-station ls-station--target" id="s6" data-station="6" aria-labelledby="ls-s6-title">
+    <div class="d-wrap ls-stage">
+      <article class="ls-panel ls-visit glass-clear" id="visit" data-ls-visit>
+        <p class="ls-kicker">06 / 06 · THE TARGET</p>
+        <h2 class="shot-head ls-h2" id="ls-s6-title">101 ROUTE 46 WEST.</h2>
+        <a class="ls-phone" href={business.phoneHref}>{business.phone}</a>
+        <p class="ls-visit__addr">{addressLine}</p>
+        <HoursTable />
+        <a class="d-btn d-btn--orange ls-btn" href={business.directionsUrl} target="_blank" rel="noopener" data-primary>GET DIRECTIONS</a>
+        <div class="ls-visit__form">
+          <p class="ls-kicker">SEND US A NOTE</p>
+          <Form action={business.formspree.contact} subject="Website message (Long Shot demo)" name="contact-long-shot" submitLabel="SEND IT">
+            <Field label="Name" name="name" required autocomplete="name" />
+            <Field label="Phone or email" name="contact" required autocomplete="email" />
+            <Field label="Message" name="message" as="textarea" rows={4} required full />
+          </Form>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <DemoFooter slot="footer" variant="clear" />
+</DemoBase>
+
+<style>
+  /* ------------------------------------------------------------ backdrop */
+  .ls-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.1s var(--ease);
+  }
+  .ls-layer[data-active] { opacity: 1; }
+  .ls-layer :global(picture),
+  .ls-layer :global(img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .ls-layer :global(img) { filter: saturate(0.85) contrast(1.06) brightness(0.9); }
+  .ls-scrim { background: linear-gradient(rgba(10, 26, 18, 0.35), rgba(10, 26, 18, 0.7)); }
+
+  /* ------------------------------------------------------------- display */
+  .ls-display,
+  .ls-h2,
+  .ls-phone {
+    font-family: var(--font-condensed);
+    font-style: italic;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.005em;
+  }
+  .ls-kicker {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--tgt-orange-hi);
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+  }
+  .ls-btn { border-radius: 4px; }
+
+  /* ------------------------------------------------------------ stations
+     Plain full-height sections. Room on the right for the rail. */
+  .ls-station {
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: clamp(5rem, 3rem + 6vh, 8rem);
+    scroll-margin-top: 0;
+  }
+  .ls-stage {
+    display: grid;
+    padding-right: max(var(--gutter), 2.75rem);
+  }
+  @media (min-width: 48rem) { .ls-stage { padding-right: max(var(--gutter), 7.5rem); } }
+
+  /* ---------------------------------------------------------------- hero */
+  .ls-hero { position: relative; align-items: end; padding-bottom: clamp(3rem, 2rem + 6vh, 6rem); }
+  /* Local scrim behind the hero copy: the snow and sky in the ridge scene are
+     the brightest thing on the page, and this copy sits on them directly. */
+  .ls-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, rgba(6, 16, 11, 0.86) 0%, rgba(6, 16, 11, 0.55) 45%, transparent 75%),
+      linear-gradient(to right, rgba(6, 16, 11, 0.6), transparent 70%);
+    pointer-events: none;
+  }
+  .ls-hero .ls-stage { position: relative; gap: var(--sp-7); }
+  .ls-hero__copy { display: grid; gap: var(--sp-5); max-width: 52rem; }
+  .ls-display {
+    font-size: clamp(2.25rem, 9.5vw, 5rem);
+    line-height: 0.9;
+    color: var(--tgt-white);
+  }
+  .ls-hero__sub { margin: 0; font-size: var(--fs-lead); line-height: 1.45; max-width: 40ch; color: rgba(248, 248, 244, 0.92); }
+  .ls-hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-4); }
+  .ls-cue {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-4);
+    min-height: 2.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--tgt-white);
+    text-decoration: none;
+  }
+  .ls-cue__line { width: 4rem; height: 1px; background: var(--tgt-orange-hi); }
+
+  /* --------------------------------------------------------------- units */
+  .ls-unit {
+    position: relative;
+    width: 100%;
+    max-width: 36rem;
+    display: grid;
+  }
+  .ls-station--right .ls-unit { justify-self: end; }
+  .ls-panel {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--sp-4);
+    justify-items: start;
+    padding: clamp(1.25rem, 0.9rem + 1.8vw, 2.25rem);
+  }
+  .ls-h2 { font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem); line-height: 0.95; color: var(--tgt-white); }
+  .ls-panel__line { margin: 0; font-size: 1.0625rem; color: rgba(248, 248, 244, 0.9); max-width: 60ch; }
+  .ls-panel :global(.fact-list) { max-width: none; }
+
+  /* The framed shop photo, overlapping the panel's outer edge by 3rem. */
+  .ls-photo {
+    position: relative;
+    z-index: 2;
+    margin: 0 0 -3rem auto;
+    width: min(72%, 16rem);
+    border: 6px solid rgba(248, 248, 244, 0.94);
+    border-radius: 4px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    background: #fff;
+  }
+  .ls-photo :global(img) { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  @media (min-width: 64rem) {
+    .ls-unit:not(.ls-unit--pair) .ls-photo {
+      position: absolute;
+      top: 3rem;
+      margin: 0;
+      width: 18rem;
+    }
+    .ls-station--left .ls-unit:not(.ls-unit--pair) .ls-photo { left: calc(100% - 3rem); }
+    .ls-station--right .ls-unit:not(.ls-unit--pair) .ls-photo { right: calc(100% - 3rem); }
+    /* The 3rem the photo overlaps is kept clear of text: the fact values sit
+       on the right edge and must never slide under the frame. */
+    .ls-station--left .ls-unit:not(.ls-unit--pair) .ls-panel { padding-right: calc(3rem + clamp(1.25rem, 0.9rem + 1.8vw, 2.25rem)); }
+    .ls-station--right .ls-unit:not(.ls-unit--pair) .ls-panel { padding-left: calc(3rem + clamp(1.25rem, 0.9rem + 1.8vw, 2.25rem)); }
+  }
+
+  /* Station 4: two panels side by side, stacked on a phone. */
+  .ls-pair { display: grid; gap: clamp(2rem, 1rem + 3vw, 3rem); }
+  @media (min-width: 60rem) {
+    .ls-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+    .ls-unit--pair { max-width: none; }
+  }
+  .ls-unit--pair .ls-photo { margin-left: auto; margin-right: var(--sp-5); }
+
+  /* Station 3: the dealer marks, one static white row under the panel. */
+  .ls-marks {
+    list-style: none;
+    margin: var(--sp-5) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3) var(--sp-5);
+  }
+  .ls-marks a { display: grid; place-items: center; min-height: 2.75rem; }
+  .ls-marks :global(.ls-mark) {
+    width: auto;
+    max-width: 6.5rem;
+    max-height: 1.75rem;
+    object-fit: contain;
+    filter: brightness(0) invert(1) drop-shadow(0 1px 6px rgba(0, 0, 0, 0.5));
+  }
+  .ls-marks :global(.ls-mark:is([data-slug='hoyt'], [data-slug='tenpoint'])) { filter: none; }
+
+  /* ---------------------------------------------------------- the target */
+  .ls-visit { max-width: 42rem; }
+  .ls-phone {
+    font-size: clamp(2.25rem, 10vw, 5.25rem);
+    line-height: 0.95;
+    color: var(--tgt-white);
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .ls-phone:hover { color: var(--tgt-orange-hi); }
+  .ls-visit__addr { margin: calc(var(--sp-2) * -1) 0 0; color: rgba(248, 248, 244, 0.86); }
+  .ls-visit :global(.hours) { max-width: 30rem; }
+  .ls-visit__form { width: 100%; display: grid; gap: var(--sp-4); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+  /* The visit panel resolves as the rings fade, once the arrow is home. */
+  :global(html.js) .ls-visit:not([data-landed]) { opacity: 0; translate: 0 18px; }
+  .ls-visit { transition: opacity 0.9s var(--ease) 0.25s, translate 0.9s var(--ease) 0.25s; }
+  :global(html.motion-failed) .ls-visit { opacity: 1; translate: none; }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .ls-visit:not([data-landed]) { opacity: 1; translate: none; }
+  }
+
+  /* ---------------------------------------------------------------- rail */
+  /* --grow is how far the target face scales at station 6. The rail stops
+     short of the screen edge by the grown radius, so the full face stays on
+     screen and its gold stays exactly where the arrow lands. */
+  .ls-rail {
+    --rail-w: 28px;
+    --arrow-len: 2.8rem;
+    --tick: 14px;
+    --target: 26px;
+    --grow: 1.6;
+    position: fixed;
+    z-index: 60;
+    right: 10px;
+    top: calc(5.5rem + var(--arrow-len));
+    bottom: calc(var(--bar-h) + env(safe-area-inset-bottom, 0px) + 3.6rem + var(--target) * var(--grow) / 2);
+    width: var(--rail-w);
+    pointer-events: none;
+  }
+  @media (min-width: 48rem) {
+    .ls-rail {
+      --rail-w: 56px;
+      --arrow-len: 5.5rem;
+      --tick: 18px;
+      --target: 44px;
+      --grow: 2.6;
+      right: 40px;
+      top: calc(6.5rem + var(--arrow-len));
+      bottom: calc(1.25rem + var(--target) * var(--grow) / 2);
+    }
+  }
+  .ls-rail__line,
+  .ls-rail__fill {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    translate: -50% 0;
+    background: rgba(248, 248, 244, 0.32);
+  }
+  .ls-rail__fill {
+    background: var(--tgt-orange-hi);
+    bottom: auto;
+    height: 0;
+  }
+  .ls-rail__ticks { list-style: none; margin: 0; padding: 0; }
+  .ls-tick {
+    --at: calc(var(--i) / 6);
+    position: absolute;
+    left: 50%;
+    top: calc(var(--at) * 100%);
+    translate: -50% -50%;
+    pointer-events: auto;
+  }
+  .ls-tick[data-tick='0'] { --i: 0; }
+  .ls-tick[data-tick='1'] { --i: 1; }
+  .ls-tick[data-tick='2'] { --i: 2; }
+  .ls-tick[data-tick='3'] { --i: 3; }
+  .ls-tick[data-tick='4'] { --i: 4; }
+  .ls-tick[data-tick='5'] { --i: 5; }
+  .ls-tick[data-tick='6'] { --i: 6; }
+  .ls-tick a {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+  }
+  .ls-ring {
+    width: var(--tick);
+    height: var(--tick);
+    border-radius: 50%;
+    border: 1.5px solid rgba(248, 248, 244, 0.7);
+    background: radial-gradient(circle, rgba(248, 248, 244, 0.7) 0 18%, transparent 22%);
+    box-shadow: 0 0 0 3px rgba(10, 26, 18, 0.35);
+    transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), scale var(--dur-fast) var(--ease);
+  }
+  .ls-tick[data-passed] .ls-ring {
+    border-color: var(--tgt-orange-hi);
+    background: radial-gradient(circle, var(--tgt-orange-hi) 0 30%, transparent 34%);
+  }
+  .ls-tick a[aria-current] .ls-ring {
+    background: var(--tgt-orange-hi);
+    border-color: var(--tgt-white);
+    scale: 1.2;
+  }
+  .ls-tick a:hover .ls-ring { scale: 1.25; }
+
+  /* The target face at the end of the rail. It grows as station 6 nears. */
+  .ls-target {
+    position: relative;
+    display: block;
+    width: var(--target);
+    height: var(--target);
+    transform-origin: 50% 50%;
+    transition: scale 0.9s var(--ease-out-soft);
+  }
+  .ls-target img { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); }
+  .ls-rail[data-near] .ls-target { scale: var(--grow); }
+  .ls-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ls-pulse--y { border-color: var(--ring-yellow); }
+  .ls-pulse--r { border-color: var(--ring-red); }
+  .ls-pulse--b { border-color: var(--ring-blue); }
+  .ls-rail[data-hit] .ls-pulse { animation: ls-pulse 1.3s var(--ease-out-soft) both; }
+  .ls-rail[data-hit] .ls-pulse--r { animation-delay: 0.16s; }
+  .ls-rail[data-hit] .ls-pulse--b { animation-delay: 0.32s; }
+  @keyframes ls-pulse {
+    0% { opacity: 0.95; scale: 1; }
+    100% { opacity: 0; scale: 2.4; }
+  }
+
+  /* The arrow: points down, tip on the track. Position is scrubbed by script. */
+  .ls-rail__arrow {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 0;
+    height: 0;
+    z-index: 2;
+  }
+  .ls-rail__kick {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: var(--arrow-len);
+    /* Rotate the right-pointing art to point down, tip at the anchor. */
+    translate: -100% -50%;
+    rotate: 90deg;
+    transform-origin: 100% 50%;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  }
+  /* GSAP moves this inner wrapper only (the release pull-back and the
+     shudder), so its transforms never stack on the CSS rotation above.
+     Its x axis runs along the shaft. */
+  .ls-rail__shake { display: block; transform-origin: 100% 50%; }
+  @media (prefers-reduced-motion: reduce) {
+    .ls-target { transition: none; }
+    .ls-rail[data-hit] .ls-pulse { animation: none; }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+  const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cleanups: (() => void)[] = [];
+
+  function init() {
+    const rail = document.querySelector<HTMLElement>('[data-ls-rail]');
+    if (!rail) return;
+    const stations = [...document.querySelectorAll<HTMLElement>('[data-station]')];
+    const layers = [...document.querySelectorAll<HTMLElement>('[data-scene]')];
+    const ticks = [...rail.querySelectorAll<HTMLElement>('[data-tick]')];
+    const links = ticks.map((t) => t.querySelector('a')!);
+    const arrow = rail.querySelector<HTMLElement>('[data-rail-arrow]')!;
+    const kick = rail.querySelector<HTMLElement>('[data-rail-kick]')!;
+    const fill = rail.querySelector<HTMLElement>('[data-rail-fill]')!;
+    const visit = document.querySelector<HTMLElement>('[data-ls-visit]');
+    const cue = document.querySelector<HTMLElement>('[data-ls-cue]');
+    const last = stations[stations.length - 1];
+
+    /* Tick positions match where the arrow will be when each station's top
+       reaches the top of the screen, so the point crosses each ring exactly
+       as that station arrives. Recomputed on every refresh. */
+    let marks: number[] = ticks.map((_, i) => i / 6);
+    const measure = () => {
+      const end = last.offsetTop - stations[0].offsetTop;
+      marks = stations.map((s) => (end > 0 ? (s.offsetTop - stations[0].offsetTop) / end : 0));
+      ticks.forEach((t, i) => t.style.setProperty('--at', String(marks[i])));
+    };
+
+    /* ---------------------------------------- scenes + current station */
+    let current = 0;
+    const setStation = (i: number) => {
+      current = i;
+      layers.forEach((l, k) => l.toggleAttribute('data-active', k === i));
+      links.forEach((a, k) => (k === i ? a.setAttribute('aria-current', 'step') : a.removeAttribute('aria-current')));
+      rail.toggleAttribute('data-near', i === 6);
+      if (reduced()) place(marks[i]);
+      if (i === 6 && reduced()) land(false);
+    };
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) setStation(Number((e.target as HTMLElement).dataset.station));
+      }
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    stations.forEach((s) => io.observe(s));
+    cleanups.push(() => io.disconnect());
+
+    /* --------------------------------------------- the arrow on the rail */
+    const trackHeight = () => rail.getBoundingClientRect().height;
+    const place = (p: number) => {
+      const y = p * trackHeight();
+      gsap.set(arrow, { y });
+      fill.style.height = `${y}px`;
+      ticks.forEach((t, i) => t.toggleAttribute('data-passed', i > 0 && p >= marks[i] - 0.002));
+    };
+
+    let landed = false;
+    const land = (animate: boolean) => {
+      if (landed) return;
+      landed = true;
+      visit?.setAttribute('data-landed', '');
+      if (!animate) return;
+      rail.removeAttribute('data-hit');
+      void rail.offsetWidth;
+      rail.setAttribute('data-hit', '');
+      gsap.to(kick, {
+        keyframes: [
+          { rotate: -2, duration: 0.08 },
+          { rotate: 1.4, duration: 0.1 },
+          { rotate: -0.6, duration: 0.12 },
+          { rotate: 0, duration: 0.16 },
+        ],
+        ease: 'sine.inOut',
+      });
+    };
+
+    measure();
+    if (reduced()) {
+      place(marks[current]);
+    } else {
+      let released = false;
+      const st = ScrollTrigger.create({
+        trigger: stations[0],
+        start: 'top top',
+        endTrigger: last,
+        end: 'top top',
+        scrub: 0.4,
+        onRefresh: () => { measure(); },
+        onUpdate: (self) => {
+          const p = self.progress;
+          place(p);
+          if (!released && p > 0.002) {
+            released = true;
+            // The release: a quick ease-out kick before the scrub takes over.
+            gsap.fromTo(kick, { x: -10 }, { x: 0, duration: 0.35, ease: 'expo.out' });
+            if (cue) gsap.to(cue, { opacity: 0, duration: 0.4 });
+          }
+          if (p >= 0.995) land(true);
+          if (p < 0.9 && landed) { landed = false; rail.removeAttribute('data-hit'); }
+        },
+      });
+      cleanups.push(() => st.kill());
+      place(st.progress);
+      if (st.progress >= 0.995) land(false);
+    }
+
+    // Failsafe: if station 6 sits on screen for a moment without a landing
+    // (a jump link, a short viewport), resolve the panel anyway.
+    const safety = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) setTimeout(() => visit?.setAttribute('data-landed', ''), 1400);
+    }, { threshold: 0.25 });
+    safety.observe(last);
+    cleanups.push(() => safety.disconnect());
+
+    const onResize = () => { measure(); if (reduced()) place(marks[current]); };
+    addEventListener('resize', onResize, { passive: true });
+    cleanups.push(() => removeEventListener('resize', onResize));
+    ScrollTrigger.refresh();
+  }
+
+  function teardown() {
+    cleanups.forEach((c) => c());
+    cleanups = [];
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', teardown);
+</script>

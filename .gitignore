@@ -24,3 +24,6 @@ qa/
 
 # local editor / agent config
 .claude/
+
+# Session handoff notes are local only
+/26_*_handoff.md

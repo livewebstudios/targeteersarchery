@@ -57,7 +57,31 @@ const arrow = (c) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 3
 </svg>
 `;
 
+/* Rob's logo colours, for the home page demos under /demos/. Every key in
+   COMMON can be overridden per file, so the vanes, wraps and nock slot follow
+   the brand rather than the cream-and-ember set above. */
+const BRAND = {
+  shaftHi: '#2a4a7a', shaft: '#001840', shaftLo: '#000c22',
+  gleam: '#f8f8f4', nock: '#0a2a5c',
+  vane: '#e46024', vaneLo: '#b8440f', vaneEdge: '#9c3a0a',
+  wrap: '#f8f8f4', nockSlot: '#e46024',
+};
+const BRAND_LIGHT = {
+  shaftHi: '#ffffff', shaft: '#dfe6ee', shaftLo: '#9fb0c4',
+  gleam: '#ffffff', nock: '#dfe6ee',
+  vane: '#e46024', vaneLo: '#b8440f', vaneEdge: '#fcba66',
+  wrap: '#e46024', nockSlot: '#e46024',
+};
+
+const FILES = [
+  ['shot-arrow.svg', { ...COMMON, ...LIGHT }],
+  ['shot-arrow-light.svg', { ...COMMON, ...DARK }],
+  ['shot-arrow-brand.svg', { ...COMMON, ...BRAND }],
+  ['shot-arrow-brand-light.svg', { ...COMMON, ...BRAND_LIGHT }],
+];
+
 await mkdir(OUT, { recursive: true });
-await writeFile(path.join(OUT, 'shot-arrow.svg'), arrow({ ...COMMON, ...LIGHT }));
-await writeFile(path.join(OUT, 'shot-arrow-light.svg'), arrow({ ...COMMON, ...DARK }));
-console.log('shot-arrow.svg + shot-arrow-light.svg written');
+for (const [name, colours] of FILES) {
+  await writeFile(path.join(OUT, name), arrow(colours));
+}
+console.log(FILES.map(([name]) => name).join(' + ') + ' written');

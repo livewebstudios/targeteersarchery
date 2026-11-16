@@ -13,15 +13,22 @@ const AXE = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 
 const BASE = process.env.QA_BASE ?? 'http://localhost:4322';
 const CHROME =
-  process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  process.env.CHROME_PATH ??
+  (process.platform === 'win32'
+    ? 'C:/Program Files/Google/Chrome/Application/chrome.exe'
+    : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome');
 
-const ROUTES = [
+// `node scripts/a11y.mjs --demos` checks only /demos/ and the three demos.
+const DEMO_ROUTES = ['/demos/', '/demos/1-base-camp/', '/demos/2-trailhead/', '/demos/3-long-shot/'];
+
+const SITE_ROUTES = [
   '/', '/about/', '/trophy-room/', '/pro-shop/', '/pro-shop/mathews/', '/pro-shop/hoyt/',
   '/pro-shop/sitka/', '/services/', '/services/bow-tuning/', '/lessons/', '/leagues/',
   '/kids/', '/groups/', '/range/', '/waiver/', '/calendar/', '/hunting/', '/insights/',
   '/insights/how-to-know-when-your-bow-needs-tuning/', '/insights/category/hunting/',
   '/faq/', '/contact/', '/careers/', '/thank-you/', '/404/',
 ];
+const ROUTES = process.argv.includes('--demos') ? DEMO_ROUTES : SITE_ROUTES;
 
 const browser = await puppeteer.launch({
   executablePath: CHROME,
@@ -32,6 +39,8 @@ const page = await browser.newPage();
 // Reveal wrappers start at opacity 0 until scrolled into view; reduced motion
 // renders them visible immediately, so axe measures the real colours.
 await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+// The pre-launch gate covers every page; without the cookie axe only sees it.
+await page.setCookie({ name: 'tgt_gate', value: 'open', url: BASE });
 
 const seen = new Map();
 let total = 0;

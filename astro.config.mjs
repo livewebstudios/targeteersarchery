@@ -10,7 +10,8 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      filter: (page) => !page.includes('/admin') && !page.includes('/thank-you'),
+      filter: (page) =>
+        !page.includes('/admin') && !page.includes('/thank-you') && !page.includes('/demos'),
     }),
   ],
   image: {

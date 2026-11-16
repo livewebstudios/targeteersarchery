@@ -1,0 +1,92 @@
+---
+/**
+ * Review aid only. A fixed pill, bottom left, that switches between the three
+ * home page demos. Comes out before launch, with the /demos/ routes.
+ */
+import { demos } from '~/data/home';
+
+interface Props {
+  /** 0 is the /demos/ index. */
+  current: number;
+}
+const { current } = Astro.props;
+---
+<nav class="demo-bar" aria-label="Home page demos">
+  <ol>
+    <li>
+      <a href="/demos/" aria-current={current === 0 ? 'page' : undefined}>ALL 3</a>
+    </li>
+    {demos.map((d) => (
+      <li>
+        <a href={d.href} aria-current={current === d.id ? 'page' : undefined}>
+          <span class="demo-bar__num">{d.id}</span>
+          <span class="demo-bar__name">{d.name}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .demo-bar {
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 90;
+    max-width: calc(100vw - 2rem);
+    background: rgba(0, 24, 64, 0.88);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(0, 10, 30, 0.35);
+    padding: 0.3rem;
+  }
+  /* Above the mobile action bar, never under it. */
+  @media (max-width: 47.99rem) {
+    :global(.has-actionbar) .demo-bar {
+      bottom: calc(var(--bar-h) + env(safe-area-inset-bottom, 0px) + 0.6rem);
+      left: 50%;
+      translate: -50% 0;
+    }
+  }
+  ol {
+    display: flex;
+    gap: 0.15rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-height: 2.25rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: rgba(248, 248, 244, 0.86);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  }
+  a:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  a[aria-current='page'] { background: #f8f8f4; color: #001840; }
+  .demo-bar__num {
+    display: inline-grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    font-size: 0.625rem;
+    letter-spacing: 0;
+  }
+  /* A phone shows the numbers only. */
+  @media (max-width: 30rem) {
+    .demo-bar__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  }
+  @media print { .demo-bar { display: none; } }
+</style>

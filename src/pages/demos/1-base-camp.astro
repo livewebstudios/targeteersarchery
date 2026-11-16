@@ -1,0 +1,610 @@
+---
+/**
+ * Demo 1: BASE CAMP.
+ * A classic long-scroll page in dark navy smoke glass, floating over one
+ * continuous hike: ridge at daybreak, into the timber, out at dusk.
+ * Signature arrow: one BrandArrow crosses the viewport on load and lands
+ * above the H1.
+ */
+import { Image, Picture } from 'astro:assets';
+import DemoBase from '~/layouts/DemoBase.astro';
+import DemoNav from '~/components/demo/DemoNav.astro';
+import DemoFooter from '~/components/demo/DemoFooter.astro';
+import FactList from '~/components/demo/FactList.astro';
+import BrandArrow from '~/components/demo/BrandArrow.astro';
+import TaskIcon from '~/components/demo/TaskIcon.astro';
+import OpenNowPill from '~/components/OpenNowPill.astro';
+import HoursTable from '~/components/HoursTable.astro';
+import Map from '~/components/Map.astro';
+import DealerRow from '~/components/DealerRow.astro';
+import Form from '~/components/Form.astro';
+import Field from '~/components/Field.astro';
+import ArrowRightIcon from '~/components/icons/ArrowRightIcon.astro';
+import PhoneIcon from '~/components/icons/PhoneIcon.astro';
+import { tasks, task, imageFor } from '~/data/home';
+import { business, addressLine } from '~/data/business';
+import { getPosts } from '~/utils/posts';
+
+import ridge from '~/assets/demo-scenes/ridge.jpg';
+import timber from '~/assets/demo-scenes/timber.jpg';
+import dusk from '~/assets/demo-scenes/dusk.jpg';
+import counterMen from '~/assets/story/counter-three-men.jpg';
+import trophyImg from '~/assets/trophy/mount-04.jpg';
+
+const posts = (await getPosts()).slice(0, 3);
+const strip = (['shoot', 'service', 'lessons', 'kids'] as const).map(task);
+const chips = [
+  { label: 'ALL', value: 'all' },
+  { label: 'SHOOT', value: 'shoot' },
+  { label: 'SERVICE', value: 'service' },
+  { label: 'LEARN', value: 'lessons' },
+  { label: 'GEAR', value: 'gear' },
+  { label: 'KIDS', value: 'kids' },
+  { label: 'HUNT', value: 'hunt' },
+];
+const home = '/demos/1-base-camp/';
+---
+<DemoBase
+  demo={1}
+  glass="smoke"
+  title="Base Camp · Home page demo 1 | Targeteers Archery"
+  description="North Jersey's family-owned archery pro shop and 11-lane indoor range in Saddle Brook. Bows, tuning, lessons, leagues and kids camp, since 1957."
+  ogImage="/og/home.jpg"
+>
+  <!-- ------------------------------------------------------------ backdrop -->
+  <div class="d-backdrop bc-backdrop" slot="backdrop" aria-hidden="true" data-bc-backdrop>
+    <div class="d-backdrop__layer bc-layer bc-layer--ridge" data-layer="ridge">
+      <Picture src={ridge} alt="" formats={['avif', 'webp']} widths={[800, 1200, 1600, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="d-backdrop__layer bc-layer bc-layer--timber" data-layer="timber">
+      <Picture src={timber} alt="" formats={['avif', 'webp']} widths={[800, 1200, 1600, 1920]} sizes="100vw" loading="lazy" />
+    </div>
+    <div class="d-backdrop__layer bc-layer bc-layer--dusk" data-layer="dusk">
+      <Picture src={dusk} alt="" formats={['avif', 'webp']} widths={[800, 1200, 1600, 1920]} sizes="100vw" loading="lazy" />
+    </div>
+    <div class="d-backdrop__scrim bc-scrim"></div>
+  </div>
+
+  <DemoNav slot="nav" variant="smoke" home={home} />
+
+  <!-- --------------------------------------------------------------- hero -->
+  <section class="d-wrap bc-hero" aria-labelledby="bc-title">
+    <div class="bc-hero__card glass-smoke">
+      <p class="d-eyebrow">SADDLE BROOK, NEW JERSEY · SINCE 1957</p>
+      <div class="bc-hero__arrow" data-hero-arrow>
+        <BrandArrow tone="light" />
+      </div>
+      <h1 id="bc-title">Archery, the way it's been done here for three generations.</h1>
+      <p class="d-lead bc-hero__sub">
+        North Jersey's family-owned pro shop, indoor range, and the people who tune your bow like
+        it's their own.
+      </p>
+      <div class="bc-hero__actions">
+        <a class="d-btn d-btn--orange" href={business.phoneHref} data-primary>
+          <PhoneIcon size={16} /><span>CALL THE SHOP</span>
+        </a>
+        <a class="d-btn d-btn--outline" href="/lessons/#book">BOOK A LESSON</a>
+      </div>
+      <div class="bc-hero__meta">
+        <ul class="bc-chips" aria-label="At a glance">
+          <li>11 LANES</li>
+          <li>SINCE 1957</li>
+          <li>3 GENERATIONS</li>
+        </ul>
+        <OpenNowPill />
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------ feature strip -->
+  <nav class="d-wrap bc-strip-wrap" aria-label="Jump to an answer">
+    <ul class="bc-strip glass-smoke">
+      {strip.map((t) => (
+        <li>
+          <a href={`#${t.id}`} data-jump={t.id}>
+            <span class="bc-ring"><TaskIcon id={t.id} size={22} /></span>
+            <span class="bc-strip__text">
+              <span class="bc-strip__tab">{t.tab}</span>
+              <span class="bc-strip__line">{t.strip}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <!-- ------------------------------------------------- what are you here for -->
+  <section class="d-wrap bc-section" aria-labelledby="bc-tasks-title">
+    <div class="bc-section__head" data-reveal>
+      <h2 class="shot-head" id="bc-tasks-title">What are you here for?</h2>
+      <div class="bc-filter" role="group" aria-label="Filter the answers" data-filter>
+        {chips.map((c) => (
+          <button type="button" class="bc-filter__chip" data-filter-value={c.value} aria-pressed={c.value === 'all' ? 'true' : 'false'}>
+            {c.label}
+          </button>
+        ))}
+      </div>
+      <p class="visually-hidden" aria-live="polite" data-filter-status></p>
+    </div>
+
+    <div class="bc-cards">
+      {tasks.map((t, i) => (
+        <article class="bc-card glass-smoke glass-lift" id={t.id} data-task={t.id} data-reveal data-stagger={String(i % 3)} aria-labelledby={`bc-${t.id}-title`}>
+          <div class="bc-card__media">
+            <Image src={imageFor(t)} alt={t.imageAlt} widths={[400, 640, 900]} sizes="(max-width: 48rem) 92vw, (max-width: 72rem) 45vw, 24rem" loading="lazy" />
+            <span class="bc-card__pill">{t.tab}</span>
+          </div>
+          <div class="bc-card__body">
+            <h3 id={`bc-${t.id}-title`}>{t.title}</h3>
+            <p class="bc-card__text">{t.body}</p>
+            <FactList facts={t.facts} limit={3} />
+            {t.facts.length > 3 && (
+              <details class="bc-card__more">
+                <summary>WHAT TO KNOW</summary>
+                <FactList facts={t.facts} from={3} />
+              </details>
+            )}
+            <div class="bc-card__actions">
+              <a class="d-btn d-btn--outline" href={t.primary.href} target={t.primary.href.startsWith('http') ? '_blank' : undefined}>
+                <span>{t.primary.label}</span><ArrowRightIcon size={16} />
+              </a>
+              {t.secondary && (
+                <a class="d-link" href={t.secondary.href}><span>{t.secondary.label}</span></a>
+              )}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------- the family -->
+  <section class="d-wrap bc-section bc-family" aria-labelledby="bc-family-title">
+    <figure class="bc-family__frame glass-smoke" data-reveal>
+      <Image src={counterMen} alt="Three men behind the Targeteers counter, archival photograph"
+        widths={[560, 900]} sizes="(max-width: 60rem) 90vw, 32rem" loading="lazy" />
+      <figcaption>The photograph on the office wall. Route 46, Saddle Brook.</figcaption>
+    </figure>
+    <div class="bc-family__copy glass-smoke" data-reveal data-stagger="1">
+      <h2 class="shot-head" id="bc-family-title">Three generations. One counter.</h2>
+      <p>
+        A bow shop opened on Route 46 in 1957. Rob bought it from his father in the nineties,
+        after he had already been in the trade for twenty years. 2020 marked his fiftieth.
+      </p>
+      <p>
+        What has not changed is the bench, and the rule that no bow leaves this shop without being
+        looked over twice. Rob did not invent that rule. He inherited it.
+      </p>
+      <a class="d-link" href="/about/"><span>READ OUR STORY</span><ArrowRightIcon size={16} /></a>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------- dealers -->
+  <div class="d-wrap bc-dealers-wrap">
+    <div class="bc-dealers glass-smoke">
+      <DealerRow heading="Authorized dealer" />
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------- from the counter -->
+  <section class="d-wrap bc-section" aria-labelledby="bc-notes-title">
+    <div class="bc-section__head bc-section__head--row" data-reveal>
+      <h2 class="shot-head" id="bc-notes-title">Notes from behind the counter.</h2>
+      <a class="d-link" href="/insights/"><span>ALL INSIGHTS</span><ArrowRightIcon size={16} /></a>
+    </div>
+    <ul class="bc-rail" aria-label="Latest insights">
+      {posts.map((p, i) => (
+        <li data-reveal data-stagger={String(i)}>
+          <a class="bc-post glass-smoke glass-lift" href={`/insights/${p.id}/`}>
+            {p.data.image && (
+              <Image class="bc-post__img" src={p.data.image} alt={p.data.imageAlt} widths={[420, 760]} sizes="(max-width: 48rem) 80vw, 24rem" loading="lazy" />
+            )}
+            <span class="bc-post__body">
+              <span class="bc-post__cat">{p.data.category}</span>
+              <span class="bc-post__title">{p.data.title}</span>
+              <time datetime={p.data.date.toISOString()}>
+                {p.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}
+              </time>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- --------------------------------------------------------- trophy room -->
+  <section class="d-wrap bc-section" aria-labelledby="bc-trophy-title">
+    <div class="bc-trophy" data-reveal>
+      <Image src={trophyImg} alt="Snow-covered spruce in mountain hunting country" widths={[640, 1000, 1400, 1920]} sizes="(max-width: 78rem) 94vw, 74rem" loading="lazy" />
+      <div class="bc-trophy__caption glass-smoke">
+        <h2 class="shot-head" id="bc-trophy-title">Two hundred mounts. One polar bear.</h2>
+        <a class="d-link" href="/trophy-room/"><span>WALK THE ROOM</span><ArrowRightIcon size={16} /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------------- visit -->
+  <section class="d-wrap bc-section" id="visit" aria-labelledby="bc-visit-title">
+    <div class="bc-visit glass-smoke" data-reveal>
+      <div class="bc-visit__copy">
+        <h2 class="shot-head" id="bc-visit-title">101 Route 46 West, Saddle Brook.</h2>
+        <a class="bc-visit__phone" href={business.phoneHref}>{business.phone}</a>
+        <p class="bc-visit__addr">{addressLine}</p>
+        <div class="bc-visit__hours">
+          <p class="d-eyebrow">HOURS</p>
+          <HoursTable />
+        </div>
+        <a class="d-btn d-btn--orange" href={business.directionsUrl} target="_blank" rel="noopener" data-primary>GET DIRECTIONS</a>
+        <div class="bc-visit__form">
+          <p class="d-eyebrow">SEND US A NOTE</p>
+          <Form action={business.formspree.contact} subject="Website message (Base Camp demo)" name="contact-base-camp" submitLabel="SEND IT">
+            <Field label="Name" name="name" required autocomplete="name" />
+            <Field label="Phone or email" name="contact" required autocomplete="email" />
+            <Field label="Message" name="message" as="textarea" rows={4} required full />
+          </Form>
+        </div>
+      </div>
+      <div class="bc-visit__map">
+        <Map />
+      </div>
+    </div>
+  </section>
+
+  <DemoFooter slot="footer" variant="smoke" />
+</DemoBase>
+
+<style>
+  /* ------------------------------------------------------------ backdrop
+     One hike, daybreak to dusk. Stills, graded down, under a pine scrim. */
+  .bc-layer :global(img) { filter: saturate(0.82) contrast(1.06) brightness(0.9); }
+  .bc-layer--ridge :global(img) {
+    animation: d-ken-burns 45s var(--ease) infinite alternate;
+    transform-origin: 52% 46%;
+  }
+  .bc-scrim { background: linear-gradient(rgba(10, 26, 18, 0.5), rgba(10, 26, 18, 0.74)); }
+  @media (max-width: 47.99rem) {
+    .bc-layer--ridge :global(img) { animation: none; }
+  }
+  /* Reduced motion: timber only, static. */
+  @media (prefers-reduced-motion: reduce) {
+    .bc-layer--ridge, .bc-layer--dusk { display: none; }
+    .bc-layer--timber { opacity: 1; }
+  }
+
+  /* --------------------------------------------------------------- hero */
+  .bc-hero {
+    min-height: calc(100svh - 7rem);
+    display: grid;
+    align-items: center;
+    padding-block: clamp(2.5rem, 1rem + 6vh, 5rem);
+  }
+  .bc-hero__card {
+    max-width: 34rem;
+    padding: clamp(1.5rem, 1rem + 2.4vw, 2.75rem);
+    display: grid;
+    gap: var(--sp-5);
+  }
+  .bc-hero__card h1 { font-size: clamp(2.125rem, 1.5rem + 2.4vw, 3.5rem); line-height: 1.04; }
+  .bc-hero__sub { margin: 0; }
+  .bc-hero__arrow {
+    width: clamp(6rem, 22vw, 9rem);
+    margin-bottom: calc(var(--sp-3) * -1);
+    transform-origin: 100% 50%;
+  }
+  :global(html.js) .bc-hero__arrow { opacity: 0; }
+  :global(html.motion-failed) .bc-hero__arrow { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .bc-hero__arrow { opacity: 1; }
+  }
+  .bc-hero__actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
+  .bc-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--hair);
+  }
+  .bc-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); list-style: none; margin: 0; padding: 0; }
+  .bc-chips li {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--hair-strong);
+    border-radius: 999px;
+    color: var(--ink-muted);
+  }
+
+  /* ------------------------------------------------------ feature strip */
+  .bc-strip-wrap { margin-top: calc(var(--sp-6) * -1); position: relative; }
+  .bc-strip {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+  .bc-strip li + li { border-top: 1px solid var(--hair); }
+  @media (min-width: 60rem) {
+    .bc-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .bc-strip li + li { border-top: 0; border-left: 1px solid var(--hair); }
+  }
+  .bc-strip a {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-5);
+    height: 100%;
+    text-decoration: none;
+    color: var(--ink);
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .bc-strip a:hover { background: rgba(255, 255, 255, 0.05); }
+  .bc-ring {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid rgba(244, 122, 60, 0.6);
+    color: var(--tgt-orange-hi);
+  }
+  .bc-strip__text { display: grid; gap: 0.1rem; }
+  .bc-strip__tab { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; }
+  .bc-strip__line { font-size: var(--fs-small); color: var(--ink-muted); line-height: 1.35; }
+
+  /* ----------------------------------------------------------- sections */
+  .bc-section { padding-block: clamp(4rem, 2.5rem + 5vw, 7rem) 0; }
+  .bc-section__head { display: grid; gap: var(--sp-5); margin-bottom: var(--sp-7); }
+  .bc-section__head--row {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+  .bc-section__head h2 { max-width: 22ch; }
+
+  .bc-filter { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+  :global(html:not(.js)) .bc-filter { display: none; }
+  .bc-filter__chip {
+    min-height: 2.75rem;
+    padding: 0.5rem 1.05rem;
+    border-radius: 999px;
+    border: 1px solid var(--outline);
+    background: transparent;
+    color: var(--ink);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  }
+  .bc-filter__chip:hover { border-color: var(--ink); }
+  .bc-filter__chip[aria-pressed='true'] { background: var(--tgt-white); color: var(--tgt-navy); border-color: var(--tgt-white); }
+
+  /* -------------------------------------------------------------- cards */
+  .bc-cards {
+    display: grid;
+    gap: var(--demo-gap);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 44rem) { .bc-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 72rem) { .bc-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .bc-card { overflow: hidden; scroll-margin-top: 7rem; display: flex; flex-direction: column; }
+  .bc-card[hidden] { display: none; }
+  .bc-card__media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
+  .bc-card__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .bc-card__pill {
+    position: absolute;
+    left: var(--sp-4);
+    top: var(--sp-4);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: var(--tgt-navy);
+    color: var(--tgt-white);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .bc-card__body { flex: 1; display: flex; flex-direction: column; gap: var(--sp-4); padding: var(--sp-5) var(--sp-5) var(--sp-6); }
+  .bc-card__body h3 { font-size: var(--fs-h3); }
+  .bc-card__text { margin: 0; color: var(--ink-muted); font-size: 0.9375rem; max-width: 60ch; }
+  .bc-card__more { border-top: 1px solid var(--hair); }
+  .bc-card__more summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 2.75rem;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--accent-text);
+  }
+  .bc-card__more summary::-webkit-details-marker { display: none; }
+  .bc-card__more summary::after {
+    content: '+';
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1;
+    transition: rotate var(--dur-fast) var(--ease);
+  }
+  .bc-card__more[open] summary::after { rotate: 45deg; }
+  .bc-card__actions { margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-5); padding-top: var(--sp-2); }
+
+  /* ------------------------------------------------------------- family */
+  .bc-family { display: grid; gap: var(--demo-gap); align-items: center; }
+  @media (min-width: 60rem) { .bc-family { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr); } }
+  .bc-family__frame { margin: 0; padding: clamp(0.75rem, 0.4rem + 1vw, 1.25rem); }
+  .bc-family__frame :global(img) { width: 100%; height: auto; border-radius: 10px; }
+  .bc-family__frame figcaption { margin-top: var(--sp-3); font-size: 0.8125rem; color: var(--ink-muted); }
+  .bc-family__copy { padding: clamp(1.5rem, 1rem + 2.4vw, 3rem); display: grid; gap: var(--sp-4); justify-items: start; }
+  .bc-family__copy p { margin: 0; color: var(--ink-muted); max-width: 60ch; }
+
+  /* ------------------------------------------------------------ dealers */
+  .bc-dealers-wrap { padding-top: clamp(3rem, 2rem + 3vw, 5rem); }
+  .bc-dealers { padding: var(--sp-5) clamp(1.25rem, 0.8rem + 2vw, 2.5rem); }
+
+  /* --------------------------------------------------------------- rail */
+  .bc-rail {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 var(--sp-4);
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(16rem, 80%);
+    gap: var(--demo-gap);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+  }
+  .bc-rail > li { scroll-snap-align: start; }
+  @media (min-width: 60rem) {
+    .bc-rail { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; }
+  }
+  .bc-post { display: flex; flex-direction: column; height: 100%; overflow: hidden; text-decoration: none; color: var(--ink); }
+  .bc-post :global(.bc-post__img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+  .bc-post__body { display: grid; gap: var(--sp-2); padding: var(--sp-5); }
+  .bc-post__cat { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-text); }
+  .bc-post__title { font-family: var(--font-display); font-size: var(--fs-h4); font-weight: 600; line-height: 1.25; }
+  .bc-post time { font-size: 0.8125rem; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+
+  /* ------------------------------------------------------------- trophy */
+  .bc-trophy { position: relative; border-radius: 18px; overflow: hidden; min-height: 26rem; display: grid; align-items: end; }
+  .bc-trophy > :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .bc-trophy__caption {
+    position: relative;
+    margin: clamp(1rem, 0.5rem + 2vw, 2rem);
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+    max-width: 32rem;
+    display: grid;
+    gap: var(--sp-4);
+    justify-items: start;
+  }
+
+  /* -------------------------------------------------------------- visit */
+  .bc-visit {
+    display: grid;
+    gap: var(--sp-7);
+    padding: clamp(1.5rem, 1rem + 2.4vw, 3rem);
+  }
+  @media (min-width: 64rem) { .bc-visit { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-8); } }
+  .bc-visit__copy { display: grid; gap: var(--sp-5); justify-items: start; align-content: start; }
+  .bc-visit__phone {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .bc-visit__phone:hover { color: var(--tgt-orange-hi); }
+  .bc-visit__addr { margin: calc(var(--sp-3) * -1) 0 0; color: var(--ink-muted); }
+  .bc-visit__hours { width: 100%; max-width: 30rem; display: grid; gap: var(--sp-2); }
+  .bc-visit__form { width: 100%; display: grid; gap: var(--sp-4); padding-top: var(--sp-5); border-top: 1px solid var(--hair); }
+  .bc-visit__map { align-self: start; }
+  @media (min-width: 64rem) { .bc-visit__map { position: sticky; top: 7rem; } }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+  const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let triggers: ScrollTrigger[] = [];
+
+  /* ------------------------------------------------------------ filter */
+  function initFilter() {
+    const group = document.querySelector<HTMLElement>('[data-filter]');
+    if (!group || group.dataset.wired) return;
+    group.dataset.wired = '';
+    const chips = [...group.querySelectorAll<HTMLButtonElement>('[data-filter-value]')];
+    const cards = [...document.querySelectorAll<HTMLElement>('[data-task]')];
+    const status = document.querySelector<HTMLElement>('[data-filter-status]');
+
+    const apply = (value: string) => {
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filterValue === value)));
+      let shown = 0;
+      for (const card of cards) {
+        const show = value === 'all' || card.dataset.task === value;
+        card.hidden = !show;
+        if (show) { shown++; card.classList.add('is-revealed'); }
+      }
+      if (status) status.textContent = value === 'all' ? `Showing all ${cards.length} answers.` : `Showing ${shown} of ${cards.length} answers.`;
+      ScrollTrigger.refresh();
+    };
+    chips.forEach((c) => c.addEventListener('click', () => apply(c.dataset.filterValue ?? 'all')));
+
+    // A strip cell or a hash link to a filtered-out card resets the filter first.
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-jump]')) {
+      link.addEventListener('click', () => {
+        const target = document.getElementById(link.dataset.jump ?? '');
+        if (target?.hidden) apply('all');
+      }, { capture: true });
+    }
+  }
+
+  /* ------------------------------------------- backdrop: one long hike */
+  function initBackdrop() {
+    const root = document.querySelector<HTMLElement>('[data-bc-backdrop]');
+    if (!root || reduced()) return;
+    const timber = root.querySelector('[data-layer="timber"]');
+    const dusk = root.querySelector('[data-layer="dusk"]');
+    if (!timber || !dusk) return;
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: document.documentElement,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1.2,
+      },
+    });
+    tl.to(timber, { opacity: 1, ease: 'none', duration: 0.25 }, 0.18)
+      .to(dusk, { opacity: 1, ease: 'none', duration: 0.25 }, 0.68)
+      .set({}, {}, 1);
+    if (tl.scrollTrigger) triggers.push(tl.scrollTrigger);
+  }
+
+  /* ---------------------------------------- signature: the hero arrow
+     One arrow crosses the whole viewport from the left edge and lands above
+     the H1 as that heading's arrow. Once per page load. */
+  function initHeroArrow() {
+    const arrow = document.querySelector<HTMLElement>('[data-hero-arrow]');
+    if (!arrow || arrow.dataset.flown) return;
+    arrow.dataset.flown = '';
+    if (reduced()) { gsap.set(arrow, { opacity: 1 }); return; }
+    const box = arrow.getBoundingClientRect();
+    const from = -(box.right + 40);
+    gsap.timeline({ delay: 0.35 })
+      .fromTo(arrow, { x: from, opacity: 1 }, { x: 0, duration: 1.1, ease: 'expo.out' })
+      .to(arrow, {
+        keyframes: [
+          { rotate: -1.6, duration: 0.12 },
+          { rotate: 1, duration: 0.14 },
+          { rotate: -0.5, duration: 0.16 },
+          { rotate: 0.22, duration: 0.18 },
+          { rotate: 0, duration: 0.22 },
+        ],
+        ease: 'sine.inOut',
+      }, '-=0.12');
+  }
+
+  function init() {
+    if (!document.querySelector('[data-bc-backdrop]')) return;
+    initFilter();
+    initBackdrop();
+    initHeroArrow();
+    ScrollTrigger.refresh();
+  }
+  function teardown() {
+    triggers.forEach((t) => t.kill());
+    triggers = [];
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', teardown);
+</script>

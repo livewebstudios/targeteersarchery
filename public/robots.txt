@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /thank-you/
+Disallow: /demos/
 
 Sitemap: https://targeteersarchery.com/sitemap-index.xml

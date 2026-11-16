@@ -1,0 +1,117 @@
+---
+/**
+ * Layout for the three home page demos under /demos/.
+ *
+ * Same head as Base.astro (fonts, icons, the motion failsafe, SEO, JSON-LD,
+ * analytics, view transitions) but none of the live site's chrome: each demo
+ * supplies its own backdrop, nav and footer through named slots. The pre-launch
+ * gate renders exactly as it does on every other page.
+ *
+ * Every demo route is noindex, out of the sitemap and disallowed in robots.txt.
+ */
+import '@fontsource-variable/familjen-grotesk';
+import '@fontsource-variable/instrument-sans';
+import '~/styles/tokens.css';
+import '~/styles/global.css';
+import '~/styles/demo.css';
+
+import { ClientRouter } from 'astro:transitions';
+import Analytics from '~/components/Analytics.astro';
+import Seo from '~/components/seo/Seo.astro';
+import type { SeoProps } from '~/components/seo/Seo.astro';
+import JsonLd from '~/components/seo/JsonLd.astro';
+import { localBusinessSchema } from '~/components/seo/localBusiness';
+import SiteGate from '~/components/SiteGate.astro';
+import DemoBar from '~/components/demo/DemoBar.astro';
+import ActionBar from '~/components/demo/ActionBar.astro';
+
+export interface Props extends Omit<SeoProps, 'noindex'> {
+  /** 0 is the /demos/ review index, 1 to 3 the demos. */
+  demo: 0 | 1 | 2 | 3;
+  glass: 'smoke' | 'frost' | 'clear';
+  bodyClass?: string;
+  /** The mobile CALL / DIRECTIONS / HOURS bar. On for every demo. */
+  actionBar?: boolean;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { demo, glass, bodyClass = '', actionBar = true, schema, ...seo } = Astro.props;
+
+const siteUrl = Astro.site!.href;
+const graph: Record<string, unknown>[] = [
+  localBusinessSchema(siteUrl),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: seo.title,
+    description: seo.description,
+    url: new URL(Astro.url.pathname, Astro.site).href,
+    about: { '@id': 'https://targeteersarchery.com/#store' },
+  },
+];
+if (schema) graph.push(...(Array.isArray(schema) ? schema : [schema]));
+
+const bodyClasses = ['demo', `demo--${glass}`, actionBar ? 'has-actionbar' : '', bodyClass]
+  .filter(Boolean)
+  .join(' ');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#001840" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="alternate icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <script is:inline>
+      /* Same two guards as Base.astro: .js gates the hidden reveal state, and
+         the timer un-hides everything if motion.ts never reported in. */
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!document.documentElement.hasAttribute('data-motion-ready')) {
+          document.documentElement.classList.add('motion-failed');
+        }
+      }, 2000);
+    </script>
+
+    <Seo {...seo} noindex />
+    <JsonLd data={graph} />
+    <Analytics />
+    <ClientRouter fallback="swap" />
+  </head>
+
+  <body class={bodyClasses}>
+    {/* TEMPORARY pre-launch gate, exactly as Base.astro renders it. */}
+    <SiteGate />
+
+    {/* In its own landmark so axe's region rule is satisfied. */}
+    <nav aria-label="Skip link"><a class="skip-link" href="#main">Skip to content</a></nav>
+    <slot name="backdrop" />
+    <slot name="nav" />
+    <main id="main"><slot /></main>
+    <slot name="footer" />
+    {actionBar && <ActionBar glass={glass} />}
+    <DemoBar current={demo} />
+
+    <script src="~/scripts/motion.ts"></script>
+  </body>
+</html>
+
+<style is:global>
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) { animation: none; }
+  }
+</style>

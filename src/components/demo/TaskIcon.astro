@@ -1,0 +1,22 @@
+---
+/** One icon per task, so all three demos use the same mark for the same job. */
+import type { TaskId } from '~/data/home';
+import RangeLaneIcon from '~/components/icons/RangeLaneIcon.astro';
+import WrenchRingIcon from '~/components/icons/WrenchRingIcon.astro';
+import TargetIcon from '~/components/icons/TargetIcon.astro';
+import BowIcon from '~/components/icons/BowIcon.astro';
+import CampIcon from '~/components/icons/CampIcon.astro';
+import ArrowInTarget from '~/components/icons/ArrowInTarget.astro';
+
+interface Props { id: TaskId; size?: number; class?: string }
+const { id, size = 24, class: klass = '' } = Astro.props;
+const Icon = {
+  shoot: RangeLaneIcon,
+  service: WrenchRingIcon,
+  lessons: TargetIcon,
+  gear: BowIcon,
+  kids: CampIcon,
+  hunt: ArrowInTarget,
+}[id];
+---
+<Icon size={size} class={klass} />
