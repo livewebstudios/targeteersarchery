@@ -152,9 +152,10 @@ const ariaCurrent = (s?: 'page' | 'section') => (s === 'page' ? 'page' : s === '
   /* When an orange button is already on screen in the page itself, the nav's
      own call button steps down to an outline: one orange per viewport. */
   .site-nav[data-quiet] .site-nav__call {
-    background: transparent;
+    --btn-ledge: rgba(0, 10, 30, 0.55);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 100%);
     color: var(--ink);
-    border-color: var(--outline);
+    border-color: rgba(255, 255, 255, 0.55);
   }
 
   .site-nav__icon {
@@ -166,7 +167,7 @@ const ariaCurrent = (s?: 'page' | 'section') => (s === 'page' ? 'page' : s === '
     border: 1px solid var(--hair-strong);
     background: transparent;
     color: var(--ink);
-    cursor: pointer;
+    cursor: var(--cursor-hot);
     padding: 0;
   }
   .site-nav__bars { display: grid; gap: 5px; width: 18px; }

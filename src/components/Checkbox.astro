@@ -27,7 +27,7 @@ const id = `f-${name}`;
     --accent-text: var(--tgt-tan-pale);
     --accent: var(--tgt-tan-pale);
     --ember: var(--tgt-tan-pale);
-    cursor: pointer;
+    cursor: var(--cursor-hot);
     display: grid;
     place-items: center;
     transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
@@ -42,5 +42,5 @@ const id = `f-${name}`;
   }
   input:checked { background: var(--ember-ink); border-color: var(--ember-ink); }
   input:checked::after { scale: 1; }
-  label { font-size: var(--fs-small); line-height: 1.55; color: var(--fg-muted); cursor: pointer; }
+  label { font-size: var(--fs-small); line-height: 1.55; color: var(--fg-muted); cursor: var(--cursor-hot); }
 </style>
