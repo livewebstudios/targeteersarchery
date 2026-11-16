@@ -25,7 +25,7 @@ const menuId = `demo-menu-${variant}`;
 <header class={`demo-nav demo-nav--${variant}`} data-demo-nav>
   <div class={`demo-nav__pill glass-${variant}`}>
     <a class="demo-nav__logo" href={home} aria-label={`${business.shortName}, top of the page`}>
-      <Image src={logoRGB} alt="Targeteers Archery" widths={[240, 480]} sizes="120px" loading="eager" />
+      <Image src={logoRGB} alt="Targeteers Archery" widths={[240, 480]} sizes="170px" loading="eager" />
     </a>
 
     <nav class="demo-nav__links" aria-label="Main">
@@ -53,7 +53,7 @@ const menuId = `demo-menu-${variant}`;
   <dialog class={`demo-menu demo-menu--${variant} glass-${variant}`} id={menuId} aria-label="Menu" data-menu>
     <div class="demo-menu__head">
       <a class="demo-nav__logo" href={home}>
-        <Image src={logoRGB} alt="Targeteers Archery" widths={[240, 480]} sizes="120px" loading="lazy" />
+        <Image src={logoRGB} alt="Targeteers Archery" widths={[240, 480]} sizes="170px" loading="lazy" />
       </a>
       <button class="demo-nav__icon" type="button" data-menu-close>
         <span class="demo-menu__x" aria-hidden="true"></span>
@@ -88,7 +88,7 @@ const menuId = `demo-menu-${variant}`;
   .demo-nav__pill {
     display: flex;
     align-items: center;
-    gap: var(--sp-5);
+    gap: var(--sp-4);
     padding: 0.6rem 0.6rem 0.6rem 0.75rem;
     border-radius: 999px;
     transition: padding var(--dur) var(--ease);
@@ -110,16 +110,20 @@ const menuId = `demo-menu-${variant}`;
   .demo-nav--clear .demo-nav__logo { border-radius: 4px; }
   .demo-nav__logo :global(img) {
     width: auto;
-    height: 2.5rem;
+    height: 3rem;
     transition: height var(--dur) var(--ease);
   }
-  .demo-nav[data-scrolled] .demo-nav__logo :global(img) { height: 2.1rem; }
+  .demo-nav[data-scrolled] .demo-nav__logo :global(img) { height: 2.5rem; }
+  @media (min-width: 72rem) {
+    .demo-nav__logo :global(img) { height: 3.5rem; }
+    .demo-nav[data-scrolled] .demo-nav__logo :global(img) { height: 2.875rem; }
+  }
 
   /* --------------------------------------------------------------- links */
   .demo-nav__links { display: none; }
   .demo-nav__links ul {
     display: flex;
-    gap: clamp(0.75rem, 0.2rem + 1vw, 1.6rem);
+    gap: clamp(0.75rem, 0.1rem + 0.9vw, 1.25rem);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -192,7 +196,7 @@ const menuId = `demo-menu-${variant}`;
   /* The menu is the one place the glass holds a lot of small text over a
      moving page, so it gets a firmer fill. */
   .demo-menu--smoke { background: rgba(0, 24, 64, 0.94); }
-  .demo-menu--frost { background: rgba(248, 248, 244, 0.97); }
+  .demo-menu--frost { background: rgba(0, 24, 64, 0.94); }
   .demo-menu--clear { background: rgba(10, 26, 18, 0.95); }
   .demo-menu::backdrop { background: rgba(0, 12, 34, 0.55); }
   .demo-menu[open] { display: grid; gap: var(--sp-5); }

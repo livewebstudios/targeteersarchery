@@ -10,6 +10,7 @@ interface Props {
   body?: string;
   primary?: { label: string; href: string };
   secondary?: { label: string; href: string };
+  /** Kept for older call sites. One skin now. */
   tone?: 'pine' | 'linen';
 }
 const {
@@ -17,12 +18,12 @@ const {
   body = 'The best way to find the right bow is to stand behind one. Call ahead, or just walk in. We are on Route 46 in Saddle Brook.',
   primary = { label: 'Book a lesson', href: '/lessons/#book' },
   secondary = { label: 'Get directions', href: business.directionsUrl },
-  tone = 'pine',
 } = Astro.props;
 ---
-<section class={`contact-band tone-${tone}`} aria-labelledby="contact-band-title">
+<section class="contact-band" aria-labelledby="contact-band-title">
+  <div class="wrap">
+  <div class="glass contact-band__inner">
   <div class="contact-band__rings" aria-hidden="true"><TargetIcon size={560} strokeWidth={0.4} /></div>
-  <div class="wrap contact-band__inner">
     <div class="contact-band__copy" data-reveal>
       <Eyebrow>Talk to a pro</Eyebrow>
       <h2 id="contact-band-title" class="shot-head">{title}</h2>
@@ -54,29 +55,27 @@ const {
       </div>
     </dl>
   </div>
+  </div>
 </section>
 
 <style>
-  .contact-band {
-    position: relative;
-    background: var(--bg);
-    color: var(--fg);
-    padding-block: var(--section-y);
-    overflow: hidden;
-    isolation: isolate;
-  }
+  .contact-band { position: relative; color: var(--ink); }
   .contact-band__rings {
     position: absolute;
     top: 50%; right: -10rem;
     translate: 0 -50%;
-    color: var(--accent);
-    opacity: 0.07;
+    color: var(--ink);
+    opacity: 0.08;
+    z-index: -1;
     pointer-events: none;
   }
   .contact-band__rings :global(svg) { width: 35rem; height: 35rem; }
 
   .contact-band__inner {
     position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding: var(--panel-pad);
     display: grid;
     gap: var(--sp-7);
     align-items: start;
@@ -84,7 +83,7 @@ const {
   @media (min-width: 60rem) {
     .contact-band__inner { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--sp-9); }
   }
-  .contact-band__copy p { max-width: 44ch; margin-top: var(--sp-4); font-size: var(--fs-lead); line-height: 1.5; }
+  .contact-band__copy p { max-width: 44ch; margin-top: var(--sp-4); font-size: var(--fs-lead); line-height: 1.5; color: var(--ink-muted); }
   .contact-band__actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-6); }
 
   .contact-band__details {
@@ -105,6 +104,6 @@ const {
     margin-bottom: 0.4rem;
   }
   .contact-band__details dd { margin: 0; font-size: var(--fs-small); line-height: 1.55; }
-  .contact-band__details a { color: var(--fg); text-decoration: none; transition: color var(--dur-fast) var(--ease); }
+  .contact-band__details a { color: var(--ink); text-decoration: none; transition: color var(--dur-fast) var(--ease); }
   .contact-band__details a:hover { color: var(--accent); }
 </style>

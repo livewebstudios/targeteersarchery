@@ -2,7 +2,7 @@
 import Base from '~/layouts/Base.astro';
 import Section from '~/components/Section.astro';
 import Button from '~/components/Button.astro';
-import { navGroups, contactLink } from '~/data/nav';
+import { siteNav, contactLink } from '~/data/nav';
 ---
 <Base
   title="Page Not Found | Targeteers Archery · Saddle Brook, NJ"
@@ -38,7 +38,7 @@ import { navGroups, contactLink } from '~/data/nav';
         have existed. Either way, here is where everything actually is.
       </p>
       <nav class="nf__links" aria-label="Site sections">
-        {[...navGroups, contactLink].map((l) => <a href={l.href}>{l.label}</a>)}
+        {[...siteNav, contactLink].map((l) => <a href={l.href}>{l.label}</a>)}
       </nav>
       <div class="nf__actions">
         <Button href="/" variant="primary">Back to the home page</Button>
@@ -68,7 +68,7 @@ import { navGroups, contactLink } from '~/data/nav';
     margin: 0;
   }
   .nf h1 { font-size: var(--fs-h2); color: var(--cream-50); }
-  .nf .lead { margin-inline: auto; color: rgba(248, 245, 238, 0.78); }
+  .nf .lead { margin-inline: auto; color: var(--ink-faint); }
   .nf__links {
     display: flex;
     flex-wrap: wrap;
@@ -83,9 +83,9 @@ import { navGroups, contactLink } from '~/data/nav';
     text-transform: uppercase;
     text-decoration: none;
     padding: 0.5rem 0.9rem;
-    border: 1px solid rgba(248, 245, 238, 0.2);
+    border: 1px solid var(--hair);
     border-radius: 999px;
-    color: rgba(248, 245, 238, 0.78);
+    color: var(--ink-faint);
     transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
   }
   .nf__links a:hover { border-color: var(--ember); color: var(--ember); }

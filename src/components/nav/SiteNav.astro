@@ -1,0 +1,272 @@
+---
+/**
+ * The site nav. Five plain links, no dropdowns, no panels, no sub-nav.
+ *
+ * Wide: a floating clear-glass pill 16px off the top. Logo on its white
+ * plate, five links, the open-now pill, and the one orange CALL button.
+ * Below 72rem: logo, a phone button, a menu button. The menu is a solid navy
+ * <dialog> listing the same five links plus CONTACT, every link visible.
+ *
+ * The current destination is underlined. A page that belongs to a
+ * destination (Leagues under RANGE & LEAGUES, say) lights its parent up.
+ */
+import { Image } from 'astro:assets';
+import logoRGB from '~/assets/brand/logoRGB.png';
+import { business } from '~/data/business';
+import { siteNav, contactLink, currentState } from '~/data/nav';
+import OpenNowPill from '~/components/OpenNowPill.astro';
+import PhoneIcon from '~/components/icons/PhoneIcon.astro';
+
+const path = Astro.url.pathname;
+const links = siteNav.map((d) => ({ ...d, state: currentState(d, path) }));
+const contactState = path === contactLink.href ? 'page' : undefined;
+const ariaCurrent = (s?: 'page' | 'section') => (s === 'page' ? 'page' : s === 'section' ? 'true' : undefined);
+---
+<header class="site-nav" data-site-nav>
+  <div class="site-nav__pill glass">
+    <a class="site-nav__logo" href="/" aria-label={`${business.shortName}, home`}>
+      <Image src={logoRGB} alt="Targeteers Archery" widths={[240, 480]} sizes="170px" loading="eager" />
+    </a>
+
+    <nav class="site-nav__links" aria-label="Main">
+      <ul>
+        {links.map((l) => <li><a href={l.href} aria-current={ariaCurrent(l.state)}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="site-nav__end">
+      <span class="site-nav__open"><OpenNowPill compact /></span>
+      <a class="d-btn d-btn--orange site-nav__call" href={business.phoneHref}>
+        <PhoneIcon size={16} />
+        <span>CALL {business.phone}</span>
+      </a>
+      <a class="site-nav__icon" href={business.phoneHref} aria-label={`Call the shop, ${business.phone}`}>
+        <PhoneIcon size={20} />
+      </a>
+      <button class="site-nav__icon site-nav__menu" type="button" aria-haspopup="dialog" aria-controls="site-menu" aria-expanded="false" data-menu-open>
+        <span class="site-nav__bars" aria-hidden="true"><span></span><span></span></span>
+        <span class="visually-hidden">Open the menu</span>
+      </button>
+    </div>
+  </div>
+
+  <dialog class="site-menu" id="site-menu" aria-label="Menu" data-menu>
+    <div class="site-menu__head">
+      <a class="site-nav__logo" href="/" aria-label={`${business.shortName}, home`}>
+        <Image src={logoRGB} alt="Targeteers Archery" widths={[240, 480]} sizes="170px" loading="lazy" />
+      </a>
+      <button class="site-nav__icon" type="button" data-menu-close>
+        <span class="site-menu__x" aria-hidden="true"></span>
+        <span class="visually-hidden">Close the menu</span>
+      </button>
+    </div>
+    <nav aria-label="Menu links">
+      <ul class="site-menu__links">
+        {links.map((l) => <li><a href={l.href} aria-current={ariaCurrent(l.state)}>{l.label}</a></li>)}
+        <li><a href={contactLink.href} aria-current={ariaCurrent(contactState)}>{contactLink.label}</a></li>
+      </ul>
+    </nav>
+    <div class="site-menu__foot">
+      <OpenNowPill />
+      <a class="d-btn d-btn--orange" href={business.phoneHref}>
+        <PhoneIcon size={16} /><span>CALL {business.phone}</span>
+      </a>
+    </div>
+  </dialog>
+</header>
+
+<style>
+  .site-nav {
+    position: sticky;
+    top: 16px;
+    z-index: var(--z-nav);
+    width: 100%;
+    max-width: var(--wrap);
+    margin: 16px auto 0;
+    padding-inline: var(--gutter);
+  }
+  .site-nav__pill {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: 0.6rem 0.6rem 0.6rem 0.75rem;
+    border-radius: 999px;
+    transition: padding var(--dur) var(--ease);
+  }
+  .site-nav[data-scrolled] .site-nav__pill { padding-block: 0.35rem; }
+
+  /* ---------------------------------------------------------------- logo
+     Never on glass that muddies the navy: it always sits on its own plate. */
+  .site-nav__logo {
+    flex: none;
+    display: block;
+    background: #fff;
+    border-radius: 999px;
+    padding: 0.3rem 0.9rem;
+    line-height: 0;
+  }
+  .site-nav__logo :global(img) {
+    width: auto;
+    height: 3rem;
+    transition: height var(--dur) var(--ease);
+  }
+  .site-nav[data-scrolled] .site-nav__logo :global(img) { height: 2.5rem; }
+  @media (min-width: 72rem) {
+    .site-nav__logo :global(img) { height: 3.5rem; }
+    .site-nav[data-scrolled] .site-nav__logo :global(img) { height: 2.875rem; }
+  }
+
+  /* --------------------------------------------------------------- links */
+  .site-nav__links { display: none; }
+  .site-nav__links ul {
+    display: flex;
+    gap: clamp(0.75rem, 0.1rem + 0.9vw, 1.25rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-nav__links a,
+  .site-menu__links a {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: var(--ink);
+    white-space: nowrap;
+    background: linear-gradient(var(--tgt-orange), var(--tgt-orange)) left bottom / 0 2px no-repeat;
+    padding-block: 0.5rem;
+    transition: background-size var(--dur-fast) var(--ease);
+  }
+  .site-nav__links a:hover,
+  .site-nav__links a[aria-current] { background-size: 100% 2px; }
+
+  .site-nav__end {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+  .site-nav__open { display: none; }
+  .site-nav__call { display: none; }
+
+  /* When an orange button is already on screen in the page itself, the nav's
+     own call button steps down to an outline: one orange per viewport. */
+  .site-nav[data-quiet] .site-nav__call {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--outline);
+  }
+
+  .site-nav__icon {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--hair-strong);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 0;
+  }
+  .site-nav__bars { display: grid; gap: 5px; width: 18px; }
+  .site-nav__bars span { display: block; height: 2px; background: currentColor; border-radius: 2px; }
+
+  @media (min-width: 72rem) {
+    .site-nav__links { display: block; }
+    .site-nav__call { display: inline-flex; }
+    .site-nav__icon { display: none; }
+  }
+  @media (min-width: 84rem) {
+    .site-nav__open { display: inline-flex; }
+  }
+
+  /* ---------------------------------------------------------------- menu
+     Solid navy: a lot of small text over a moving page. */
+  .site-menu {
+    width: min(100vw - 1.5rem, 30rem);
+    max-height: calc(100dvh - 1.5rem);
+    margin: 0.75rem 0.75rem auto auto;
+    padding: var(--sp-5);
+    color: var(--ink);
+    overflow: auto;
+    background: rgba(0, 24, 64, 0.97);
+    border: 1px solid var(--glass-edge);
+    border-radius: var(--glass-radius);
+    box-shadow: var(--glass-shadow);
+  }
+  .site-menu::backdrop { background: rgba(0, 12, 34, 0.6); }
+  .site-menu[open] { display: grid; gap: var(--sp-5); }
+  .site-menu__head { display: flex; align-items: center; justify-content: space-between; }
+  .site-menu .site-nav__icon { display: grid; }
+  .site-menu__x { position: relative; width: 18px; height: 18px; }
+  .site-menu__x::before,
+  .site-menu__x::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 18px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    rotate: 45deg;
+  }
+  .site-menu__x::after { rotate: -45deg; }
+  .site-menu__links { list-style: none; margin: 0; padding: 0; }
+  .site-menu__links li { border-bottom: 1px solid var(--hair); }
+  .site-menu__links a {
+    display: flex;
+    min-height: 3.25rem;
+    align-items: center;
+    font-size: 0.9375rem;
+  }
+  .site-menu__links a[aria-current] { color: var(--accent-text); }
+  .site-menu__foot { display: grid; gap: var(--sp-4); justify-items: start; }
+</style>
+
+<script>
+  function wireNav() {
+    for (const nav of document.querySelectorAll<HTMLElement>('[data-site-nav]')) {
+      if (nav.dataset.wired) continue;
+      nav.dataset.wired = '';
+
+      // Shrink slightly once the page has moved.
+      const onScroll = () => nav.toggleAttribute('data-scrolled', window.scrollY > 24);
+      onScroll();
+      addEventListener('scroll', onScroll, { passive: true });
+
+      // One orange per viewport: go quiet while an in-page primary is visible.
+      const primaries = document.querySelectorAll('[data-primary]');
+      if (primaries.length && 'IntersectionObserver' in window) {
+        const visible = new Set<Element>();
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) e.isIntersecting ? visible.add(e.target) : visible.delete(e.target);
+          nav.toggleAttribute('data-quiet', visible.size > 0);
+        });
+        primaries.forEach((p) => io.observe(p));
+        document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+      }
+
+      // Menu: a real <dialog>, so focus, Escape and the backdrop come free.
+      const dialog = nav.querySelector<HTMLDialogElement>('[data-menu]');
+      const open = nav.querySelector<HTMLButtonElement>('[data-menu-open]');
+      const close = nav.querySelector<HTMLButtonElement>('[data-menu-close]');
+      if (!dialog || !open) continue;
+      open.addEventListener('click', () => {
+        dialog.showModal();
+        open.setAttribute('aria-expanded', 'true');
+      });
+      close?.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('close', () => {
+        open.setAttribute('aria-expanded', 'false');
+        open.focus();
+      });
+      // A tap on the dim backdrop closes it.
+      dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+      dialog.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => dialog.close()));
+    }
+  }
+  wireNav();
+  document.addEventListener('astro:page-load', wireNav);
+</script>

@@ -166,8 +166,9 @@ const awards = [
 
   <!-- --------------------------------------------------------------- "The Wall" -->
   <section class="wall tone-pine" aria-labelledby="wall-title">
-    <div class="wall__rings" aria-hidden="true"><TargetIcon size={520} strokeWidth={0.4} /></div>
-    <div class="wrap wall__inner">
+    <div class="wrap">
+      <div class="glass band__panel wall__inner">
+      <div class="wall__rings" aria-hidden="true"><TargetIcon size={520} strokeWidth={0.4} /></div>
       <Reveal class="wall__copy">
         <h2 id="wall-title" class="shot-head">For the ones who taught us to aim true.</h2>
         <p>
@@ -196,6 +197,7 @@ const awards = [
              Until Rob supplies them this stays as "Est. 1957" — see handoff §5.2. -->
         <p>Est. 1957</p>
       </Reveal>
+    </div>
     </div>
   </section>
 
@@ -271,7 +273,10 @@ const awards = [
   @media (min-width: 60rem) { .rob { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); gap: var(--sp-9); } }
   .rob__frame {
     margin: 0;
-    background: var(--cream-50);
+    background: var(--pane-fill);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     padding: clamp(0.75rem, 0.3rem + 1.4vw, 1.5rem);
     border: 1px solid var(--parchment);
     border-radius: var(--radius);
@@ -333,7 +338,7 @@ const awards = [
     margin-bottom: var(--sp-6);
   }
   .wall__copy p {
-    color: rgba(248, 245, 238, 0.8);
+    color: var(--ink-muted);
     font-size: var(--fs-lead);
     line-height: 1.6;
     max-width: 58ch;
@@ -349,7 +354,10 @@ const awards = [
   }
   .wall__frame {
     margin: 0;
-    background: var(--cream-50);
+    background: var(--pane-fill);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     padding: clamp(0.6rem, 0.3rem + 1vw, 1.1rem);
     border-radius: var(--radius);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
@@ -365,7 +373,7 @@ const awards = [
     font-weight: 600;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: rgba(248, 245, 238, 0.62);
+    color: var(--ink-faint);
   }
 
   /* ----------------------------------------------------------------- awards */
@@ -384,7 +392,10 @@ const awards = [
     width: 7.5rem; height: auto;
     border-radius: var(--radius);
     border: 1px solid var(--cream-200);
-    background: var(--cream-50);
+    background: var(--pane-fill);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
   }
   .awards figcaption { display: grid; gap: 0.25rem; }
   .awards__label {
@@ -407,7 +418,10 @@ const awards = [
   }
   .team__card {
     height: 100%;
-    background: var(--cream-50);
+    background: var(--pane-fill);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: var(--sp-5);
@@ -421,6 +435,9 @@ const awards = [
     place-items: center;
     border-radius: 999px;
     background: var(--cream-100);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     color: var(--ember);
     margin-bottom: var(--sp-2);
   }

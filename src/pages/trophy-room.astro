@@ -85,7 +85,8 @@ const galleryItems = [
   </Section>
 
   <section class="bear tone-pine" aria-labelledby="bear-title">
-    <div class="wrap bear__inner">
+    <div class="wrap">
+      <div class="glass band__panel bear__inner">
       <Reveal>
         <TrophyIcon size={36} />
         <Eyebrow>The one everybody stops at</Eyebrow>
@@ -100,6 +101,7 @@ const galleryItems = [
           Come and stand next to it. That is genuinely the whole pitch.
         </p>
       </Reveal>
+    </div>
     </div>
   </section>
 
@@ -193,8 +195,8 @@ const galleryItems = [
   .bear :global(.eyebrow) { justify-content: center; }
   .bear :global(.eyebrow)::before { display: none; }
   .bear h2 { color: var(--cream-50); }
-  .bear .lead { margin-top: var(--sp-4); margin-inline: auto; color: rgba(248, 245, 238, 0.82); }
-  .bear__note { margin-top: var(--sp-5); font-size: var(--fs-small); color: rgba(248, 245, 238, 0.58); font-style: italic; }
+  .bear .lead { margin-top: var(--sp-4); margin-inline: auto; color: var(--ink-muted); }
+  .bear__note { margin-top: var(--sp-5); font-size: var(--fs-small); color: var(--ink-faint); font-style: italic; }
 
   .visit-grid {
     display: grid;
@@ -204,6 +206,9 @@ const galleryItems = [
   .visit-card {
     height: 100%;
     background: var(--cream-100);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: var(--sp-5);

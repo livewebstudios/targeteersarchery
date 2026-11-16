@@ -13,12 +13,13 @@ const { href, class: klass = '' } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: 0.55em;
-    font-size: var(--fs-eyebrow);
-    font-weight: 600;
+    min-height: 2.75rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
     text-decoration: none;
-    color: var(--accent, var(--ember));
+    color: var(--ink);
   }
   .arrow-link :global(svg) { transition: translate var(--dur) var(--ease); flex: none; }
   .arrow-link:hover :global(svg) { translate: 0.35rem 0; }
@@ -29,10 +30,10 @@ const { href, class: klass = '' } = Astro.props;
     inset-inline: 0;
     bottom: 0;
     height: 1px;
-    background: currentColor;
-    scale: 0 1;
+    background: var(--hair-strong);
+    scale: 1 1;
     transform-origin: left;
     transition: scale var(--dur) var(--ease);
   }
-  .arrow-link:hover span::after { scale: 1 1; }
+  .arrow-link:hover span::after { background: currentColor; }
 </style>

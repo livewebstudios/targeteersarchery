@@ -1,14 +1,27 @@
 ---
+/**
+ * One section of a page: a single clear-glass panel over the landscape.
+ * Everything inside it is a pane (tinted, never blurred again), so there is
+ * never glass inside glass.
+ *
+ * `tone` is kept for the pages that still pass it. There is one skin now, so
+ * every tone renders the same panel; `pine` and `bark` read a touch deeper,
+ * which keeps a run of panels from looking identical.
+ */
 interface Props {
   tone?: 'cream' | 'linen' | 'pine' | 'bark';
   id?: string;
   class?: string;
   width?: 'default' | 'narrow' | 'wide' | 'full';
-  /** Extra top/bottom air for the set-piece bands. */
+  /** Extra air inside the panel for the set-piece sections. */
   size?: 'default' | 'tight' | 'tall';
   as?: 'section' | 'div' | 'article' | 'aside';
-  /** Drifting colour behind a plain band. On by default where the ground is bare. */
+  /** Retired with the cream skin. Accepted and ignored. */
   aura?: boolean;
+  /** Content sits straight on the page with no panel (rare). */
+  bare?: boolean;
+  'aria-labelledby'?: string;
+  'aria-label'?: string;
 }
 const {
   tone = 'cream',
@@ -17,81 +30,44 @@ const {
   width = 'default',
   size = 'default',
   as: Tag = 'section',
-  aura,
+  bare = false,
+  ...rest
 } = Astro.props;
-/* The plain cream and linen bands are the ones with nothing on them, so they
-   are the ones that get the aura unless a page turns it off. */
-const showAura = aura ?? (tone === 'cream' || tone === 'linen');
 
 const WRAPPERS: Record<NonNullable<Props['width']>, string> = {
   default: 'wrap',
   narrow: 'wrap-narrow',
   wide: 'wrap-wide',
-  full: '',
+  full: 'wrap-wide',
 };
-const wrapClass = WRAPPERS[width];
+const deep = tone === 'pine' || tone === 'bark';
 ---
-<Tag id={id} class={`section tone-${tone} size-${size} ${klass}`}>
-  {showAura && (
-    <div class="aura" aria-hidden="true"><div class="aura__drift" /></div>
-  )}
-  {wrapClass ? <div class={`${wrapClass} section__inner`}><slot /></div> : <div class="section__inner"><slot /></div>}
+<Tag id={id} class={`section size-${size} ${klass}`} {...rest}>
+  <div class={WRAPPERS[width]}>
+    <div class={`section__inner ${bare ? '' : 'glass section__panel'} ${deep ? 'is-deep' : ''}`}>
+      <slot />
+    </div>
+  </div>
 </Tag>
 
 <style>
-  /* ----------------------------------------------------------------- aura
-     Three soft blobs drifting slowly behind a plain band, so two bare
-     sections in a row are not two flat rectangles. The clip lives on .aura
-     and the movement on .aura__drift, which keeps the transform GPU-composited
-     and stops it pushing the page sideways. Nothing here clips the section
-     itself, because several pages have position: sticky inside one. */
-  .aura {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .aura__drift {
-    position: absolute;
-    inset: -18%;
-    background:
-      radial-gradient(34% 42% at 16% 26%, var(--aura-red), transparent 68%),
-      radial-gradient(40% 48% at 84% 66%, var(--aura-blue), transparent 70%),
-      radial-gradient(28% 34% at 52% 96%, var(--aura-warm), transparent 66%);
-    animation: aura-drift 72s var(--ease) infinite alternate;
-    will-change: transform;
-  }
-  /* Neighbouring bands drift out of phase, so a run of them never pulses
-     together. */
-  .section:nth-of-type(even) .aura__drift {
-    animation-duration: 88s;
-    animation-direction: alternate-reverse;
-    /* rotate is free here; the keyframes only touch translate and scale, so a
-       half turn mirrors the blob layout without being overridden. */
-    rotate: 180deg;
-  }
-  @keyframes aura-drift {
-    from { translate: 0 0; scale: 1; }
-    50% { translate: 2.5% -1.5%; scale: 1.08; }
-    to { translate: -2% 1.2%; scale: 1.03; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .aura__drift { animation: none; }
-  }
-
-  .section__inner { position: relative; z-index: 1; }
-
   .section {
     position: relative;
-    background: var(--bg);
-    color: var(--fg);
-    padding-block: var(--section-y);
-    isolation: isolate;
+    color: var(--ink);
+    scroll-margin-top: 7rem;
   }
-  .size-tight { padding-block: calc(var(--section-y) * 0.55); }
-  .size-tall { padding-block: calc(var(--section-y) * 1.35); }
-  .section :global(h2), .section :global(h3) { color: var(--fg); }
-  .section :global(p) { color: var(--fg-muted); }
-  .section :global(h1), .section :global(h2), .section :global(h3), .section :global(h4) { color: var(--fg); }
+  .section__panel { padding: var(--panel-pad); }
+  .size-tight .section__panel { padding-block: calc(var(--panel-pad) * 0.75); }
+  .size-tall .section__panel { padding-block: calc(var(--panel-pad) * 1.35); }
+  /* A deeper tint for rhythm. Still clear glass, still one blur. */
+  .section__panel.is-deep {
+    background:
+      linear-gradient(140deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.08) 100%),
+      rgba(0, 24, 64, 0.34);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .section__panel.is-deep { background: var(--glass-solid); }
+  }
+  .section :global(p) { color: var(--ink-muted); }
+  .section :global(:is(h1, h2, h3, h4)) { color: var(--ink); }
 </style>

@@ -28,19 +28,17 @@ const serialised = JSON.stringify(
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--fg-muted, var(--bark-500));
-    border: 1px solid var(--rule, var(--cream-200));
+    color: var(--ink-muted);
+    border: 1px solid var(--hair-strong);
     border-radius: 999px;
     padding: 0.45em 0.9em 0.45em 0.75em;
-    background: color-mix(in srgb, var(--bg, var(--cream-50)) 70%, transparent);
-    backdrop-filter: blur(6px);
+    background: transparent;
     white-space: nowrap;
   }
-  .open-pill.is-compact { border: 0; padding: 0; background: none; backdrop-filter: none; }
+  .open-pill.is-compact { border: 0; padding: 0; background: none; }
   .open-pill :global(svg) { flex: none; color: var(--accent, var(--ember)); }
-  .open-pill[data-state='open'] :global(svg) { color: var(--pine-500); }
-  .tone-pine .open-pill[data-state='open'] :global(svg) { color: var(--sage-300); }
-  .open-pill[data-state='closed'] :global(svg) { color: var(--stone-400); }
+  .open-pill[data-state='open'] :global(svg) { color: var(--accent-text); }
+  .open-pill[data-state='closed'] :global(svg) { color: var(--ink-faint); }
 </style>
 
 <script>

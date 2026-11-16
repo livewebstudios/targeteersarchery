@@ -14,7 +14,7 @@ interface Props {
   class?: string;
   note?: string;
 }
-const { action, subject, name, submitLabel = 'Send', class: klass = '', note } = Astro.props;
+const { action, subject, name, submitLabel = 'SEND IT', class: klass = '', note } = Astro.props;
 const site = Astro.site?.href ?? 'https://targeteersarchery.com/';
 const pending = action.includes('FORM_ID');
 ---
@@ -71,28 +71,30 @@ const pending = action.includes('FORM_ID');
   .form__note { font-size: var(--fs-small); color: var(--fg-faint); margin: 0; }
   .form__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-4); }
 
+  /* SEND IT is a quiet white outline: the orange belongs to CALL. */
   .form__submit {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--ember-bright);
-    color: var(--bark-900);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: var(--ls-eyebrow);
+    min-height: 3rem;
+    background: transparent;
+    color: var(--ink);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 1.05rem 2rem;
-    border: 0;
-    border-radius: var(--radius);
+    padding: 0.85rem 1.75rem;
+    border: 1.5px solid var(--outline);
+    border-radius: 999px;
     cursor: pointer;
-    transition: background var(--dur-fast) var(--ease), translate var(--dur-fast) var(--ease);
+    transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), translate var(--dur-fast) var(--ease);
   }
-  .form__submit:hover { background: var(--ember-hover); translate: 0 -1px; }
+  .form__submit:hover { border-color: var(--ink); background: rgba(255, 255, 255, 0.06); translate: 0 -1px; }
   .form__submit[disabled] { opacity: 0.55; cursor: progress; translate: 0 0; }
 
   .form__status { margin: 0; font-size: var(--fs-small); }
-  .form__status[data-state='error'] { color: var(--bullseye); }
-  .form__status[data-state='ok'] { color: var(--pine-500); }
+  .form__status[data-state='error'] { color: var(--accent-text); }
+  .form__status[data-state='ok'] { color: var(--ink); }
 
   .form__pending {
     font-size: var(--fs-small);

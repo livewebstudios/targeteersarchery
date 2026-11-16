@@ -1,0 +1,85 @@
+---
+/**
+ * The pages under the current destination, as one slim glass strip at the
+ * foot of the page. This is how the pages that left the top nav (Leagues,
+ * Waiver, Hunting, FAQ, Careers...) stay one click from their parent, without
+ * a dropdown or a sticky sub-nav. Rendered by Base.astro; the current page is
+ * marked and not a link.
+ */
+import { destinationFor } from '~/data/nav';
+import ArrowRightIcon from '~/components/icons/ArrowRightIcon.astro';
+
+const path = Astro.url.pathname;
+const dest = destinationFor(path);
+// The longest matching href is the page you are on, or the one you are under
+// (a post sits under INSIGHTS). Only an exact match stops being a link.
+const current = dest?.pages
+  .filter((p) => path.startsWith(p.href))
+  .sort((a, b) => b.href.length - a.href.length)[0];
+---
+{dest && dest.pages.length > 1 && (
+  <nav class="section-links" aria-label={`More under ${dest.label.toLowerCase()}`}>
+    <div class="wrap">
+      <div class="section-links__bar glass">
+        <p class="section-links__label">{dest.label}</p>
+        <ul>
+          {dest.pages.map((p) => (
+            <li>
+              {p === current && p.href === path
+                ? <span aria-current="page">{p.label}</span>
+                : <a href={p.href} aria-current={p === current ? 'true' : undefined}><span>{p.label}</span><ArrowRightIcon size={14} /></a>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </nav>
+)}
+
+<style>
+  .section-links__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3) var(--sp-6);
+    padding: var(--sp-4) clamp(1.25rem, 0.7rem + 2vw, 2rem);
+  }
+  .section-links__label {
+    margin: 0;
+    font-size: var(--fs-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--ls-eyebrow);
+    color: var(--accent-text);
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  a, span[aria-current] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-height: 2.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  a span { border-bottom: 1px solid var(--hair-strong); padding-bottom: 0.15em; }
+  a:hover span { border-color: currentColor; }
+  a :global(svg) { flex: none; transition: translate var(--dur-fast) var(--ease); }
+  a:hover :global(svg) { translate: 3px 0; }
+  span[aria-current] { color: var(--ink-muted); }
+  [aria-current]::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--tgt-orange);
+  }
+</style>

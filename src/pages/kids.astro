@@ -130,6 +130,7 @@ const galleryItems = [
 
   <section class="parents tone-pine" aria-labelledby="parents-title">
     <div class="wrap">
+      <div class="glass band__panel">
       <div class="parents__head" data-reveal>
         <Eyebrow>For parents</Eyebrow>
         <h2 id="parents-title" class="shot-head">Three things worth knowing.</h2>
@@ -159,6 +160,7 @@ const galleryItems = [
           </p>
         </Reveal>
       </div>
+    </div>
     </div>
   </section>
 
@@ -243,6 +245,9 @@ const galleryItems = [
   .programs article {
     height: 100%;
     background: var(--cream-100);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: var(--sp-5);
@@ -263,7 +268,7 @@ const galleryItems = [
     gap: var(--sp-6);
   }
   .parents__grid h3 { color: var(--cream-50); font-size: var(--fs-h4); margin-bottom: var(--sp-3); }
-  .parents__grid p { color: rgba(248, 245, 238, 0.74); font-size: var(--fs-small); line-height: 1.7; margin: 0; }
+  .parents__grid p { color: var(--ink-faint); font-size: var(--fs-small); line-height: 1.7; margin: 0; }
 
   .reserve { display: grid; gap: var(--sp-8); align-items: start; }
   @media (min-width: 60rem) { .reserve { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.2fr); gap: var(--sp-9); } }
@@ -272,6 +277,9 @@ const galleryItems = [
   .reserve__figure :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
   .reserve__form {
     background: var(--cream-100);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: clamp(1.25rem, 0.6rem + 2vw, 2.25rem);

@@ -29,7 +29,7 @@ const embed = `https://www.google.com/maps?q=${encodeURIComponent(
     position: relative;
     aspect-ratio: 4 / 3;
     background:
-      repeating-linear-gradient(45deg, var(--cream-100) 0 12px, var(--cream-50) 12px 24px);
+      repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.06) 0 12px, rgba(255, 255, 255, 0.02) 12px 24px);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -51,7 +51,7 @@ const embed = `https://www.google.com/maps?q=${encodeURIComponent(
     color: var(--bark-700);
     transition: background var(--dur-fast) var(--ease);
   }
-  .map__load:hover { background: color-mix(in srgb, var(--cream-50) 55%, transparent); }
+  .map__load:hover { background: var(--pane-fill-hover); }
   .map__load :global(svg) { color: var(--ember); margin-bottom: var(--sp-2); }
   .map__title { font-family: var(--font-display); font-weight: 500; font-size: var(--fs-h4); }
   .map__sub { font-size: var(--fs-small); color: var(--bark-500); }

@@ -3,52 +3,53 @@ import '@fontsource-variable/familjen-grotesk';
 import '@fontsource-variable/instrument-sans';
 import '~/styles/tokens.css';
 import '~/styles/global.css';
-import '~/styles/mobile-menu.css';
 
 import { ClientRouter } from 'astro:transitions';
-import Nav from '~/components/nav/Nav.astro';
+import SiteNav from '~/components/nav/SiteNav.astro';
+import ActionBar from '~/components/nav/ActionBar.astro';
 import Footer from '~/components/Footer.astro';
+import Backdrop from '~/components/Backdrop.astro';
+import SectionLinks from '~/components/nav/SectionLinks.astro';
 import Analytics from '~/components/Analytics.astro';
 import Seo from '~/components/seo/Seo.astro';
 import type { SeoProps } from '~/components/seo/Seo.astro';
 import JsonLd from '~/components/seo/JsonLd.astro';
 import { localBusinessSchema, breadcrumbSchema } from '~/components/seo/localBusiness';
-import { groupFor } from '~/data/nav';
-import SubRail from '~/components/nav/SubRail.astro';
+import { sceneFor, type Scene } from '~/data/scenes';
 import SiteGate from '~/components/SiteGate.astro';
 
 export interface Props extends SeoProps {
-  /** The hero page lets the nav float over the film. */
-  overHero?: boolean;
   bodyClass?: string;
   breadcrumbs?: { name: string; path: string }[];
   schema?: Record<string, unknown> | Record<string, unknown>[];
+  /** The landscape behind the glass. Picked from the URL when left out. */
+  scene?: Scene;
+  /** Where the phone action bar's HOURS button jumps. The footer by default. */
+  hoursHref?: string;
 }
 
 const {
-  overHero = false,
   bodyClass = '',
   breadcrumbs,
   schema,
+  scene = sceneFor(Astro.url.pathname),
+  hoursHref,
   ...seo
 } = Astro.props;
-
-/* Pages inside a nav group get the sticky sub-nav, which needs the wide bands
-   to stop short of the right rail on very wide screens. */
-const subNavGroup = groupFor(Astro.url.pathname);
-const bodyClasses = [bodyClass, subNavGroup ? 'has-subnav' : ''].filter(Boolean).join(' ');
 
 const siteUrl = Astro.site!.href;
 const graph: Record<string, unknown>[] = [localBusinessSchema(siteUrl)];
 if (breadcrumbs?.length) graph.push(breadcrumbSchema(siteUrl, breadcrumbs));
 if (schema) graph.push(...(Array.isArray(schema) ? schema : [schema]));
+
+const bodyClasses = ['has-actionbar', bodyClass].filter(Boolean).join(' ');
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#14261B" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#001840" />
     <meta name="format-detection" content="telephone=no" />
 
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
@@ -82,13 +83,16 @@ if (schema) graph.push(...(Array.isArray(schema) ? schema : [schema]));
     {/* TEMPORARY pre-launch gate. Remove this line and the import on launch day. */}
     <SiteGate />
 
-    <a class="skip-link" href="#main">Skip to content</a>
-    <Nav overHero={overHero} />
-    <main id="main">
+    {/* In its own landmark so axe's region rule is satisfied. */}
+    <nav aria-label="Skip link"><a class="skip-link" href="#main">Skip to content</a></nav>
+    <slot name="backdrop"><Backdrop scene={scene} /></slot>
+    <SiteNav />
+    <main id="main" class="page">
       <slot />
+      <SectionLinks />
     </main>
-    {subNavGroup && <SubRail group={subNavGroup} current={Astro.url.pathname} />}
     <Footer />
+    <ActionBar hoursHref={hoursHref} />
 
     <script>
       // Decap CMS invite links arrive as #invite_token=… on the home page.
@@ -103,7 +107,7 @@ if (schema) graph.push(...(Array.isArray(schema) ? schema : [schema]));
 </html>
 
 <style is:global>
-  /* View transition: a slow cream crossfade rather than a slide. */
+  /* View transition: a slow crossfade rather than a slide. */
   @view-transition { navigation: auto; }
   ::view-transition-old(root),
   ::view-transition-new(root) {
@@ -113,5 +117,15 @@ if (schema) graph.push(...(Array.isArray(schema) ? schema : [schema]));
   @media (prefers-reduced-motion: reduce) {
     ::view-transition-old(root),
     ::view-transition-new(root) { animation: none; }
+  }
+
+  /* The page is a stack of glass panels with even gaps between them. */
+  .page {
+    display: grid;
+    /* minmax(0, 1fr), so no panel can grow wider than the screen to fit an
+       unbreakable line. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--panel-gap);
+    padding-top: var(--panel-gap);
   }
 </style>

@@ -1,0 +1,23 @@
+---
+/**
+ * The fixed landscape behind every inner page, under the navy wash. One
+ * scene per destination, so the five parts of the site each have their own
+ * country. Real <img> elements through astro:assets, never
+ * background-attachment: fixed (iOS ignores it). The home page brings its
+ * own backdrop with Rob's film through Base's `backdrop` slot.
+ *
+ * Files are the graded renders in src/assets/demo-scenes/. Replacing one with
+ * a new render of the same name needs no code change.
+ */
+import { Picture } from 'astro:assets';
+import { SCENES, type Scene } from '~/data/scenes';
+
+interface Props { scene: Scene }
+const { scene } = Astro.props;
+---
+<div class="d-backdrop" aria-hidden="true">
+  <div class="d-backdrop__layer">
+    <Picture src={SCENES[scene]} alt="" formats={['avif', 'webp']} widths={[800, 1200, 1600, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
+  </div>
+  <div class="d-backdrop__scrim"></div>
+</div>

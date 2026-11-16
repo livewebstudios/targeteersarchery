@@ -83,7 +83,8 @@ const galleryItems = [
   </Section>
 
   <section class="promise tone-pine" aria-labelledby="promise-title">
-    <div class="wrap promise__inner">
+    <div class="wrap">
+      <div class="glass band__panel promise__inner">
       <Reveal class="promise__copy">
         <ShieldRingIcon size={34} />
         <Eyebrow>Our promise</Eyebrow>
@@ -101,6 +102,7 @@ const galleryItems = [
           certificates.
         </p>
       </Reveal>
+    </div>
     </div>
   </section>
 
@@ -180,9 +182,9 @@ const galleryItems = [
   @media (min-width: 60rem) { .promise__inner { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--sp-9); } }
   .promise__copy :global(svg) { color: var(--ember); margin-bottom: var(--sp-5); }
   .promise h2 { color: var(--cream-50); }
-  .promise .lead { margin-top: var(--sp-4); color: rgba(248, 245, 238, 0.82); }
+  .promise .lead { margin-top: var(--sp-4); color: var(--ink-muted); }
   .promise__card {
-    border: 1px solid rgba(248, 245, 238, 0.18);
+    border: 1px solid var(--hair);
     border-radius: var(--radius-lg);
     padding: var(--sp-5);
   }
@@ -194,7 +196,7 @@ const galleryItems = [
     color: var(--ember);
     margin: 0 0 var(--sp-3);
   }
-  .promise__card p { color: rgba(248, 245, 238, 0.78); font-size: var(--fs-small); line-height: 1.7; margin: 0; }
+  .promise__card p { color: var(--ink-faint); font-size: var(--fs-small); line-height: 1.7; margin: 0; }
 
   .rules { list-style: none; margin: 0; padding: 0; counter-reset: rule; display: grid; gap: 0; max-width: 58rem; }
   .rules li { counter-increment: rule; border-bottom: 1px solid var(--rule); }
@@ -226,7 +228,10 @@ const galleryItems = [
   }
   .panel {
     height: 100%;
-    background: var(--cream-50);
+    background: var(--pane-fill);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: var(--sp-5);

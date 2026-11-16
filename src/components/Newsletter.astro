@@ -45,7 +45,10 @@ const pending = business.mailchimpAction === 'MAILCHIMP_ACTION_URL';
   .news__form { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-2); }
   .news__form input {
     flex: 1 1 12rem;
-    background: var(--cream-50);
+    background: var(--pane-fill);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius);
     padding: 0.85rem 1rem;
@@ -69,6 +72,6 @@ const pending = business.mailchimpAction === 'MAILCHIMP_ACTION_URL';
     cursor: pointer;
     transition: background var(--dur-fast) var(--ease);
   }
-  .news__form button:hover { background: var(--pine-900); }
+  .news__form button:hover { background: var(--tgt-navy); }
   .news__pending { font-size: 0.75rem; color: var(--fg-faint); margin: 0; }
 </style>

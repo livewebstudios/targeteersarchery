@@ -17,9 +17,9 @@ interface Props {
 }
 const { variant, compact = false } = Astro.props;
 const year = new Date().getFullYear();
-const shoot = footerNav.find((c) => c.heading === 'Shoot With Us')!;
-const shop = footerNav.find((c) => c.heading === 'The Shop')!;
-const family = footerNav.find((c) => c.heading === 'The Family')!;
+const shop = footerNav.find((c) => c.heading === 'Pro Shop & Service')!;
+const shoot = footerNav.find((c) => c.heading === 'Range & Lessons')!;
+const family = footerNav.find((c) => c.heading === 'About')!;
 
 /* Hand-written public paths stay relative (LWS path rule), so count how deep
    this route sits. /demos/1-base-camp/ is two levels down. */

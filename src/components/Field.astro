@@ -53,7 +53,7 @@ const id = `f-${name}`;
     text-transform: uppercase;
     color: var(--fg-muted);
   }
-  .field__req { color: var(--bullseye); }
+  .field__req { color: var(--accent-text); }
   .field__opt {
     font-size: 0.625rem;
     letter-spacing: 0.08em;
@@ -61,22 +61,25 @@ const id = `f-${name}`;
     text-transform: lowercase;
     font-weight: 400;
   }
+  /* Fields are white with navy ink: the one place on the site where the
+     reader types, so it gets the plainest, highest-contrast surface. */
   input, textarea, select {
     width: 100%;
-    background: var(--cream-50);
-    border: 1px solid var(--cream-200);
-    border-radius: var(--radius);
+    background: #fff;
+    border: 1px solid rgba(0, 24, 64, 0.22);
+    border-radius: 10px;
     padding: 0.85rem 1rem;
     font-size: var(--fs-body);
-    color: var(--bark-900);
+    color: var(--tgt-navy);
     transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
   }
+  select { color-scheme: light; }
   textarea { resize: vertical; min-height: 8rem; line-height: 1.55; }
   input:focus, textarea:focus, select:focus {
     outline: 0;
-    border-color: var(--ember);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ember) 18%, transparent);
+    border-color: var(--tgt-orange);
+    box-shadow: var(--focus);
   }
-  input::placeholder, textarea::placeholder { color: var(--stone-400); }
+  input::placeholder, textarea::placeholder { color: #55607a; }
   .field__hint { font-size: 0.75rem; color: var(--fg-faint); }
 </style>

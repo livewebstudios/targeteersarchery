@@ -22,13 +22,71 @@ Node 20 or newer.
 
 ---
 
+## The look: clear glass over country
+
+The whole site is the **Trailhead** design Jon picked from the three home page
+demos in November 2026. Every page is the same stack:
+
+1. **A fixed landscape** behind everything (`Backdrop.astro`, real `<img>`
+   elements, never `background-attachment: fixed`). Each of the five
+   destinations has its own scene, set in `src/data/scenes.ts`. The home page
+   uses Rob's hero film instead.
+2. **A navy wash** over the landscape (`--wash`, `--wash-film`). This does most
+   of the contrast work. Do not lighten it without re-running
+   `node scripts/contrast.mjs`.
+3. **Clear glass panels** on top (`.glass`): a thin navy tint under a diagonal
+   white shine, `blur(24px) saturate(160%)` (12px on a phone), a white rim and a
+   lit top edge. Every `<Section>`, the page hero, the contact band, the nav pill
+   and the footer is one glass panel. The page itself is a grid of panels with
+   an even gap (`.page` in `Base.astro`).
+4. **Panes** inside glass (`.pane`): tinted and rimmed, never blurred again.
+   Cards, the home page tiles and form boxes are panes. **Never glass inside
+   glass.** `scripts/layout-check.mjs` reports any it finds.
+
+Ink and accents:
+
+| Token | Value | Use |
+|---|---|---|
+| `--ink` | `#f8f8f4` | Headings and body copy |
+| `--ink-muted` | white at 0.9 | Paragraphs, list text |
+| `--ink-faint` | white at 0.8 | Notes, captions. Nothing fainter. |
+| `--tgt-tan` | `#fcba66` | Small accent labels on glass. Orange text fails over snow. |
+| `--tgt-tan-pale` | `#ffd29a` | The same labels on a pane, which sits brighter. Set automatically on `.pane`. |
+| `--tgt-orange` | `#e46024` | **Fills only**, always with navy text. One per screen. |
+| `--tgt-navy` | `#001840` | The menu, the phone action bar, the solid fallback |
+
+**One orange per screen.** The nav's CALL button is orange. While any in-page
+button marked `data-primary` (a `<Button variant="orange">`) is on screen, the
+nav's CALL drops to an outline. Below 48rem the phone action bar owns the
+orange and in-page primaries render as outlines. A page's main action is
+otherwise `<Button variant="primary">`: white fill, navy text.
+
+**Fallbacks.** With no `backdrop-filter`, or with `prefers-reduced-transparency`,
+every glass surface becomes solid navy at 0.92.
+
+The old cream-and-ember token names (`--cream-*`, `--bark-*`, `--stone-400`,
+`--ember*`, `--pine-*`) still exist in `tokens.css`, re-pointed at the glass
+skin, so an older page style that says `color: var(--bark-500)` reads as muted
+white ink. New code should use `--ink`, `--hair`, `--accent-text` and `--tgt-*`.
+The pre-launch gate is the one exception: `#site-gate` pins the old values so
+the gate looks exactly as it did.
+
+Astro is set to `scopedStyleStrategy: 'class'` so that a page's scoped style
+reaches the element a child component renders with the class it was handed
+(`<Reveal class="intro__media">`). With the default attribute strategy those
+rules silently never applied.
+
+---
+
 ## Day-to-day: what lives where
 
 | You want to change… | Edit this |
 |---|---|
 | Phone, address, email, hours, socials, Formspree IDs, GA4 ID, Mailchimp URL | `src/data/business.ts` |
-| Nav groups, dropdown panels, sub-nav links, footer columns | `src/data/nav.ts` |
-| Colours, type scale, spacing, motion timing, arrow colours | `src/styles/tokens.css` |
+| The five nav destinations, the pages under each, footer columns | `src/data/nav.ts` |
+| The six "What are you here for?" tasks on the home page | `src/data/home.ts` |
+| Which landscape sits behind which part of the site | `src/data/scenes.ts` |
+| Colours, glass, wash, type scale, spacing, motion timing | `src/styles/tokens.css` |
 | Dealer carousel tiles, including the shop's own | `brands` in `src/data/business.ts` |
 | Favicon and app icons | `public/images/cropped-target.png`, then `node scripts/make-icons.mjs` |
 | Blog posts | `src/content/insights/` — or `/admin/`, see below |
@@ -37,7 +95,7 @@ Node 20 or newer.
 | FAQ entries | `src/content/faq/` |
 | Staff cards on the About page | `src/content/team/` |
 | Mathews / Hoyt / SITKA landing-page copy | `src/content/brands/` |
-| The "Since 1957" milestone band | `milestones` in `src/pages/index.astro` |
+| Backdrop landscapes | `src/assets/demo-scenes/` (replace a file, keep its name) |
 | Dealer logo files | `src/assets/brands/` — see the README in there |
 | Old-URL redirects | `public/_redirects` |
 
@@ -105,8 +163,10 @@ src/assets/brands/carbon-express.png  feradyne.com
 ```
 
 Drop a replacement in under the same slug, rebuild, and the tile picks it up.
-No code change. On the dark bands logos are knocked back to cream so the row
-reads as one row; the Targeteers tile is exempt, because an internal `url` in
+No code change. On navy glass every mark is knocked back to white so the row
+reads as one row. Hoyt and TenPoint ship as black badges made for dark grounds
+and keep their own colours. The Targeteers tile is exempt and sits on a white
+plate, because Rob's logo is never recoloured; an internal `url` in
 `business.ts` is what marks a tile as ours.
 
 **These came off the manufacturers' public sites, on the client's instruction
@@ -132,35 +192,39 @@ the previous site rather than the portal.
 
 ## Navigation
 
-Everything is defined in `src/data/nav.ts`. The site has six top-level groups
-plus a plain Contact link:
+Five destinations, ALL CAPS, no dropdowns, no panels, no sub-nav:
 
-`PRO SHOP · SERVICES · LESSONS & KIDS · RANGE & LEAGUES · ABOUT · CONTACT`
+`PRO SHOP · BOW SERVICE · RANGE & LEAGUES · LESSONS & KIDS · ABOUT`
 
-Each group carries one or two columns of links (label, href, one-line blurb)
-and an optional dark feature tile. Labels render ALL CAPS everywhere. To add a
-page to the nav, add it to the right group's `columns` and, if its URL sits
-outside the group's own path, add that path to the group's `extra` array so the
-sub-nav knows the page belongs there.
+Everything is in `src/data/nav.ts`. Each destination lists the URL prefixes it
+`owns` and the `pages` under it:
 
-Three surfaces read that one file:
+| Destination | Pages under it |
+|---|---|
+| PRO SHOP `/pro-shop/` | Mathews, Hoyt and SITKA brand pages (SEO landers) |
+| BOW SERVICE `/services/` | Bow tuning, Hunting setups |
+| RANGE & LEAGUES `/range/` | Leagues, Range waiver, Calendar |
+| LESSONS & KIDS `/lessons/` | Kids camp, Groups & parties |
+| ABOUT `/about/` | Trophy room, Insights, FAQ, Careers |
+
+Four surfaces read that file:
 
 | Surface | Component | Shows up |
 |---|---|---|
-| Mega dropdown panels | `src/components/nav/Nav.astro` | 72rem and up. Hover opens, click keeps open, Escape closes |
-| Sticky sub-nav strip | `src/components/nav/SubNav.astro` | Below 104rem, inside the sticky header, scrolls sideways on a phone and centres the page you are on |
-| Fixed vertical sub-nav rail | `src/components/nav/SubRail.astro` | 104rem and up, in the right margin, fades in once the hero is past |
-| Overlay menu | `src/components/nav/MobileMenu.astro` | Below 72rem. Every group expanded, no accordions |
+| The nav pill | `src/components/nav/SiteNav.astro` | Sticky, 16px off the top. Logo on its white plate, five links, open-now pill, orange CALL. The current destination is underlined. |
+| The menu | the `<dialog>` inside `SiteNav.astro` | Below 72rem. Solid navy, the five links plus CONTACT, every link visible. |
+| The section strip | `src/components/nav/SectionLinks.astro` | Foot of every page under a destination: that destination's pages, the current one marked. This is how pages that left the top nav stay one click from their parent. |
+| The footer | `src/components/Footer.astro` | Every page on the site, grouped, plus the visit block (`#hours`). |
 
-The rail is rendered from `Base.astro` rather than from inside the header,
-because the header carries a `backdrop-filter` and that would make it the
-containing block for a fixed child. Pages inside a group get `has-subnav` on
-`<body>`, which pulls `--wrap-wide` in at 104rem so no wide band ever runs
-underneath the rail.
+Contact lives in the footer, the visit block and the phone action bar
+(`src/components/nav/ActionBar.astro`: CALL, DIRECTIONS, HOURS, below 48rem, on
+every page). Its HOURS button jumps to `#hours` in the footer; the home page
+points it at the hours card (`#today`) instead.
 
-Anchor links in the panels (`/pro-shop/#carry`, `/services/#strings`,
-`/lessons/#book`) point at `id`s on the relevant `<Section>`. If you rename a
-section id, fix the nav entry too.
+To add a page: put it under the right destination's `pages` (and its prefix in
+`owns` if its URL sits outside the destination's path), then add it to
+`footerNav`. Every URL that ever existed keeps working; nothing was removed from
+`public/_redirects`.
 
 ---
 
@@ -203,43 +267,32 @@ available on the page through `TargetMark.astro`, which is used for the small
 filled marks: team avatars, the post mark, the Hours heading. The large
 decorative ring backdrops on the footer, contact band, milestones and About
 wall stay on `TargetIcon.astro`, which is line art in `currentColor` and sits
-inside the cream palette rather than fighting it.
+inside the panel as faint white line art.
 
 **The shot arrow.** An arrow flies into every section heading on the site, 80
 of them across 21 routes. It is one CSS rule, `.shot-head` in `global.css`,
 driving a `::before` on the heading itself. To give a new heading an arrow, add
 that class. Nothing else.
 
-The arrow art is two static SVGs in `public/images/`, generated by:
+The site uses the brand arrow, `public/images/shot-arrow-brand-light.svg`:
+pale shaft, orange vanes, tan edge, made for navy glass. It always sits on its
+own line above the heading, inside the panel. (`shot-arrow.svg`,
+`shot-arrow-light.svg` and `shot-arrow-brand.svg` are the earlier cream-site and
+light-glass versions, kept for the demos.) All four come from:
 
 ```bash
 node scripts/make-arrow.mjs
 ```
 
-Two files because a `background-image` cannot read CSS custom properties, and
-the shaft has to change: carbon on cream, pale anodised on the dark bands and
-on the photo panels. `SectionHead` renders the class automatically; pass
-`arrow={false}` to turn it off.
-
-Two placements:
-
-| Where | Placement |
-|---|---|
-| `SectionHead` at 90rem and up | Out in the page margin, point resting just short of the first word |
-| Everything else, and all widths under 90rem | Its own line above the heading, whole arrow visible |
-
-That split matters. A heading inside a two-column block or a half-width panel
-has no page margin to fly through, so the margin placement would put the arrow
-on top of the neighbouring photograph or clip it to a stub. Only headings that
-sit at the edge of the content column get it. A heading that does sit there but
-is not a `SectionHead` can opt in with `.shot-head--margin`.
+`SectionHead` renders the class automatically; pass `arrow={false}` to turn it
+off.
 
 The flight fires from `.is-revealed` on the heading or any ancestor, so every
 arrow needs a revealing block around it. `scripts/` has no check for this; the
 way to verify after adding headings is to load each route, add `is-revealed`
 everywhere, and look for a `.shot-head` with no `.is-revealed` ancestor.
 
-Colours are the `--arrow-*` tokens. Under `prefers-reduced-motion`, and under
+Under `prefers-reduced-motion`, and under
 the `.motion-failed` failsafe, the arrow is simply there with no flight.
 
 ---
@@ -268,7 +321,7 @@ optimises them like every other photograph on the site.
 
 ---
 
-## The hero film
+## The hero film (home page)
 
 `public/video/` holds three files, all silent:
 
@@ -278,11 +331,13 @@ optimises them like every other photograph on the site.
 | `hero.webm` | 1.9 MB | VP9, preferred where supported |
 | `hero-sm.mp4` | 1.0 MB | 768–1023px viewports |
 
+The film is the home page's backdrop, behind the glass, under the film wash.
 The poster (`src/assets/hero/hero-poster.jpg`) is the Largest Contentful Paint.
-The video element is only created in the browser, and only when the viewport is
-at least 768px wide, the visitor has not asked for reduced motion, and the
-connection is not flagged as save-data. It crossfades in on `canplay`. Below
-that, the poster runs a 45-second Ken Burns drift instead.
+The video element is only created in the browser (the `film()` function in
+`src/pages/index.astro`), and only when the viewport is at least 768px wide, the
+visitor has not asked for reduced motion, and the connection is not flagged as
+save-data. It crossfades in on `canplay`. Below that, the poster stays, with a
+soft-focus copy under the lower cards.
 
 ### Swapping the video
 
@@ -326,7 +381,7 @@ Three things it does that are worth knowing:
   transparency checkerboard baked into the pixels. This reconstructs a real
   alpha channel by flood-filling the checker greys. There is no monochrome
   variant: a full-colour lockup cannot be flattened to one colour and stay
-  legible, so dark sections put the real logo on a cream plate instead.
+  legible, so the real logo always sits on a white plate instead.
 - **`scripts/prepare-assets.mjs`** — grey-world white balance on the store and
   range photographs, which were shot under whatever fluorescent tubes were
   overhead. Vintage prints get a 2x lanczos upscale, a warm tone and fine grain.
@@ -379,23 +434,28 @@ These are marked with `<!-- CONFIRM -->` in the source. Search for it.
 ```bash
 npm run build
 npx astro preview --port 4322 &
-npm run qa                 # screenshots at 375 / 768 / 1280 / 1920 into qa/
-node scripts/a11y.mjs      # axe-core over every route at two widths
+node scripts/qa-screens.mjs       # every route at 390 and 1440 into qa/
+node scripts/a11y.mjs             # axe-core over every route at 375 and 1440
+node scripts/contrast.mjs         # ink and tan over the brightest ground of every scene
+node scripts/layout-check.mjs     # 6 widths: no sideways scroll, no glass in glass, one orange per screen
+node scripts/layout-check.mjs --transparency   # every glass surface solid under reduced transparency
+node scripts/kill-list.mjs        # no em dashes or banned phrases in any built page
 ```
 
-Both scripts drive the Mac's own Chrome through `puppeteer-core`, so nothing
-large gets installed into the project.
+From Git Bash on Windows, prefix each with `MSYS_NO_PATHCONV=1`.
+`qa-screens.mjs` takes `--widths=360,1920` and `--only=home,lessons` while
+iterating, and `--demos` for the demo routes. The scripts drive the machine's
+own Chrome through `puppeteer-core`, so nothing large gets installed.
 
-**Last measured** (Lighthouse 12, `astro preview`):
+axe cannot see through `backdrop-filter`, so it skips most text on this site.
+`contrast.mjs` is the real check: it lays an empty glass panel (and a pane) over
+each scene, takes the brightest 1% of the result, and composites every ink over
+it. Lowest result at handover: **4.62:1**.
 
-| | Performance | Accessibility | Best practices | SEO |
-|---|---|---|---|---|
-| `/` desktop | 100 | 100 | 100 | 100 |
-| `/` mobile | 96 | 100 | 100 | 100 |
-| `/about/` mobile | 91 | 100 | 100 | 100 |
-| `/range/` mobile | 97 | 100 | 100 | 100 |
-
-axe-core: zero violations across 25 routes at 375px and 1440px.
+**Last measured** (2026-11-16, after the glass re-skin): axe zero violations
+across 25 routes at 375 and 1440; layout check clean across 25 routes at 360,
+390, 768, 1024, 1440 and 1920, with and without reduced transparency; kill list
+clean across 48 built files. Lighthouse has not been re-run since the re-skin.
 
 ---
 

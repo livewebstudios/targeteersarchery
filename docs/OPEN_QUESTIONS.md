@@ -1,39 +1,49 @@
-# Open questions: home page demos
+# Open questions: the Trailhead site
 
-Branch `demo/home-three`, 2026-11-16. Calls I made while building the three demos, plus what still needs Jon or Rob. Nothing here blocks the review.
+Branch `demo/home-three`, 2026-11-16. Jon picked Trailhead and asked for the whole site in it. These are the calls made while doing that, plus what still needs Jon or Rob. Nothing here blocks review. The older demo-phase notes are at the bottom.
 
 ## Judgment calls (worth a look on the preview)
 
-1. **One orange per viewport vs. the nav's orange CALL button.** The brief puts an orange CALL in the nav and an orange CALL THE SHOP in the Base Camp hero, which would be two oranges on one screen. Resolution:
-   - On desktop, the nav's call button drops to an outline while any in-page orange button (`data-primary`) is on screen, and turns orange again once it scrolls away.
-   - Below 48rem the action bar always holds the orange, so in-page primaries render as outlines there.
-2. **Trailhead arrow resting place.** The arrow leaves the selected tile pointed at the panel, then levels out and sticks flat in the panel's top-left corner, like a heading arrow. Resting it on the line from tile to panel put it across an unselected tile whenever the open tab was in the top row.
-3. **Trailhead greeting** sits on a single frost strip. Navy or white text straight on the bright film failed contrast over the snow and sky.
-4. **Trailhead height.** The dashboard itself (greeting, status, tiles, panel, side cards) is about 1.5 screens at 1440×900. With the required visit block, form and footer, the whole page is about 3.4 screens.
-5. **Long Shot target.** The target face lives at the end of the fixed rail and grows (2.6× desktop, 1.6× phone) as station 6 arrives. The rail stops short of the screen edge by the grown radius, so the arrow lands dead in the gold at every viewport height. Tick positions are measured from the real station offsets, so the point crosses each ring as that station reaches the top.
-6. **Long Shot station 4** (lessons and kids side by side) has a visually hidden H2 and two H3 panels, so the outline stays valid.
-7. **No scroll snap in Long Shot.** The brief allowed proximity snap on desktop. Left out because it fights Lenis.
-8. **Dealer logos: Hoyt and TenPoint** ship as black badge logos built for dark grounds. A one-colour knockout turns them into solid slabs, so in the demos they keep their own colours. **The live home page's pine band has the same problem today:** both render as grey rectangles. Out of scope here. Worth a dealer-portal file or an exemption on the live site.
-9. **Trophy photo.** `trophy/mount-04.jpg`, named in the brief for Base Camp's trophy panel and Long Shot station 5, is a snowy spruce landscape, not mounts. It's used as briefed, with corrected alt text. One of `mount-01` to `mount-03` would sell "Two hundred mounts" better.
-10. **Trailhead THIS WEEK** shows an empty state with a calendar link. Every entry in `src/content/events/` is in the past (the latest is Nov 14). The events collection needs winter dates.
-11. **Asset paths.** Hand-written public paths in the demos are relative (the LWS badge, the target face). The brand arrow backgrounds in `demo.css` are root-absolute `url('/images/...')`, the same pattern `global.css` already uses: the CSS is inlined into pages at different depths, so a relative `url()` would break. This is the deviation the README already documents for this Astro build.
-12. **Footer link labels** are authored in `nav.ts` title case and displayed in caps with CSS.
+1. **The glass is darker than the demo Jon approved.** The demo's contrast check measured the darkest part of the ground, which is the wrong end for white text. Measured against the brightest 1% of every scene (`scripts/contrast.mjs`), tan labels came out at 3.1:1 and faint text at 3.8:1. To clear 4.5:1 everywhere, the fix went where the brief says contrast should come from, the wash, plus a small step on the glass:
+   - Wash over the scenes: 0.48/0.56 to **0.64/0.68**. Over the film: 0.42/0.50 to **0.58/0.64**.
+   - Glass navy tint 0.20 to **0.28**, diagonal shine 0.16 to **0.12** at its brightest.
+   - Lowest result now 4.62:1. If Jon wants it lighter, the trade is tan labels (or faint notes) turning white.
+2. **Tan on cards.** A card inside glass (a pane) sits brighter than the glass, and tan text on it measured 3.85:1. Labels on panes use a paler tan, `#ffd29a`, set automatically on `.pane` and on the page-built cards that use the pane tint. Same family, 4.65:1 worst case.
+3. **Hover never brightens a card's fill.** A 14% white hover tint dropped faint text under 4.5:1 while hovered. Cards and home tiles now lift and brighten the rim instead.
+4. **Every section is one glass panel.** `Section.astro` renders its content in a single `.glass` panel; anything inside is a pane. The old tones collapse to one skin; `pine` and `bark` read a touch deeper so a run of panels does not look identical. The eight hand-built dark bands (range promise, tuning steps, polar bear and so on) keep their markup but now sit in one deeper glass panel (`.band__panel`).
+5. **Page heroes put Rob's photo inside the card.** Landscapes behind the glass, his photos inside it: the hero is one glass card with the H1 on the left and his photo on the right (on top on a phone).
+6. **One landscape per destination** (`src/data/scenes.ts`): timber for the pro shop, hardwoods for service, canopy for hunting, ridge for range and leagues, meadow for lessons and kids, dusk for about, tarn for insights and FAQ, valley for contact and everything else. The home page keeps the film.
+7. **Buttons.** Orange is reserved for CALL. `<Button variant="primary">` is now a white fill with navy text; `variant="orange"` exists for a page's one real call and marks itself `data-primary`, so the nav's CALL steps down while it is on screen. Form buttons are white outlines.
+8. **Form button labels.** The default is SEND IT. The pages' own labels (Request a lesson, Send enquiry, Sign me up, Sign and send, Ask about a spot, Send message) were kept: none is banned and each says what happens.
+9. **A section strip at the foot of each page.** With the sub-nav gone, four destination pages did not link to everything they absorbed (Services did not link Hunting; Range did not link Leagues; Lessons did not link Groups; About did not link FAQ, Careers or Insights). Rather than write links into the copy, every page under a destination ends with a slim glass strip listing that destination's pages (`SectionLinks.astro`). Not sticky, not a dropdown. Easy to remove if Jon prefers the footer alone.
+10. **The footer lists every page,** grouped Pro Shop & Service, Range & Lessons, About, plus the visit block with the week's hours (`#hours`, where the phone action bar's HOURS button lands). Footer link labels are authored in caps now, not just styled.
+11. **Home content that did not come across.** Trailhead replaces the old home page whole. The milestone band, the "What we do" cards, the trophy panel, the three-post insights rail and the newsletter box were not carried over: the six task tiles, the hours card, the four side cards (calendar, leagues, latest insight, dealers) and the family strip already answer the same questions. The newsletter signup stays on Contact. `HeroFilm.astro` and `Milestones.astro` were deleted.
+12. **Production home differences from the demo:** real SEO (title, description, keywords, `/og/home.jpg`, indexable, canonical, LocalBusiness JSON-LD from `Base`), the `?bg=valley` test switch removed, the form posts as `contact-home`, and the phone action bar's HOURS goes to the hours card (`#today`).
+13. **Retired:** the mega menu (`Nav.astro`), `MobileMenu.astro`, `SubNav.astro`, `SubRail.astro` and `mobile-menu.css`. `nav.ts` is now the five destinations, the pages under each, and the footer.
+14. **Scoped styles were partly dead.** Astro's default attribute scoping never reaches an element a child component renders, so every page rule aimed at `<Reveal class="...">` (photo sizes, form boxes, the Sasquatch) silently did nothing, already on `main`. `astro.config.mjs` now uses `scopedStyleStrategy: 'class'`. Some layouts therefore look the way they were originally written rather than the way they rendered before.
+15. **Dealer marks** are knocked back to white on the live site now, with Hoyt and TenPoint keeping their badge colours (this closes demo-phase item 8). Rob's own lockup sits on a white plate.
+16. **The gate is untouched.** Its file is unchanged. Because it reads the old palette by name, `tokens.css` pins those names to their old values inside `#site-gate`.
+17. **The demos stay** at `/demos/` for comparison: noindex, out of the sitemap, disallowed in robots.txt, still behind the gate. They now share `tokens.css` and `global.css` with the site and were re-captured to confirm they still render. They and their kit (`src/components/demo/`, `DemoBase.astro`, `demo.css`, the demo bar) should come out before launch. `FactList`, `BrandArrow` and `TaskIcon` moved to `src/components/` because the live site uses them.
+18. **The skin is called glass now.** Production uses `.glass` and `.pane`. `.glass-frost` and `.pane-frost` are kept as aliases only so the demo still renders.
 
-## Existing-site issues found along the way (not fixed, out of scope)
-
-- **Skip link fails axe's `region` rule on the live routes** once the gate cookie is set. The demos wrap it in a labelled nav and pass. The README's "zero violations" figure predates the gate.
-- **The live gate renders its own H1** on every page. With the gate down it is `display: none`, so each demo shows exactly one H1. With the gate up, the gate's H1 is the visible one. The gate was not touched.
-- **Post dates on the live `PostCard`** show a day early in any US timezone (UTC date, local format). It's harmless on Netlify's UTC build, but `astro dev` on Jon's machine shows the wrong day. The demos format in UTC.
-
-## Carried from the existing build
+## Still needs Jon or Rob
 
 - Range distance: 27 or 28 yards.
 - 2026 lesson prices.
 - Thursday closing time: 7 pm or 5 pm.
-- Formspree IDs, GA4 ID and Mailchimp action URL are still placeholders in `business.ts`. The three demo forms post to `formspree.contact` and show the "not connected yet, call us" note until the ID is set.
+- Formspree IDs, GA4 ID and Mailchimp action URL are still placeholders in `business.ts`. Every form shows the "not connected yet, call us" note until its ID is set.
+- The events collection needs winter dates: every entry is in the past, so the home page's THIS WEEK card shows its empty state.
+- `trophy/mount-04.jpg` is a snowy spruce landscape, not mounts (carried from the demo notes).
 
-## Not done this session
+## Not done or not verified
 
-- The Impeccable passes (`/polish`, `/colorize`, `/layout`, `/animate`) were not run as skills. Each demo got a manual review at 390 and 1440 with motion on, and the fixes went in (photo overlap, target fit, arrow transforms, card heights, badge logos).
-- No Lighthouse run. CLS and LCP were measured with PerformanceObserver on the production build (see `SESSION_SUMMARY.md`).
-- The Netlify Deploy Preview needs the PR opened (see `SESSION_SUMMARY.md`).
+- **No Lighthouse, LCP or CLS run** since the re-skin. Every inner page now loads a full-screen backdrop photo eagerly; worth measuring on a mid-range phone.
+- **Contrast was measured on the film's poster frame,** not on every frame of the moving film.
+- **Checked by eye** at 390 and 1440 from full-page captures of all 25 routes, with closer looks at the home page, contact, trophy room and the pro shop dealer row. Not checked on a real phone or in Safari, where `backdrop-filter` behaves differently.
+- Hover and focus states were checked in code and in the browser on a few pages, not on every component.
+
+## Demo-phase notes still true
+
+- The live gate renders its own H1. With the gate down each page shows one H1.
+- Post dates on `PostCard` show a day early in any US timezone during `astro dev` (UTC date, local format). Harmless on Netlify's UTC build.
+- Asset paths: hand-written public paths are relative (the LWS badge). The heading arrow is a root-absolute `url('/images/...')` in CSS, the deviation the README documents.

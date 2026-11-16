@@ -68,29 +68,30 @@ const articleSchema = {
 >
   <article class="post">
     <header class="post__head">
-      <div class="wrap-narrow">
-        <Eyebrow>
-          <a href={`/insights/category/${categorySlug(category)}/`}>{category}</a>
-        </Eyebrow>
-        <h1>{title}</h1>
-        <p class="post__meta">
-          <time datetime={date.toISOString()}>{formatDate(date)}</time>
-          <span aria-hidden="true">·</span>
-          <span>{minutes} min read</span>
-          <span aria-hidden="true">·</span>
-          <span>{author}</span>
-        </p>
+      <div class="wrap">
+        <div class="glass post__card">
+          <div class="post__intro">
+            <Eyebrow>
+              <a href={`/insights/category/${categorySlug(category)}/`}>{category}</a>
+            </Eyebrow>
+            <h1>{title}</h1>
+            <p class="post__meta">
+              <time datetime={date.toISOString()}>{formatDate(date)}</time>
+              <span aria-hidden="true">·</span>
+              <span>{minutes} min read</span>
+              <span aria-hidden="true">·</span>
+              <span>{author}</span>
+            </p>
+          </div>
+          {image && (
+            <figure class="post__hero">
+              <Image src={image} alt={imageAlt} widths={[520, 760, 1200, 1800]}
+                sizes="(max-width: 78rem) 92vw, 72rem" loading="eager" fetchpriority="high" />
+            </figure>
+          )}
+        </div>
       </div>
     </header>
-
-    {image && (
-      <figure class="post__hero">
-        <div class="wrap">
-          <Image src={image} alt={imageAlt} widths={[520, 760, 1200, 1800]}
-            sizes="(max-width: 78rem) 100vw, 72rem" loading="eager" fetchpriority="high" />
-        </div>
-      </figure>
-    )}
 
     <Section tone="cream" width="narrow">
       <Prose class="post__body"><Content /></Prose>
@@ -129,8 +130,10 @@ const articleSchema = {
 </Base>
 
 <style>
-  .post__head { background: var(--cream-100); padding-block: calc(var(--section-y) * 0.85) var(--sp-7); }
-  .post__head h1 { max-width: 20ch; }
+  .post { display: grid; gap: var(--panel-gap); }
+  .post__card { padding: var(--panel-pad); display: grid; gap: var(--sp-6); }
+  .post__intro { max-width: var(--wrap-narrow); }
+  .post__head h1 { max-width: 22ch; font-size: clamp(2rem, 1.45rem + 2.1vw, 3.375rem); }
   .post__head :global(.eyebrow a) { text-decoration: none; }
   .post__head :global(.eyebrow a:hover) { text-decoration: underline; }
   .post__meta {
@@ -138,20 +141,20 @@ const articleSchema = {
     flex-wrap: wrap;
     gap: 0.55em;
     margin-top: var(--sp-5);
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--stone-400);
+    color: var(--ink-faint);
   }
 
-  .post__hero { margin: 0; background: linear-gradient(var(--cream-100) 50%, var(--cream-50) 50%); }
+  .post__hero { margin: 0; }
   .post__hero :global(img) {
     width: 100%;
     height: auto;
     max-height: 60vh;
     object-fit: cover;
-    border-radius: var(--radius-lg);
+    border-radius: 18px;
   }
 
   .post__updated { margin-top: var(--sp-6); font-size: var(--fs-small); color: var(--stone-400); font-style: italic; }
@@ -163,10 +166,10 @@ const articleSchema = {
     display: flex;
     gap: var(--sp-4);
     align-items: start;
-    color: var(--ember);
+    color: var(--accent-text);
   }
   .post__foot p { margin: 0; font-size: var(--fs-small); color: var(--bark-500); line-height: 1.65; }
-  .post__foot a { color: var(--ember); }
+  .post__foot a { color: var(--ink); }
 
   .related__head { margin-bottom: var(--sp-6); }
   .related {

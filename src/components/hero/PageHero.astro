@@ -1,4 +1,11 @@
 ---
+/**
+ * The top of every inner page: one clear-glass card. Eyebrow, the page's one
+ * H1, the lead, and any actions in the slot. With a photo, Rob's own shot sits
+ * inside the card beside the copy (landscapes go behind the glass, his photos
+ * go inside it). The photo is eager and high priority: it is the page's
+ * largest image after the backdrop.
+ */
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Eyebrow from '../Eyebrow.astro';
@@ -9,73 +16,61 @@ interface Props {
   lead?: string;
   image?: ImageMetadata;
   imageAlt?: string;
+  /** Kept for older call sites. One skin now. */
   tone?: 'pine' | 'cream' | 'bark';
-  /** A photo header runs 60vh; the plain one sits tight under the nav. */
   variant?: 'photo' | 'plain';
   focus?: string;
 }
 const {
   eyebrow, title, lead, image, imageAlt = '',
-  tone = 'pine', variant = image ? 'photo' : 'plain', focus = '50% 50%',
+  variant = image ? 'photo' : 'plain', focus = '50% 50%',
 } = Astro.props;
+const withPhoto = variant === 'photo' && image;
 ---
-<section
-  class={`page-hero page-hero--${variant} tone-${variant === 'photo' ? 'pine' : tone}`}
-  data-parallax-scope
->
-  {image && (
-    <div class="page-hero__media" data-speed="0.78">
-      <Picture src={image} alt={imageAlt} formats={['avif', 'webp']}
-        widths={[560, 800, 1200, 1600, 1920]} sizes="100vw"
-        loading="eager" fetchpriority="high" style={`object-position:${focus}`} />
+<section class="page-hero" aria-labelledby="page-title">
+  <div class="wrap">
+    <div class={`page-hero__card glass ${withPhoto ? 'has-photo' : ''}`}>
+      <div class="page-hero__copy">
+        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+        <h1 id="page-title">{title}</h1>
+        {lead && <p class="lead">{lead}</p>}
+        <slot />
+      </div>
+      {withPhoto && (
+        <div class="page-hero__media">
+          <Picture src={image} alt={imageAlt} formats={['avif', 'webp']}
+            widths={[480, 720, 960, 1280]} sizes="(max-width: 60rem) 92vw, 34rem"
+            loading="eager" fetchpriority="high" style={`object-position:${focus}`} />
+        </div>
+      )}
     </div>
-  )}
-  {image && <div class="page-hero__scrim" aria-hidden="true" />}
-  {image && <div class="page-hero__grain" aria-hidden="true" />}
-
-  <div class="wrap page-hero__inner">
-    {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-    <h1>{title}</h1>
-    {lead && <p class="lead">{lead}</p>}
-    <slot />
   </div>
 </section>
 
 <style>
-  .page-hero { position: relative; overflow: hidden; background: var(--bg); color: var(--fg); isolation: isolate; }
-
-  .page-hero--photo {
-    min-height: 60vh;
+  .page-hero__card {
     display: grid;
-    align-items: end;
-    padding-block: var(--sp-9) var(--sp-8);
+    gap: var(--sp-6);
+    padding: var(--panel-pad);
+    align-items: center;
   }
-  .page-hero--plain {
-    padding-block: calc(var(--section-y) * 0.9) var(--section-y);
-    border-bottom: 1px solid var(--rule);
+  @media (min-width: 60rem) {
+    .page-hero__card.has-photo {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: var(--sp-7);
+      padding: clamp(1.25rem, 0.7rem + 1.6vw, 2rem) clamp(1.25rem, 0.7rem + 1.6vw, 2rem) clamp(1.25rem, 0.7rem + 1.6vw, 2rem) var(--panel-pad);
+    }
   }
-  .page-hero--plain.tone-cream { background: var(--cream-100); }
+  .page-hero__copy { display: grid; justify-items: start; gap: var(--sp-4); }
+  .page-hero__copy :global(.eyebrow) { margin: 0; }
+  .page-hero__copy h1 { max-width: 22ch; font-size: clamp(2rem, 1.45rem + 2.1vw, 3.375rem); }
+  .page-hero__copy .lead { margin: 0; }
+  .page-hero__copy > :global(:not(.eyebrow, h1, .lead)) { margin-top: var(--sp-2); }
 
-  .page-hero__media { position: absolute; inset: -8% 0; z-index: 0; }
+  .page-hero__media { order: -1; border-radius: 18px; overflow: hidden; aspect-ratio: 16 / 10; }
+  @media (min-width: 60rem) {
+    .page-hero__media { order: 0; aspect-ratio: 5 / 4; }
+  }
   .page-hero__media :global(picture),
   .page-hero__media :global(img) { display: block; width: 100%; height: 100%; object-fit: cover; }
-
-  .page-hero__scrim {
-    position: absolute; inset: 0; z-index: 1; pointer-events: none;
-    background:
-      linear-gradient(to right, rgba(20, 38, 27, 0.62) 0%, rgba(20, 38, 27, 0.24) 42%, transparent 70%),
-      radial-gradient(120% 100% at 40% 30%, transparent 30%, rgba(20, 38, 27, 0.45) 100%),
-      linear-gradient(to top, rgba(20, 38, 27, 0.93) 0%, rgba(20, 38, 27, 0.6) 34%, rgba(20, 38, 27, 0.15) 78%);
-  }
-  .page-hero__grain {
-    position: absolute; inset: 0; z-index: 2; opacity: 0.04; pointer-events: none;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  .page-hero__inner { position: relative; z-index: 3; }
-  .page-hero__inner h1 { max-width: 17ch; }
-  .page-hero--photo .page-hero__inner h1 { text-shadow: 0 2px 26px rgba(20, 38, 27, 0.45); }
-  .page-hero__inner .lead { margin-top: var(--sp-5); }
-  .page-hero--photo .lead { color: rgba(248, 245, 238, 0.86); }
 </style>

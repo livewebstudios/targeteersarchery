@@ -1,189 +1,194 @@
 ---
+/**
+ * The site footer: one clear-glass panel. The brand, every page on the site
+ * grouped under the five destinations, and the visit block (address, phone,
+ * email, the week's hours with today in bold). The mobile action bar's HOURS
+ * button lands on #hours. Then the base bar: copyright, the LWS badge at its
+ * intrinsic 150px, and the credit.
+ */
 import { Image } from 'astro:assets';
 import logoRGB from '~/assets/brand/logoRGB.png';
-import { business, hours, hoursLabel } from '~/data/business';
+import { business } from '~/data/business';
 import { footerNav } from '~/data/nav';
 import SocialIcon from './icons/SocialIcon.astro';
-import TargetIcon from './icons/TargetIcon.astro';
+import HoursTable from './HoursTable.astro';
+import PinRingIcon from './icons/PinRingIcon.astro';
 
 const year = new Date().getFullYear();
-const isoToday = ((new Date().getDay() + 6) % 7) + 1;
+
+/* Hand-written public paths stay relative (LWS path rule), so count how deep
+   this route sits. /insights/category/hunting/ is three levels down. */
+const depth = Astro.url.pathname.split('/').filter(Boolean).length;
+const rel = depth ? '../'.repeat(depth) : './';
 ---
-<footer class="site-footer tone-pine">
-  <div class="footer-rings" aria-hidden="true"><TargetIcon size={640} strokeWidth={0.35} /></div>
-
-  <div class="wrap-wide site-footer__inner">
-    <div class="site-footer__brand">
-      <a class="site-footer__logo" href="/" aria-label={`${business.shortName}, home`}>
-        <Image src={logoRGB} alt="Targeteers Archery" widths={[440, 880, 1320]} sizes="(max-width: 48rem) 80vw, 320px" loading="lazy" />
-      </a>
-      <p class="site-footer__blurb">
-        Family owned on Route 46 since {business.founded}. A full pro shop, an eleven-lane
-        indoor range, and people who tune your bow like it is their own.
-      </p>
-      <ul class="site-footer__social">
-        <li><a href={business.socials.facebook} target="_blank" rel="noopener" aria-label="Targeteers Archery on Facebook"><SocialIcon network="facebook" /></a></li>
-        <li><a href={business.socials.instagram} target="_blank" rel="noopener" aria-label="Targeteers Archery on Instagram"><SocialIcon network="instagram" /></a></li>
-        <li><a href={business.socials.twitter} target="_blank" rel="noopener" aria-label="Targeteers Archery on X"><SocialIcon network="twitter" /></a></li>
-      </ul>
-    </div>
-
-    <nav class="site-footer__nav" aria-label="Footer">
-      {footerNav.map((col) => (
-        <div>
-          <h2 class="site-footer__heading">{col.heading}</h2>
-          <ul>
-            {col.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__panel glass">
+      <div class="site-footer__cols">
+        <div class="site-footer__brand">
+          <a class="site-footer__logo" href="/" aria-label={`${business.shortName}, home`}>
+            <Image src={logoRGB} alt="Targeteers Archery" widths={[320, 640]} sizes="180px" loading="lazy" />
+          </a>
+          <p class="site-footer__tag">{business.tagline}</p>
+          <p class="site-footer__blurb">
+            Family owned on Route 46 since {business.founded}. A full pro shop, an eleven-lane indoor
+            range, and people who tune your bow like it is their own.
+          </p>
+          <ul class="site-footer__social">
+            <li><a href={business.socials.facebook} target="_blank" rel="noopener" aria-label="Targeteers Archery on Facebook"><SocialIcon network="facebook" /></a></li>
+            <li><a href={business.socials.instagram} target="_blank" rel="noopener" aria-label="Targeteers Archery on Instagram"><SocialIcon network="instagram" /></a></li>
+            <li><a href={business.socials.twitter} target="_blank" rel="noopener" aria-label="Targeteers Archery on X"><SocialIcon network="twitter" /></a></li>
           </ul>
         </div>
-      ))}
-    </nav>
 
-    <div class="site-footer__visit">
-      <h2 class="site-footer__heading">Visit</h2>
-      <address>
-        <a href={business.mapsUrl} target="_blank" rel="noopener">{business.address.street}<br />{business.address.city}, {business.address.region} {business.address.postal}</a>
-        <a class="site-footer__phone" href={business.phoneHref}>{business.phone}</a>
-        <a href={`mailto:${business.email}`}>{business.email}</a>
-      </address>
-      <table class="site-footer__hours" data-hours-table>
-        <caption class="visually-hidden">Store hours</caption>
-        <tbody>
-          {hours.map((h) => (
-            <tr data-today={h.day === isoToday ? '' : undefined}>
-              <th scope="row">{h.label}</th>
-              <td>{hoursLabel(h)}</td>
-            </tr>
+        <nav class="site-footer__nav" aria-label="Every page">
+          {footerNav.map((col) => (
+            <div class="site-footer__col">
+              <h2 class="site-footer__heading">{col.heading}</h2>
+              <ul>{col.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+            </div>
           ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
+        </nav>
 
-  <div class="wrap-wide site-footer__base">
-    <p>&copy; {year} {business.name}. All rights reserved.</p>
-    <p class="site-footer__lws">
-      <a href="https://livewebstudios.com" target="_blank" rel="noopener">Powered by Live Web Studios</a>
-    </p>
+        <div class="site-footer__visit" id="hours">
+          <h2 class="site-footer__heading">Visit</h2>
+          <address>
+            <a href={business.mapsUrl} target="_blank" rel="noopener">{business.address.street}<br />{business.address.city}, {business.address.region} {business.address.postal}</a>
+            <a class="site-footer__phone" href={business.phoneHref}>{business.phone}</a>
+            <a href={`mailto:${business.email}`}>{business.email}</a>
+          </address>
+          <HoursTable class="site-footer__hours" />
+          <a class="d-link" href={business.directionsUrl} target="_blank" rel="noopener">
+            <PinRingIcon size={16} /><span>GET DIRECTIONS</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="site-footer__base">
+        <p>&copy; {year} {business.name}. All rights reserved.</p>
+        <a class="site-footer__lws" href="https://livewebstudios.com" target="_blank" rel="noopener">
+          <img src={`${rel}images/verifiedsecured.png`} alt="Verified and Secured by Live Web Studios" width="150" height="37" loading="lazy" decoding="async" />
+          <span>Built by Live Web Studios</span>
+        </a>
+      </div>
+    </div>
   </div>
 </footer>
 
 <style>
-  .site-footer {
-    position: relative;
-    background: var(--pine-900);
-    color: var(--cream-50);
-    overflow: hidden;
-    padding-block: var(--sp-9) var(--sp-5);
-  }
-  .footer-rings {
-    position: absolute;
-    top: -14rem;
-    right: -12rem;
-    color: var(--sage-300);
-    opacity: 0.06;
-    pointer-events: none;
-  }
-  .footer-rings :global(svg) { width: 40rem; height: 40rem; }
+  .site-footer { padding-block: var(--sp-8) var(--sp-6); }
+  .site-footer__panel { padding: var(--panel-pad); }
 
-  .site-footer__inner {
-    position: relative;
+  .site-footer__cols {
     display: grid;
     gap: var(--sp-7) var(--sp-6);
-    grid-template-columns: 1fr;
   }
-  @media (min-width: 48rem) {
-    .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  @media (min-width: 72rem) {
-    .site-footer__inner { grid-template-columns: 1.35fr 2fr 1.15fr; gap: var(--sp-8); }
-  }
-
-  .site-footer__logo { display: inline-block; margin-bottom: var(--sp-5); }
-  .site-footer__logo :global(img) {
-    width: min(20rem, 100%);
-    height: auto;
-    filter: drop-shadow(0 2px 16px rgba(0, 0, 0, 0.35));
-  }
-
-  .site-footer__blurb {
-    color: rgba(248, 245, 238, 0.7);
-    font-size: var(--fs-small);
-    max-width: 34ch;
-    line-height: 1.7;
-  }
-
-  .site-footer__social { display: flex; gap: var(--sp-4); list-style: none; margin: var(--sp-5) 0 0; padding: 0; }
-  .site-footer__social a {
-    display: grid; place-items: center;
-    width: 2.25rem; height: 2.25rem;
-    border: 1px solid rgba(248, 245, 238, 0.2);
-    border-radius: 999px;
-    color: rgba(248, 245, 238, 0.72);
-    transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
-  }
-  .site-footer__social a:hover { color: var(--ember); border-color: var(--ember); }
-
   .site-footer__nav {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
-    gap: var(--sp-6) var(--sp-5);
+    gap: var(--sp-6);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
   }
+  @media (min-width: 48rem) {
+    .site-footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .site-footer__nav { grid-column: 1 / -1; grid-row: 2; }
+  }
+  @media (min-width: 72rem) {
+    .site-footer__cols { grid-template-columns: 1.15fr 2.6fr 1.25fr; }
+    .site-footer__nav { grid-column: auto; grid-row: auto; }
+  }
+
+  .site-footer__logo {
+    display: inline-block;
+    background: #fff;
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    line-height: 0;
+  }
+  .site-footer__logo :global(img) { width: 11rem; height: auto; }
+  .site-footer__tag {
+    margin-top: var(--sp-4);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .site-footer__blurb { margin-top: var(--sp-2); font-size: var(--fs-small); color: var(--ink-muted); max-width: 34ch; }
+
+  .site-footer__social { display: flex; gap: var(--sp-2); list-style: none; margin: var(--sp-4) 0 0; padding: 0; }
+  .site-footer__social a {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--hair-strong);
+    color: var(--ink);
+  }
+  .site-footer__social a:hover { border-color: var(--ink); }
+
   .site-footer__heading {
     font-family: var(--font-body);
     font-size: var(--fs-eyebrow);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
-    color: var(--sage-300);
-    margin-bottom: var(--sp-4);
+    color: var(--accent-text);
+    margin-bottom: var(--sp-3);
   }
-  .site-footer__nav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
-  .site-footer__nav a {
-    display: inline-block;
-    color: rgba(248, 245, 238, 0.78);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: color var(--dur-fast) var(--ease);
-  }
-  .site-footer__visit a {
-    color: rgba(248, 245, 238, 0.78);
+  .site-footer__col ul { list-style: none; margin: 0; padding: 0; }
+  .site-footer__col a,
+  .site-footer__visit address a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
     font-size: var(--fs-small);
+    color: var(--ink-muted);
     text-decoration: none;
-    transition: color var(--dur-fast) var(--ease);
   }
-  .site-footer__nav a:hover, .site-footer__visit a:hover { color: var(--ember); }
+  .site-footer__col a {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  .site-footer__col a:hover,
+  .site-footer__visit address a:hover { color: var(--ink); text-decoration: underline; }
 
-  .site-footer__visit address { font-style: normal; display: grid; gap: 0.55rem; margin-bottom: var(--sp-5); }
-  .site-footer__phone { font-family: var(--font-display); font-weight: 500; font-variant-numeric: tabular-nums; font-size: 1.375rem; letter-spacing: 0; }
-
-  .site-footer__hours { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
-  .site-footer__hours th,
-  .site-footer__hours td { text-align: left; padding: 0.3rem 0; font-weight: 400; color: rgba(248, 245, 238, 0.62); }
-  .site-footer__hours td { text-align: right; }
-  .site-footer__hours tr[data-today] th,
-  .site-footer__hours tr[data-today] td { color: var(--cream-50); font-weight: 600; }
+  .site-footer__visit { display: grid; gap: var(--sp-4); align-content: start; justify-items: start; scroll-margin-top: 7.5rem; }
+  .site-footer__visit .site-footer__heading { margin-bottom: 0; }
+  address { display: grid; gap: var(--sp-1); font-style: normal; justify-items: start; }
+  .site-footer__visit address a { line-height: 1.5; }
+  .site-footer__visit .site-footer__phone {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .site-footer__visit :global(.site-footer__hours) { max-width: 22rem; }
 
   .site-footer__base {
-    position: relative;
-    margin-top: var(--sp-8);
-    padding-top: var(--sp-5);
-    border-top: 1px solid rgba(248, 245, 238, 0.14);
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
-    gap: var(--sp-3);
-    font-size: 0.75rem;
-    color: rgba(248, 245, 238, 0.5);
+    gap: var(--sp-4);
+    margin-top: var(--sp-7);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--hair);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
   }
   .site-footer__base p { margin: 0; }
-  .site-footer__lws a { color: rgba(248, 245, 238, 0.68); text-decoration: none; transition: color var(--dur-fast) var(--ease); }
-  .site-footer__lws a:hover { color: var(--ember); }
+  .site-footer__lws {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3) var(--sp-4);
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+  .site-footer__lws:hover { color: var(--ink); }
+  /* The badge renders at its intrinsic 150px width, height auto. */
+  .site-footer__lws img { width: 150px; height: auto; flex: none; }
 </style>
-
-<script>
-  import '~/scripts/today';
-</script>

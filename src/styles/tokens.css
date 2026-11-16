@@ -1,42 +1,103 @@
 /* ==========================================================================
-   Targeteers Archery — design tokens
-   Colorado, not camo. Cream paper, worn leather, pine shadow, one bullseye.
+   Targeteers Archery: design tokens
+   Rob's logo colours over country. Clear glass, white ink, navy wash, one
+   orange button per screen. This is the Trailhead skin Jon picked, promoted
+   from /demos/2-trailhead/ to the whole site.
+
+   The old cream-and-ember names (--cream-*, --bark-*, --stone-400, --ember*,
+   --pine-*) are kept as aliases that point at the new skin, so a page style
+   that still says `color: var(--bark-500)` gets muted white ink rather than
+   dark brown on navy. New code uses the semantic names (--ink, --hair,
+   --accent-text) and the brand names (--tgt-*).
    ========================================================================== */
 
 :root {
-  /* ---------------------------------------------------------- paper & cream */
-  --cream-50: #f8f5ee;
-  --cream-100: #f1ebdf;
-  --cream-200: #e6dcc8;
-  --parchment: #d9cbae;
+  /* ------------------------------------------------------------ Rob's logo */
+  --tgt-navy: #001840;
+  --tgt-navy-2: #0a2a5c;        /* hover, raised navy */
+  --tgt-orange: #e46024;        /* THE accent. Fills only, always with navy text. */
+  --tgt-orange-hi: #f47a3c;     /* hover on orange fills */
+  --tgt-orange-ink: #9c3a0a;    /* orange on a white fill (selected tile icon) */
+  --tgt-white: #f8f8f4;
+  --tgt-tan: #fcba66;           /* small accent labels: orange text fails over snow */
+  --tgt-tan-pale: #ffd29a;      /* the same labels on a pane, which sits brighter */
 
-  /* ------------------------------------------------------------------ earth */
-  --bark-900: #1e1711;
-  --bark-700: #3b2e23;
-  --bark-500: #6b5644;
-  --stone-400: #6c665b;   /* muted labels — dark enough to clear AA on cream */
-  --leather: #8c5a2b;
+  /* Target face rings. Decoration and status only, never body text. */
+  --ring-yellow: #fcd800;
+  --ring-red: #ea2a24;
+  --ring-blue: #0096e4;
 
-  /* ------------------------------------------------------------------- pine */
-  --pine-900: #14261b;
-  --pine-700: #1f3a2a;
-  --pine-500: #3a6b4a;
-  --sage-300: #9db59a;
-  --moss-200: #c9d3be;
+  /* ------------------------------------------------------- semantic inks
+     White ink on clear glass. Muted copy stays at 0.9 because the ground
+     behind it moves; faint is for notes and captions only. */
+  --ink: var(--tgt-white);
+  --ink-muted: rgba(248, 248, 244, 0.9);
+  --ink-faint: rgba(248, 248, 244, 0.8);
+  --hair: rgba(255, 255, 255, 0.2);
+  --hair-strong: rgba(255, 255, 255, 0.4);
+  --accent-text: var(--tgt-tan);
+  --outline: rgba(248, 248, 244, 0.6);
+  --focus: 0 0 0 2px var(--tgt-navy), 0 0 0 4px var(--tgt-orange-hi);
 
-  /* ---------------------------------------------------------------- bullseye
-     The logo orange, desaturated. `--ember-bright` is the real accent and only
-     ever appears on dark grounds or as a solid fill behind near-black text;
-     `--ember` itself resolves to the ink value on light surfaces so that every
-     small eyebrow and link clears 4.5:1 on cream. Dark tones re-point it at
-     the bright value further down. */
-  --ember-bright: #c8862b;
-  --ember-hover: #dda043;
-  --ember-ink: #96590f;
-  --ember-deep: #7d4a0c;
-  --ember: var(--ember-ink);
-  --bullseye: #b7412e;
-  --sky-mist: #a9bfc7;
+  /* The semantic pair every older component reads. One skin, so every tone
+     resolves to the same values. */
+  --fg: var(--ink);
+  --fg-muted: var(--ink-muted);
+  --fg-faint: var(--ink-faint);
+  --rule: var(--hair);
+  --accent: var(--accent-text);
+  --accent-strong: var(--accent-text);
+  --bg: transparent;
+
+  /* ----------------------------------------------------------------- glass
+     One blurred surface per card. A card inside a glass panel is a pane:
+     tinted and rimmed, never blurred again. */
+  --glass-fill:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.07) 100%),
+    rgba(0, 24, 64, 0.28);
+  --glass-blur: blur(24px) saturate(160%);
+  --glass-blur-sm: blur(12px) saturate(150%);
+  --glass-edge: rgba(255, 255, 255, 0.34);
+  --glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 18px 48px rgba(0, 10, 30, 0.28);
+  --glass-solid: rgba(0, 24, 64, 0.92);   /* no blur, or reduced transparency */
+  --glass-radius: 24px;
+  --pane-fill: rgba(255, 255, 255, 0.07);
+  --pane-fill-hover: rgba(255, 255, 255, 0.07);   /* hover lifts and brightens the rim, never the fill: text must hold 4.5:1 */
+  --pane-edge: rgba(255, 255, 255, 0.22);
+  --pane-radius: 18px;
+  /* The wash over the backdrop does most of the contrast work. */
+  --wash: linear-gradient(rgba(0, 16, 40, 0.64), rgba(0, 16, 40, 0.68));
+  --wash-film: linear-gradient(rgba(0, 16, 40, 0.58), rgba(0, 16, 40, 0.64));
+
+  /* ------------------------------------------- legacy names, re-pointed
+     Text colours go white, rules go to hairlines, surfaces go to the pane
+     tint. Dark-band backgrounds become the pane too: there are no dark bands
+     any more, only glass. */
+  --cream-50: var(--tgt-white);
+  --cream-100: var(--pane-fill);
+  --cream-200: var(--hair);
+  --parchment: var(--hair-strong);
+  --bark-900: var(--tgt-white);
+  --bark-700: var(--tgt-white);
+  --bark-500: var(--ink-muted);
+  --stone-400: var(--ink-faint);
+  --leather: var(--tgt-tan);
+  --pine-950: #00102a;
+  --pine-900: var(--pane-fill);
+  --pine-700: var(--tgt-navy-2);
+  --pine-500: var(--tgt-tan);
+  --sage-300: var(--tgt-tan);
+  --moss-200: var(--ink-muted);
+  --ember-bright: var(--tgt-orange);
+  --ember-hover: var(--tgt-orange-hi);
+  --ember-ink: var(--tgt-tan);
+  --ember-deep: var(--tgt-tan);
+  --ember: var(--tgt-tan);
+  --bullseye: var(--tgt-tan);
+  --sky-mist: var(--ink-muted);
 
   /* ------------------------------------------------------------ typography */
   --font-display: 'Familjen Grotesk Variable', 'Familjen Grotesk', ui-sans-serif, system-ui,
@@ -44,20 +105,20 @@
   --font-body: 'Instrument Sans Variable', 'Instrument Sans', ui-sans-serif, system-ui,
     -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
 
-  --fs-eyebrow: clamp(0.688rem, 0.64rem + 0.16vw, 0.8125rem);
+  --fs-eyebrow: clamp(0.75rem, 0.71rem + 0.14vw, 0.8125rem);
   --fs-small: 0.875rem;
   --fs-body: clamp(1rem, 0.97rem + 0.14vw, 1.0625rem);
   --fs-lead: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
   --fs-h4: clamp(1.125rem, 1.05rem + 0.36vw, 1.3125rem);
   --fs-h3: clamp(1.375rem, 1.22rem + 0.7vw, 1.875rem);
-  --fs-h2: clamp(1.875rem, 1.5rem + 1.7vw, 3.25rem);
-  --fs-h1: clamp(2.375rem, 1.6rem + 3.3vw, 5rem);
-  --fs-display: clamp(3.5rem, 1.6rem + 8vw, 10rem);
+  --fs-h2: clamp(1.75rem, 1.35rem + 1.6vw, 2.875rem);
+  --fs-h1: clamp(2.125rem, 1.5rem + 2.8vw, 4rem);
+  --fs-display: clamp(3rem, 1.6rem + 6vw, 7rem);
 
   --lh-tight: 1.06;
   --lh-snug: 1.18;
   --lh-body: 1.65;
-  --ls-eyebrow: 0.14em;
+  --ls-eyebrow: 0.12em;
   --measure: 65ch;
   --measure-prose: 68ch;
 
@@ -72,23 +133,27 @@
   --sp-8: 4rem;
   --sp-9: 6rem;
   --sp-10: 8rem;
-  --section-y: clamp(4rem, 3rem + 6vw, 9rem);
-  --gutter: clamp(1.25rem, 0.6rem + 3vw, 3.5rem);
+  /* Space between glass panels, and padding inside them. */
+  --panel-gap: clamp(1rem, 0.5rem + 1.5vw, 1.75rem);
+  --panel-pad: clamp(1.25rem, 0.7rem + 2.4vw, 3rem);
+  --section-y: var(--panel-gap);
+  --gutter: clamp(1rem, 0.5rem + 2.4vw, 3rem);
   --wrap: 78rem;
-  --wrap-narrow: 46rem;
+  --wrap-narrow: 50rem;
   --wrap-wide: 96rem;
+  --demo-gap: var(--panel-gap);
 
   /* ----------------------------------------------------------------- shapes */
-  --radius-sm: 2px;
-  --radius: 4px;
-  --radius-lg: 10px;
-  --hairline: 1px solid var(--cream-200);
-  --hairline-dark: 1px solid rgba(248, 245, 238, 0.16);
+  --radius-sm: 4px;
+  --radius: 10px;
+  --radius-lg: 18px;
+  --hairline: 1px solid var(--hair);
+  --hairline-dark: 1px solid var(--hair);
 
   /* --------------------------------------------------------------- elevation */
-  --shadow-sm: 0 1px 2px rgba(30, 23, 17, 0.06), 0 2px 8px rgba(30, 23, 17, 0.04);
-  --shadow: 0 2px 4px rgba(30, 23, 17, 0.05), 0 12px 32px rgba(30, 23, 17, 0.08);
-  --shadow-lg: 0 4px 8px rgba(30, 23, 17, 0.06), 0 28px 60px rgba(30, 23, 17, 0.13);
+  --shadow-sm: 0 1px 2px rgba(0, 10, 30, 0.12), 0 2px 8px rgba(0, 10, 30, 0.1);
+  --shadow: 0 2px 4px rgba(0, 10, 30, 0.12), 0 12px 32px rgba(0, 10, 30, 0.2);
+  --shadow-lg: 0 4px 8px rgba(0, 10, 30, 0.14), 0 28px 60px rgba(0, 10, 30, 0.3);
 
   /* ----------------------------------------------------------------- motion */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -99,83 +164,51 @@
   --dur-slower: 1200ms;
 
   /* ------------------------------------------------------------- shot arrow
-     The arrow that flies into each section heading. Kept as its own small set
-     so the shaft can invert on the dark bands without touching anything else. */
-  --arrow-shaft-hi: #6e5a46;
-  --arrow-shaft: #322619;
-  --arrow-shaft-lo: #1b140e;
-  --arrow-gleam: #f8f5ee;
+     Only the inline arrows read these now; the heading arrow is the brand
+     SVG in public/images. Pale shaft, orange vanes. */
+  --arrow-shaft-hi: #ffffff;
+  --arrow-shaft: #dfe6ee;
+  --arrow-shaft-lo: #9fb0c4;
+  --arrow-gleam: #ffffff;
   --arrow-steel-hi: #efeae1;
   --arrow-steel: #a9a296;
   --arrow-steel-lo: #5d564d;
-  --arrow-vane: #b7412e;
-  --arrow-vane-lo: #8e3122;
-  --arrow-vane-edge: #7d4a0c;
-  --arrow-wrap: #c8862b;
-  --arrow-nock: #3a2e23;
-  --arrow-nock-slot: #c8862b;
+  --arrow-vane: #e46024;
+  --arrow-vane-lo: #b8440f;
+  --arrow-vane-edge: #fcba66;
+  --arrow-wrap: #e46024;
+  --arrow-nock: #dfe6ee;
+  --arrow-nock-slot: #e46024;
 
-  /* ------------------------------------------------------------------- aura
-     The drifting blobs behind the plain bands. Colours are pulled off the
-     target face itself, the red ring and the cyan ring, with a third warm
-     tone from the palette so the pair never reads as a flag. All three sit at
-     single-digit opacity: this is a tint on paper, not a colour field. */
-  --aura-red: rgba(183, 65, 46, 0.1);
-  --aura-blue: rgba(42, 104, 126, 0.11);
-  --aura-warm: rgba(200, 134, 43, 0.07);
+  /* No aura any more: the landscape behind the glass is the colour. */
+  --aura-red: transparent;
+  --aura-blue: transparent;
+  --aura-warm: transparent;
 
   /* ------------------------------------------------------------------ chrome */
-  --nav-h: 7rem;
-  --nav-h-shrunk: 5rem;
+  --nav-h: 6.5rem;
+  --nav-h-shrunk: 5.5rem;
+  --bar-h: 4.25rem;             /* mobile action bar, before the safe area */
   --z-nav: 100;
   --z-menu: 200;
   --z-modal: 300;
 
+  color-scheme: dark;
+}
+
+/* The pre-launch gate is not restyled. It reads the old palette by name, so
+   those names keep their original values inside it. Remove with the gate. */
+#site-gate {
+  --cream-50: #f8f5ee;
+  --bark-900: #1e1711;
+  --pine-900: #14261b;
+  --ember-bright: #c8862b;
+  --ember-hover: #dda043;
+  --moss-200: #c9d3be;
+  --sage-300: #9db59a;
+  --radius: 4px;
+  --radius-lg: 10px;
+  --fs-eyebrow: clamp(0.688rem, 0.64rem + 0.16vw, 0.8125rem);
+  --ls-eyebrow: 0.14em;
   color-scheme: light;
-}
-
-/* Dark bands invert the semantic pair rather than every token, so components
-   can stay tone-agnostic. */
-.tone-pine,
-.tone-bark {
-  --fg: var(--cream-50);
-  --fg-muted: rgba(248, 245, 238, 0.76);
-  --fg-faint: rgba(248, 245, 238, 0.6);
-  --bg: var(--pine-900);
-  --rule: rgba(248, 245, 238, 0.16);
-  --accent: var(--sage-300);
-  --ember: var(--ember-bright);
-  /* Carbon disappears on pine, so the shaft reads as a pale anodised one. */
-  --arrow-shaft-hi: #f1ebdf;
-  --arrow-shaft: #cfc4ae;
-  --arrow-shaft-lo: #9d907a;
-  --arrow-gleam: #ffffff;
-  --arrow-nock: #d9cbae;
-  --arrow-vane-edge: #c8862b;
-  /* Barely-there on the dark bands: the ground is already doing the work. */
-  --aura-red: rgba(183, 65, 46, 0.16);
-  --aura-blue: rgba(93, 170, 196, 0.12);
-  --aura-warm: rgba(200, 134, 43, 0.08);
-  --accent-strong: var(--ember-bright);
-}
-
-.tone-bark {
-  --bg: var(--bark-900);
-}
-
-.tone-cream,
-.tone-linen,
-:root {
-  --fg: var(--bark-900);
-  --fg-muted: var(--bark-500);
-  --fg-faint: var(--stone-400);
-  --bg: var(--cream-50);
-  --rule: var(--cream-200);
-  --ember: var(--ember-ink);
-  --accent: var(--ember-ink);
-  --accent-strong: var(--ember-deep);
-}
-
-.tone-linen {
-  --bg: var(--cream-100);
 }

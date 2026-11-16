@@ -92,6 +92,7 @@ const galleryItems = [
 
   <section class="checklist tone-pine" aria-labelledby="checklist-title">
     <div class="wrap">
+      <div class="glass band__panel">
       <div class="checklist__head" data-reveal>
         <Eyebrow>Pre-season</Eyebrow>
         <h2 id="checklist-title" class="shot-head">The checklist, in the order it should happen.</h2>
@@ -114,6 +115,7 @@ const galleryItems = [
       <p class="checklist__link" data-reveal>
         <ArrowLink href="/insights/hunting-season-prep-checklist/">The full pre-season checklist</ArrowLink>
       </p>
+    </div>
     </div>
   </section>
 
@@ -204,17 +206,17 @@ const galleryItems = [
   .checklist { background: var(--pine-900); color: var(--cream-50); padding-block: var(--section-y); --accent: var(--sage-300); }
   .checklist__head { margin-bottom: var(--sp-7); max-width: 44rem; }
   .checklist__head h2 { color: var(--cream-50); }
-  .checklist__head .lead { margin-top: var(--sp-4); color: rgba(248, 245, 238, 0.78); }
+  .checklist__head .lead { margin-top: var(--sp-4); color: var(--ink-faint); }
   .checklist__items {
     list-style: none; margin: 0; padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
     gap: var(--sp-6);
   }
-  .checklist__items li { border-top: 1px solid rgba(248, 245, 238, 0.18); padding-top: var(--sp-4); }
+  .checklist__items li { border-top: 1px solid var(--hair); padding-top: var(--sp-4); }
   .checklist__n { display: block; font-size: 2.25rem; color: var(--ember); margin-bottom: var(--sp-3); }
   .checklist__items h3 { color: var(--cream-50); font-size: var(--fs-h4); margin-bottom: var(--sp-2); }
-  .checklist__items p { color: rgba(248, 245, 238, 0.72); font-size: var(--fs-small); line-height: 1.65; margin: 0; }
+  .checklist__items p { color: var(--ink-faint); font-size: var(--fs-small); line-height: 1.65; margin: 0; }
   .checklist__link { margin-top: var(--sp-7); }
 
   .cards {
@@ -225,6 +227,9 @@ const galleryItems = [
   .card-plain {
     height: 100%;
     background: var(--cream-100);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: var(--sp-5);

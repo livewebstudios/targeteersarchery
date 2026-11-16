@@ -1,0 +1,73 @@
+---
+/**
+ * Below 48rem: a fixed solid-navy bar at the bottom of the screen with the
+ * three things a phone visitor wants. CALL is the orange one; the other two
+ * are quiet. On every page.
+ */
+import { business } from '~/data/business';
+import PhoneIcon from '~/components/icons/PhoneIcon.astro';
+import PinRingIcon from '~/components/icons/PinRingIcon.astro';
+import ClockRingIcon from '~/components/icons/ClockRingIcon.astro';
+
+interface Props {
+  /** Where HOURS jumps to. The footer's visit block by default. */
+  hoursHref?: string;
+}
+const { hoursHref = '#hours' } = Astro.props;
+---
+<nav class="action-bar" aria-label="Call, directions and hours">
+  <a class="action-bar__call" href={business.phoneHref}>
+    <PhoneIcon size={20} />
+    <span>CALL</span>
+  </a>
+  <a href={business.directionsUrl} target="_blank" rel="noopener">
+    <PinRingIcon size={20} />
+    <span>DIRECTIONS</span>
+  </a>
+  <a href={hoursHref}>
+    <ClockRingIcon size={20} />
+    <span>HOURS</span>
+  </a>
+</nav>
+
+<style>
+  .action-bar { display: none; }
+  @media (max-width: 47.99rem) {
+    .action-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 95;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.4rem;
+      padding: 0.45rem 0.6rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
+      background: rgba(0, 24, 64, 0.97);
+      border-top: 1px solid var(--glass-edge);
+      border-radius: 18px 18px 0 0;
+      box-shadow: 0 -10px 30px rgba(0, 10, 30, 0.3);
+    }
+  }
+  a {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 0.2rem;
+    min-height: 3.25rem;
+    border-radius: 12px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: var(--ink);
+    border: 1px solid var(--hair);
+  }
+  .action-bar__call {
+    background: var(--tgt-orange);
+    color: var(--tgt-navy);
+    border-color: transparent;
+  }
+  .action-bar__call:active { background: var(--tgt-orange-hi); }
+  @media print { .action-bar { display: none; } }
+</style>

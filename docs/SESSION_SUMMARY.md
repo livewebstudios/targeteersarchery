@@ -1,49 +1,44 @@
-# Session summary: three home page demos
+# Session summary: the whole site in Trailhead
 
-**Date:** 2026-11-16 · **Branch:** `demo/home-three` (from `main` at `2b94aea`) · **Not merged.**
+**Date:** 2026-11-16 · **Branch:** `demo/home-three` · **Not committed, not merged.**
 
-## Routes (all gated, noindex, out of the sitemap, disallowed in robots.txt)
+Jon picked Trailhead from the three home page demos and asked for the whole site in it. Every route now uses the same skin: a fixed landscape under a navy wash, clear glass panels, white ink, tan labels, one orange button per screen, the five-link nav, the phone action bar and the glass footer.
 
-| Route | What it is |
+## What changed
+
+**The system** (every page inherits it)
+- `src/styles/tokens.css`: Rob's logo colours, the ink scale, the glass and pane recipes, the washes. The old cream-and-ember names are kept as aliases pointing at the new skin; `#site-gate` pins their old values.
+- `src/styles/global.css`: type, `.glass`, `.pane`, the solid fallbacks, buttons (`.d-btn--orange / --light / --outline`), the backdrop, the brand heading arrow, reveals, the hand-built band override.
+- `src/layouts/Base.astro`: backdrop (or the page's own through the `backdrop` slot), `SiteNav`, the page as a grid of panels, the section strip, `Footer`, `ActionBar`. Gate, motion failsafe, CMS invite redirect and view transitions unchanged.
+- New: `Backdrop.astro`, `nav/SiteNav.astro`, `nav/ActionBar.astro`, `nav/SectionLinks.astro`, `data/scenes.ts`.
+- Rewritten: `Footer`, `Section`, `PageHero`, `Card`, `Button`, `ContactBand` (now glass), `Field`, `Form`, `OpenNowPill`, `DealerRow`, `ArrowLink`, `data/nav.ts`.
+- Removed: `nav/Nav.astro`, `nav/MobileMenu.astro`, `nav/SubNav.astro`, `nav/SubRail.astro`, `styles/mobile-menu.css`, `hero/HeroFilm.astro`, `Milestones.astro`.
+- Moved: `FactList`, `BrandArrow`, `TaskIcon` from `components/demo/` to `components/`.
+- `astro.config.mjs`: `scopedStyleStrategy: 'class'` (see OPEN_QUESTIONS 14).
+
+**The home page** (`src/pages/index.astro`) is Trailhead with the old home page's production SEO.
+
+**Pages:** the eight hand-built bands now sit in glass; the post layout puts the header and photo in one glass card; contact's map panel is normal width; category chips, the checkbox, the newsletter button and hand-set faint text colours fixed for navy.
+
+**Scripts:** `contrast.mjs`, `layout-check.mjs` and `kill-list.mjs` are new. `qa-screens.mjs` now covers every route (hoyt, sitka, the category page and thank-you added) at 390 and 1440, with `--widths` and `--only`.
+
+**Docs:** README (the look, navigation, the arrow, the film, QA), this file, `OPEN_QUESTIONS.md`.
+
+## Checks run (against `npm run build` + `astro preview --port 4322`)
+
+| Check | Result |
 |---|---|
-| `/demos/` | Review index: logo, one line, three cards |
-| `/demos/1-base-camp/` | Smoke glass long scroll. Ridge, timber, dusk crossfade by scroll. The arrow crosses the hero once. |
-| `/demos/2-trailhead/` | Frost glass dashboard over Rob's film. ARIA tabs, deep links `#shoot` to `#hunt`, JS-off stacked. The arrow is the tab indicator. `?bg=valley` swaps the film for the valley still. |
-| `/demos/3-long-shot/` | Clear glass, seven 100svh stations, seven scenes. An arrow on a fixed rail is scrubbed to the scroll and lands in the target at station 6. |
+| `npx astro check` | 0 errors, 0 warnings |
+| `npm run build` | clean, 45 pages, sitemap, RSS, `/admin/` |
+| `node scripts/a11y.mjs` (25 routes × 375, 1440) | no axe violations |
+| `node scripts/contrast.mjs` (9 grounds × 2 widths × glass and pane) | lowest 4.62:1 |
+| `node scripts/layout-check.mjs` (25 routes × 360, 390, 768, 1024, 1440, 1920) | no horizontal scroll, no glass in glass, never more than one orange on screen |
+| `node scripts/layout-check.mjs --transparency` | every glass surface solid |
+| `node scripts/kill-list.mjs` (48 built files) | no em dashes, no banned phrases |
+| `node scripts/qa-screens.mjs` | 50 screenshots in `qa/`; reduced motion forced, every page complete |
+| `qa-screens --demos` | the four demo routes still render |
 
-## Files
-
-**New**
-- `src/layouts/DemoBase.astro`
-- `src/styles/demo.css` (brand tokens, the three glass recipes, shared kit, re-skins of the existing components)
-- `src/data/home.ts`
-- `src/components/demo/`: `DemoNav`, `DemoBar`, `ActionBar`, `FactList`, `BrandArrow`, `TaskIcon`, `DemoFooter`
-- `src/pages/demos/` (four routes)
-- `src/assets/demo-scenes/`: eight renders, all inspected and all clean, so no fallbacks were used. `tarn.jpg` has no slot in any demo.
-- `public/images/shot-arrow-brand.svg`, `public/images/shot-arrow-brand-light.svg`
-- `public/images/verifiedsecured.png` (copied from the canonical LWS file)
-
-**Changed**
-- `astro.config.mjs` (sitemap filter)
-- `public/robots.txt`
-- `scripts/make-arrow.mjs` (colours overridable, two brand outputs)
-- `scripts/qa-screens.mjs` and `scripts/a11y.mjs` (a `--demos` flag, the gate cookie, a Windows Chrome path)
-- `package.json` (`@fontsource/barlow-condensed`)
-- `.gitignore` (`/26_*_handoff.md`)
-
-**Untouched, verified:** `git diff main` is empty for `src/pages/index.astro`, `src/layouts/Base.astro`, `src/components/nav`, `src/styles/tokens.css`, `src/styles/global.css`, `SiteGate.astro`, and the two original arrow SVGs.
-
-## Checks run
-
-- `npx astro check`: 0 errors. The 6 hints are all pre-existing.
-- `npm run build`: clean, 45 pages.
-- `node scripts/a11y.mjs --demos`: no axe violations across 4 routes × 2 widths.
-- No horizontal scroll at 360, 390, 768, 1024, 1440 or 1920 on any demo route.
-- CLS on the production build: 0 to 0.0008. The LCP element is the H1 text on every demo (the index's phone LCP is a card photo), never the film.
-- Reduced transparency: glass falls back to solid fills with no blur.
-- Reduced motion: every arrow at rest, Base Camp shows timber only, and Long Shot's arrow jumps to the current tick with the visit panel visible.
-- Kill-list scan of the demo copy: zero em dashes and zero banned phrases.
-- `node scripts/qa-screens.mjs --demos`: 8 full-page screenshots in `qa/` (gitignored).
+Untouched: `SiteGate.astro`, `public/admin/` (Decap 3.1.2 pin), `public/_redirects`, `public/robots.txt`, the content collections, every Formspree endpoint.
 
 ## To review
 
@@ -51,8 +46,11 @@
 npm run dev
 ```
 
-Then open `http://localhost:4321/demos/`. The gate is still up, so enter the admin password once per browser.
+Open `http://localhost:4321/`, enter the admin password once, and walk the five destinations. `/demos/` is still there for comparison.
 
 ## Next
 
-Open the PR from `demo/home-three` so Netlify builds a Deploy Preview, review the three directions, then pick one. See `OPEN_QUESTIONS.md`.
+1. Jon reviews the look, especially how much darker the glass is than the approved demo (OPEN_QUESTIONS 1).
+2. Commit on this branch, push, open the PR for a Netlify Deploy Preview.
+3. Lighthouse on the preview, and a real-phone and Safari pass.
+4. Before launch: remove the demos and their kit, then the gate.

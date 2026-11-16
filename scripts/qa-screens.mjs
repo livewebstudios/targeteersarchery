@@ -5,7 +5,7 @@
  *   npm run build && npx astro preview --port 4322 &
  *   node scripts/qa-screens.mjs
  *
- * Writes qa/<page>-<width>.png. Reduced motion is forced so the pinned
+ * Writes qa/<page>-<width>.png, at 390 and 1440 unless --widths says otherwise. Reduced motion is forced so the pinned
  * sections render as their static fallbacks rather than mid-animation.
  *
  * The pre-launch gate covers every page, so the gate cookie is set first.
@@ -34,12 +34,16 @@ const DEMO_PAGES = [
   ['demo-3-long-shot', '/demos/3-long-shot/'],
 ];
 
-const WIDTHS = DEMOS ? [390, 1440] : [375, 768, 1280, 1920];
+// --widths=390,1440 and --only=home,lessons narrow a run while iterating.
+const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.split('=')[1];
+const WIDTHS = arg('widths') ? arg('widths').split(',').map(Number) : DEMOS ? [390, 1440] : [390, 1440];
 const SITE_PAGES = [
   ['home', '/'],
   ['about', '/about/'],
   ['pro-shop', '/pro-shop/'],
   ['mathews', '/pro-shop/mathews/'],
+  ['hoyt', '/pro-shop/hoyt/'],
+  ['sitka', '/pro-shop/sitka/'],
   ['services', '/services/'],
   ['bow-tuning', '/services/bow-tuning/'],
   ['lessons', '/lessons/'],
@@ -53,12 +57,15 @@ const SITE_PAGES = [
   ['calendar', '/calendar/'],
   ['insights', '/insights/'],
   ['post', '/insights/how-to-know-when-your-bow-needs-tuning/'],
+  ['category', '/insights/category/hunting/'],
   ['faq', '/faq/'],
   ['contact', '/contact/'],
   ['careers', '/careers/'],
+  ['thank-you', '/thank-you/'],
   ['404', '/404/'],
 ];
-const PAGES = DEMOS ? DEMO_PAGES : SITE_PAGES;
+const only = arg('only')?.split(',');
+const PAGES = (DEMOS ? DEMO_PAGES : SITE_PAGES).filter(([name]) => !only || only.includes(name));
 
 await mkdir(OUT, { recursive: true });
 

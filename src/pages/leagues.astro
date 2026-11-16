@@ -119,7 +119,8 @@ const galleryItems = [
   </Section>
 
   <section class="fnl tone-pine" aria-labelledby="fnl-title">
-    <div class="wrap fnl__inner">
+    <div class="wrap">
+      <div class="glass band__panel fnl__inner">
       <Reveal class="fnl__copy">
         <Eyebrow>Youth</Eyebrow>
         <h2 id="fnl-title" class="shot-head">Friday Night Lights.</h2>
@@ -136,6 +137,7 @@ const galleryItems = [
         <Image src={adultImg} alt="Archers on the line under the range lights" widths={[560, 1000]}
           sizes="(max-width: 60rem) 90vw, 28rem" loading="lazy" />
       </Reveal>
+    </div>
     </div>
   </section>
 
@@ -217,7 +219,10 @@ const galleryItems = [
   }
   .league {
     height: 100%;
-    background: var(--cream-50);
+    background: var(--pane-fill);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: var(--sp-5);
@@ -236,6 +241,9 @@ const galleryItems = [
     border-radius: 999px;
     margin: 0;
     background: var(--cream-100);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     color: var(--bark-500);
   }
   .league__status[data-status='forming'] { background: color-mix(in srgb, var(--ember) 15%, transparent); color: var(--ember-deep); }
@@ -260,8 +268,8 @@ const galleryItems = [
   .fnl__inner { display: grid; gap: var(--sp-7); align-items: center; }
   @media (min-width: 60rem) { .fnl__inner { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--sp-9); } }
   .fnl h2 { color: var(--cream-50); }
-  .fnl .lead { margin-top: var(--sp-4); color: rgba(248, 245, 238, 0.84); }
-  .fnl__note { margin-top: var(--sp-5); font-size: var(--fs-small); color: rgba(248, 245, 238, 0.6); font-style: italic; max-width: 44ch; }
+  .fnl .lead { margin-top: var(--sp-4); color: var(--ink-muted); }
+  .fnl__note { margin-top: var(--sp-5); font-size: var(--fs-small); color: var(--ink-faint); font-style: italic; max-width: 44ch; }
   .fnl__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
 
   .need { display: grid; gap: var(--sp-6); }
@@ -278,7 +286,10 @@ const galleryItems = [
   @media (min-width: 60rem) { .join { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.2fr); gap: var(--sp-9); } }
   .join__copy p { max-width: 40ch; margin-top: var(--sp-4); }
   .join__form {
-    background: var(--cream-50);
+    background: var(--pane-fill);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: clamp(1.25rem, 0.6rem + 2vw, 2.25rem);

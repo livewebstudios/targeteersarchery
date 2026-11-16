@@ -111,7 +111,7 @@ import { business } from '~/data/business';
     </div>
   </Section>
 
-  <Section tone="linen" width="wide">
+  <Section tone="linen" aria-label="Map">
     <Map />
   </Section>
 </Base>
@@ -124,6 +124,9 @@ import { business } from '~/data/business';
 
   .info-card {
     background: var(--cream-100);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: var(--sp-5);
@@ -159,7 +162,10 @@ import { business } from '~/data/business';
     border: 1px solid var(--cream-200);
     border-radius: 999px;
     color: var(--bark-500);
-    background: var(--cream-50);
+    background: var(--pane-fill);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
   }
   .info-card__social a:hover { border-color: var(--ember); color: var(--ember); }
   .info-card__note { margin-top: var(--sp-4); font-size: 0.75rem; color: var(--stone-400); }

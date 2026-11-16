@@ -110,7 +110,8 @@ const galleryItems = [
   </Section>
 
   <section class="speakers tone-pine" aria-labelledby="speakers-title">
-    <div class="wrap speakers__inner">
+    <div class="wrap">
+      <div class="glass band__panel speakers__inner">
       <Reveal class="speakers__copy">
         <Eyebrow>Speaker nights</Eyebrow>
         <h2 id="speakers-title" class="shot-head">We clear the front of the store and put out chairs.</h2>
@@ -129,6 +130,7 @@ const galleryItems = [
         <Image src={seminar1} alt="A technical seminar in progress on the range"
           widths={[560, 1000]} sizes="(max-width: 60rem) 90vw, 28rem" loading="lazy" />
       </Reveal>
+    </div>
     </div>
   </section>
 
@@ -190,6 +192,9 @@ const galleryItems = [
 
   .includes {
     background: var(--cream-100);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: var(--sp-5);
@@ -228,8 +233,8 @@ const galleryItems = [
   .speakers__inner { display: grid; gap: var(--sp-7); align-items: center; }
   @media (min-width: 60rem) { .speakers__inner { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--sp-9); } }
   .speakers h2 { color: var(--cream-50); }
-  .speakers .lead { margin-top: var(--sp-4); color: rgba(248, 245, 238, 0.84); }
-  .speakers__note { margin-top: var(--sp-4); font-size: var(--fs-small); color: rgba(248, 245, 238, 0.6); font-style: italic; max-width: 44ch; }
+  .speakers .lead { margin-top: var(--sp-4); color: var(--ink-muted); }
+  .speakers__note { margin-top: var(--sp-4); font-size: var(--fs-small); color: var(--ink-faint); font-style: italic; max-width: 44ch; }
   .speakers :global(.arrow-link) { margin-top: var(--sp-5); }
   .speakers__media :global(img) { width: 100%; height: auto; border-radius: var(--radius-lg); }
 
@@ -238,6 +243,9 @@ const galleryItems = [
   .enquire__copy p { max-width: 40ch; margin-top: var(--sp-4); }
   .enquire__form {
     background: var(--cream-100);
+    --accent-text: var(--tgt-tan-pale);
+    --accent: var(--tgt-tan-pale);
+    --ember: var(--tgt-tan-pale);
     border: 1px solid var(--cream-200);
     border-radius: var(--radius-lg);
     padding: clamp(1.25rem, 0.6rem + 2vw, 2.25rem);

@@ -6,6 +6,10 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://targeteersarchery.com',
   output: 'static',
+  // Class-based scoping, so a page's scoped style reaches the element a child
+  // component renders with the class it was handed (<Reveal class="x__media">).
+  // The default attribute strategy never does, which left those rules dead.
+  scopedStyleStrategy: 'class',
   trailingSlash: 'always',
   integrations: [
     react(),

@@ -136,7 +136,7 @@ const passes = [0, 1, 2];
     border-radius: 999px;
     color: inherit;
     cursor: pointer;
-    opacity: 0.55;
+    opacity: 0.85;
     transition: opacity var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
   }
   .dealers__pause:hover { opacity: 1; border-color: var(--accent); }
@@ -198,7 +198,7 @@ const passes = [0, 1, 2];
     height: 4.5rem;
     text-decoration: none;
     color: var(--fg);
-    opacity: 0.68;
+    opacity: 0.92;
     transition: opacity var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
   }
   .dealers__list a:hover,
@@ -219,15 +219,21 @@ const passes = [0, 1, 2];
     object-fit: contain;
   }
   .dealers__logo[data-own] { max-width: 13rem; max-height: 4rem; }
-  /* Real logos come in every colour there is. On the dark bands they get
-     knocked back to cream so the row still reads as one row. */
-  .tone-pine .dealers__logo,
-  .tone-bark .dealers__logo { filter: brightness(0) invert(1); opacity: 0.9; }
-  /* Our own lockup is the exception: it carries white keylines already. */
-  .tone-pine .dealers__logo[data-own],
-  .tone-bark .dealers__logo[data-own] { filter: none; opacity: 1; }
-  .tone-pine .dealers__list a:hover .dealers__logo,
-  .tone-bark .dealers__list a:hover .dealers__logo { opacity: 1; }
+  /* Real logos come in every colour there is. On navy glass they are knocked
+     back to white so the row reads as one row. Hoyt and TenPoint ship as
+     black badges made for dark grounds, so they keep their own colours. */
+  .dealers__logo { filter: brightness(0) invert(1); opacity: 0.88; }
+  .dealers__logo:is([src*='hoyt'], [src*='tenpoint']) { filter: none; opacity: 1; }
+  .dealers__list a:hover .dealers__logo { opacity: 1; }
+  /* Rob's own lockup is never recoloured, and it always sits on a plate. */
+  .dealers__logo[data-own] {
+    filter: none;
+    opacity: 1;
+    background: #fff;
+    border-radius: 10px;
+    padding: 0.35rem 0.6rem;
+    box-sizing: content-box;
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .dealers__viewport {
