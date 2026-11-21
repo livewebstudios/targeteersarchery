@@ -80,7 +80,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
               {navLeft.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
             </ul>
           </nav>
-          <a class="s57-header__logo" href="#top"><V2Logo on="light" height={84} eager /></a>
+          <a class="s57-header__logo" href="#top"><V2Logo on="light" height={104} eager /></a>
           <nav class="s57-nav s57-nav--right" aria-label="Main, continued" data-v2-nav>
             <ul role="list">
               {navRight.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
@@ -674,7 +674,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     transition: transform var(--v2-t-header) var(--v2-ease);
   }
   .v2--since1957 .s57-header__logo { display: block; flex: none; }
-  .v2--since1957 .s57-header__logo .v2-logo { width: auto; height: 52px; transition: transform var(--v2-t-header) var(--v2-ease); }
+  .v2--since1957 .s57-header__logo .v2-logo { width: auto; height: 64px; transition: transform var(--v2-t-header) var(--v2-ease); }
   .v2--since1957 .s57-nav { display: none; }
   .v2--since1957 .s57-menu-btn,
   .v2--since1957 .s57-menu__close {
@@ -695,9 +695,9 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     .v2--since1957 .s57-header[data-scrolled] .s57-header__bar { transform: translateY(-32px); }
     .v2--since1957 .s57-header[data-scrolled] .s57-header__in { transform: translateY(16px); }
     .v2--since1957 .s57-header__in { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: clamp(1.5rem, 3vw, 3rem); }
-    .v2--since1957 .s57-header__logo .v2-logo { height: 84px; }
-    /* 84px down to 60px. */
-    .v2--since1957 .s57-header[data-scrolled] .v2-logo { transform: scale(0.714); }
+    .v2--since1957 .s57-header__logo .v2-logo { height: 104px; }
+    /* 104px down to 72px. */
+    .v2--since1957 .s57-header[data-scrolled] .v2-logo { transform: scale(0.692); }
     .v2--since1957 .s57-menu-btn { display: none; }
     .v2--since1957 .s57-nav { display: block; }
     .v2--since1957 .s57-nav ul { display: flex; gap: clamp(1.25rem, 2.4vw, 2.5rem); }

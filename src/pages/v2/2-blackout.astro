@@ -62,7 +62,7 @@ const archive = [...photos.archive, photos.then];
 
     <div class="bk-header" data-v2-header>
       <div class="bk-wrap bk-header__in">
-        <a class="bk-header__logo" href="#top"><V2Logo on="dark" height={60} eager /></a>
+        <a class="bk-header__logo" href="#top"><V2Logo on="dark" height={76} eager /></a>
         <nav class="bk-nav" aria-label="Main" data-v2-nav>
           <ul role="list">
             {v2Nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
@@ -532,7 +532,7 @@ const archive = [...photos.archive, photos.then];
     height: 100%;
   }
   .v2--blackout .bk-header__logo { display: block; flex: none; margin-right: auto; }
-  .v2--blackout .bk-header__logo .v2-logo { width: auto; height: 44px; }
+  .v2--blackout .bk-header__logo .v2-logo { width: auto; height: 60px; }
   .v2--blackout .bk-nav { display: none; }
   .v2--blackout .bk-header__call { display: none; min-height: 2.75rem; padding: 0.5rem 1.5rem; }
   /* Orange once the hero's own CALL button has left the screen. */
@@ -555,7 +555,7 @@ const archive = [...photos.archive, photos.then];
     .v2--blackout .bk-header__call { display: inline-flex; }
   }
   @media (min-width: 64rem) {
-    .v2--blackout .bk-header__logo .v2-logo { height: 60px; }
+    .v2--blackout .bk-header__logo .v2-logo { height: 76px; }
     .v2--blackout .bk-menu-btn { display: none; }
     .v2--blackout .bk-nav { display: block; }
     .v2--blackout .bk-nav ul { display: flex; gap: clamp(1rem, 2vw, 2rem); }
