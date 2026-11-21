@@ -1,7 +1,1070 @@
 ---
+/**
+ * Demo 2: BLACKOUT. Targeteers the way Mathews and Hoyt present themselves.
+ *
+ * Near black, product first, photos edge to edge, huge condensed capitals, one
+ * small label, one short line and one button per banner. No cards, no boxes,
+ * no rounded corners. Sections are divided by a single hairline.
+ *
+ * Signature move: the shot. An orange arrow is fired along five of the seams.
+ *
+ * All copy comes from src/data/homeV2.ts. Nothing here links to an inner page.
+ */
+import '@fontsource/barlow-condensed/600.css';
+import '@fontsource/barlow-condensed/700.css';
+import '@fontsource/barlow-condensed/800.css';
+import '@fontsource-variable/instrument-sans';
+
+import { Image } from 'astro:assets';
 import V2Base from '~/layouts/V2Base.astro';
-import { hero } from '~/data/homeV2';
+import V2Logo from '~/components/v2/V2Logo.astro';
+import V2OpenNow from '~/components/v2/V2OpenNow.astro';
+import V2Hours from '~/components/v2/V2Hours.astro';
+import V2Form from '~/components/v2/V2Form.astro';
+import V2Arrow from '~/components/v2/V2Arrow.astro';
+import V2Brands from '~/components/v2/V2Brands.astro';
+import SocialIcon from '~/components/icons/SocialIcon.astro';
+import { business } from '~/data/business';
+import {
+  v2Nav, call, callShort, directions, hero, proof, welcome, team, mission, dealers,
+  offerings, hunt, about, events, visit, footer, photos, v2Widths,
+} from '~/data/homeV2';
+
+const year = new Date().getFullYear();
+const socials = [
+  { network: 'facebook', href: business.socials.facebook },
+  { network: 'instagram', href: business.socials.instagram },
+  { network: 'twitter', href: business.socials.twitter },
+] as const;
+
+/* Back in the Days: the three archive photos plus the counter photo. */
+const archive = [...photos.archive, photos.then];
 ---
-<V2Base demo={2} theme="blackout" title="Targeteers Archery Pro Shop | Demo 2, BLACKOUT" description={hero.lead}>
-  <h1>{hero.h1}</h1>
+<V2Base
+  demo={2}
+  theme="blackout"
+  title="Targeteers Archery Pro Shop | Saddle Brook, NJ | Demo 2, Blackout"
+  description={hero.lead}
+>
+  <Fragment slot="header">
+    <div class="bk-util">
+      <div class="bk-wrap bk-util__in">
+        <V2OpenNow />
+        <p class="bk-util__right">
+          <span class="bk-util__addr">{business.address.street}, {business.address.city}, {business.address.region}</span>
+          <a href={business.phoneHref}>{business.phone}</a>
+        </p>
+      </div>
+    </div>
+
+    <header class="bk-header" data-v2-header>
+      <div class="bk-wrap bk-header__in">
+        <a class="bk-header__logo" href="#top"><V2Logo on="dark" height={60} eager /></a>
+        <nav class="bk-nav" aria-label="Main" data-v2-nav>
+          <ul role="list">
+            {v2Nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          </ul>
+        </nav>
+        <a class="bk-btn bk-header__call" href={call.href}>CALL</a>
+        <button class="bk-menu-btn" type="button" aria-expanded="false" aria-controls="bk-menu" data-v2-menu-button>MENU</button>
+      </div>
+    </header>
+
+    <div class="bk-menu" id="bk-menu" data-v2-menu hidden>
+      <button class="bk-menu__close" type="button" data-v2-menu-close>CLOSE</button>
+      <nav aria-label="Menu">
+        <ul role="list">
+          {v2Nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+      <div class="bk-menu__actions">
+        <a class="bk-btn bk-btn--primary" href={call.href}>{call.label}</a>
+        <a class="bk-btn bk-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ------------------------------------------------------------------ hero */}
+  <section class="bk-hero" aria-labelledby="bk-h1">
+    <Image
+      class="bk-hero__photo"
+      src={photos.hero2.src}
+      alt={photos.hero2.alt}
+      widths={[640, 960, 1280, 1920, 2560, 3200]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="bk-wrap bk-hero__in">
+      <div class="bk-hero__copy">
+        <p class="bk-label">{hero.eyebrow}</p>
+        <h1 id="bk-h1">{hero.h1}</h1>
+        <p class="bk-hero__lead">{hero.lead}</p>
+        <div class="bk-actions" data-bk-hero-actions>
+          <a class="bk-btn bk-btn--primary" href={call.href}>{call.label}</a>
+          <a class="bk-btn bk-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="bk-seam" data-bk-seam aria-hidden="true">
+    <div class="bk-seam__track"><span class="bk-seam__glow"></span><V2Arrow length={160} class="bk-seam__arrow" /><span class="bk-seam__head"></span></div>
+  </div>
+
+  {/* ----------------------------------------------------------------- proof */}
+  <!-- CONFIRM: award wording. The old About page says "East Coast Dealer of the Year". The badge says 2007. -->
+  <div class="bk-proof">
+    <ul class="bk-wrap bk-proof__row" role="list">
+      {proof.map((p) => (
+        <li data-reveal>
+          <p class="bk-proof__big">{p.big}</p>
+          <p class="bk-proof__label">{p.label}</p>
+          <p class="bk-proof__note">{p.note}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="bk-seam" data-bk-seam aria-hidden="true">
+    <div class="bk-seam__track"><span class="bk-seam__glow"></span><V2Arrow length={160} class="bk-seam__arrow" /><span class="bk-seam__head"></span></div>
+  </div>
+
+  {/* -------------------------------------------------- welcome, team, mission */}
+  <div class="bk-mission">
+    <div class="bk-wrap bk-mission__grid">
+      <section class="bk-mission__pledge" aria-labelledby="bk-mission-title">
+        <h2 class="bk-label" id="bk-mission-title">{mission.title}</h2>
+        <p class="bk-pledge">{mission.pledge}</p>
+      </section>
+      <div class="bk-mission__body" data-reveal>
+        <p class="bk-mission__welcome">{welcome.body}</p>
+        <section aria-labelledby="bk-team-title">
+          <h2 class="bk-label" id="bk-team-title">{team.title}</h2>
+          <p>{team.body}</p>
+        </section>
+        <p class="bk-mission__line">{mission.body}</p>
+      </div>
+    </div>
+  </div>
+
+  {/* ------------------------------------------------------ authorized dealer */}
+  <section class="bk-dealers" aria-labelledby="bk-dealers-title">
+    <div class="bk-wrap">
+      <h2 class="bk-label" id="bk-dealers-title">{dealers.title}</h2>
+      <p class="bk-dealers__line">{dealers.line}</p>
+      <V2Brands mode="mono-light" maxWidth={130} maxHeight={36} />
+    </div>
+  </section>
+
+  <div class="bk-seam" data-bk-seam aria-hidden="true">
+    <div class="bk-seam__track"><span class="bk-seam__glow"></span><V2Arrow length={160} class="bk-seam__arrow" /><span class="bk-seam__head"></span></div>
+  </div>
+
+  {/* ------------------------------------------------------------- offerings */}
+  <!-- CONFIRM: range distance, 27 or 28 yards. -->
+  <!-- CONFIRM: 2026 lesson prices. -->
+  <!-- CONFIRM: current league schedule. -->
+  <div class="bk-offer">
+    <div class="bk-wrap bk-offer__grid">
+      {offerings.map((o) => {
+        const photo = photos.offering[o.id];
+        return (
+          <section class="bk-tile" id={o.id} aria-labelledby={`bk-${o.id}-title`} data-reveal>
+            <div class="bk-tile__photo">
+              <Image
+                src={photo.src}
+                alt={o.imageAlt}
+                widths={v2Widths(photo.src, 360, 420)}
+                sizes="(min-width: 56rem) 420px, (min-width: 30rem) 46vw, calc(100vw - 2rem)"
+                loading="lazy"
+              />
+            </div>
+            <h2 id={`bk-${o.id}-title`}>{o.title}</h2>
+            <p class="bk-tile__line">{o.line}</p>
+            <dl class="bk-facts">
+              {o.facts.map((f) => (
+                <div><dt>{f.label}</dt><dd>{f.value}</dd></div>
+              ))}
+            </dl>
+          </section>
+        );
+      })}
+    </div>
+  </div>
+
+  <div class="bk-seam" data-bk-seam aria-hidden="true">
+    <div class="bk-seam__track"><span class="bk-seam__glow"></span><V2Arrow length={160} class="bk-seam__arrow" /><span class="bk-seam__head"></span></div>
+  </div>
+
+  {/* ------------------------------------------------------------- hunt band */}
+  <section class="bk-hunt" aria-labelledby="bk-hunt-title">
+    <Image
+      class="bk-hunt__photo"
+      src={photos.hunt2.src}
+      alt={photos.hunt2.alt}
+      widths={[640, 960, 1280, 1920, 2560, 3200]}
+      sizes="100vw"
+      loading="lazy"
+    />
+    <div class="bk-wrap bk-hunt__in">
+      <div class="bk-hunt__copy" data-reveal>
+        {/* The label is Rob's own phrase, lifted from hunt.body. */}
+        <p class="bk-label">North American big game</p>
+        <h2 id="bk-hunt-title">{hunt.title}</h2>
+        <p>{hunt.body}</p>
+        <a class="bk-btn bk-btn--primary" href={callShort.href}>{callShort.label}</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="bk-seam" data-bk-seam aria-hidden="true">
+    <div class="bk-seam__track"><span class="bk-seam__glow"></span><V2Arrow length={160} class="bk-seam__arrow" /><span class="bk-seam__head"></span></div>
+  </div>
+
+  {/* ----------------------------------------------------------------- about */}
+  <section class="bk-about" id="about" aria-labelledby="bk-about-title">
+    <div class="bk-wrap">
+      <div class="bk-about__grid">
+        <p class="bk-about__year" aria-hidden="true">{business.founded}</p>
+        <div class="bk-about__copy" data-reveal>
+          <p class="bk-label">{about.eyebrow}</p>
+          <h2 id="bk-about-title">{about.title}</h2>
+          {about.body.map((para) => <p>{para}</p>)}
+          <ol class="bk-timeline" role="list">
+            {about.timeline.map((t) => (
+              <li><span class="bk-timeline__year">{t.year}</span><span>{t.line}</span></li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <div class="bk-archive" data-reveal>
+        <h3 class="bk-label">{about.archiveTitle}</h3>
+        <ul role="list">
+          {archive.map((a) => (
+            <li>
+              <Image
+                src={a.src}
+                alt={a.alt}
+                widths={v2Widths(a.src, 170, 320)}
+                sizes="(min-width: 56rem) 310px, 45vw"
+                loading="lazy"
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------------------------------------------------------------- events */}
+  <section class="bk-events" id="events" aria-labelledby="bk-events-title">
+    <div class="bk-wrap" data-reveal>
+      <h2 id="bk-events-title">{events.title}</h2>
+      <dl class="bk-events__rows">
+        {events.items.map((e) => (
+          <div><dt>{e.name}</dt><dd>{e.when}</dd></div>
+        ))}
+      </dl>
+      <p class="bk-events__note">{events.note}</p>
+    </div>
+  </section>
+
+  {/* ----------------------------------------------------------------- visit */}
+  <section class="bk-visit" id="visit" aria-labelledby="bk-visit-title">
+    <div class="bk-wrap bk-visit__grid">
+      <div data-reveal>
+        <h2 id="bk-visit-title">{visit.title}</h2>
+        <V2Hours />
+        <address>
+          {business.address.street}<br />
+          {business.address.city}, {business.address.region} {business.address.postal}
+        </address>
+        <p class="bk-visit__phone"><a href={business.phoneHref}>{business.phone}</a></p>
+        <a class="bk-btn bk-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
+      </div>
+      <div data-reveal>
+        <h3>{visit.formTitle}</h3>
+        <p class="bk-visit__formline">{visit.formLine}</p>
+        <V2Form />
+      </div>
+    </div>
+  </section>
+
+  {/* ---------------------------------------------------------------- footer */}
+  <footer class="bk-footer" slot="footer">
+    <div class="bk-wrap">
+      <div class="bk-footer__top">
+        <div class="bk-footer__brand">
+          <V2Logo on="dark" height={64} />
+          <p>{footer.family}</p>
+          <p class="bk-footer__tagline">{footer.tagline}</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul role="list">
+            {v2Nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          </ul>
+        </nav>
+        <div class="bk-footer__contact">
+          <address>
+            {business.address.street}<br />
+            {business.address.city}, {business.address.region} {business.address.postal}
+          </address>
+          <p><a href={business.phoneHref}>{business.phone}</a></p>
+          <p class="bk-footer__email">{business.email}</p>
+          <ul class="bk-social" role="list">
+            {socials.map((s) => (
+              <li><a href={s.href} target="_blank" rel="noopener"><SocialIcon network={s.network} size={20} /></a></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div class="bk-footer__legal">
+        <p>&copy; {year} {business.name}</p>
+        <a class="bk-footer__lws" href="https://livewebstudios.com" target="_blank" rel="noopener">
+          <img src="../../images/verifiedsecured.png" alt="Verified and Secured by Live Web Studios" width="150" height="37" loading="lazy" decoding="async" />
+          <span>{footer.credit}</span>
+        </a>
+      </div>
+    </div>
+  </footer>
 </V2Base>
+
+<script>
+  /* Signature move: the shot. When a seam crosses 75 percent of the viewport
+     height, one arrow is fired along it. Once per seam. The flight is CSS. */
+  const seams = document.querySelectorAll<HTMLElement>('[data-bk-seam]');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          e.target.classList.add('is-shot');
+          io.unobserve(e.target);
+        }
+      },
+      { rootMargin: '0px 0px -25% 0px' },
+    );
+    seams.forEach((s) => io.observe(s));
+  }
+
+  /* One primary button per viewport: the header CALL button stays an outline
+     while the hero's own CALL button is on screen, and turns orange after. */
+  const header = document.querySelector<HTMLElement>('[data-v2-header]');
+  const heroActions = document.querySelector<HTMLElement>('[data-bk-hero-actions]');
+  if (header && heroActions && 'IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      const e = entries[entries.length - 1];
+      header.toggleAttribute('data-past-hero', !e.isIntersecting && e.boundingClientRect.top < 0);
+    }).observe(heroActions);
+  } else if (header) {
+    header.setAttribute('data-past-hero', '');
+  }
+</script>
+
+<style is:global>
+  /* ========================================================================
+     Demo 2: BLACKOUT. Every rule lives under .v2--blackout.
+     Orange always carries black text: white on orange is 3.50:1 and fails.
+     ======================================================================== */
+  :root:has(.v2--blackout) { color-scheme: dark; }
+
+  .v2--blackout {
+    --bk-black: #0b0c0d;
+    --bk-panel: #16181a;
+    --bk-line: #2a2d30;
+    --bk-ink: #f4f2ec;
+    --bk-muted: #a8aba6;
+    --bk-orange: #e46024;   /* from Rob's logo */
+
+    --bk-display: 'Barlow Condensed', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
+    --bk-body: 'Instrument Sans Variable', 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --bk-gutter: clamp(1rem, 4vw, 2.5rem);
+    --bk-section: clamp(4rem, 9vw, 7.5rem);
+    --bk-header: 68px;
+
+    --v2-header-h: 68px;
+    --v2-bar-bg: var(--bk-black);
+    --v2-bar-fg: var(--bk-ink);
+    --v2-bar-line: var(--bk-line);
+    --v2-bar-call-bg: var(--bk-orange);
+    --v2-bar-call-fg: var(--bk-black);
+
+    background: var(--bk-black);
+    color: var(--bk-ink);
+    font-family: var(--bk-body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  @media (min-width: 64rem) {
+    .v2--blackout { --bk-header: 84px; --v2-header-h: 84px; }
+  }
+
+  /* Three 420px tiles and two gaps: no tile photo runs past its cap. */
+  .v2--blackout .bk-wrap {
+    width: 100%;
+    max-width: calc(81.75rem + 2 * var(--bk-gutter));
+    margin-inline: auto;
+    padding-inline: var(--bk-gutter);
+  }
+
+  .v2--blackout h1,
+  .v2--blackout h2,
+  .v2--blackout h3 {
+    font-family: var(--bk-display);
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    line-height: 0.96;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .v2--blackout h2 { font-size: clamp(2.5rem, 6vw, 5rem); }
+  .v2--blackout p { text-wrap: pretty; }
+
+  /* The small label that sits over every banner. */
+  .v2--blackout .bk-label {
+    color: var(--bk-orange);
+    font-family: var(--bk-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  /* ---------------------------------------------------------------- buttons */
+  .v2--blackout .bk-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.75rem;
+    border: 1px solid var(--bk-ink);
+    border-radius: 0;
+    background: transparent;
+    color: var(--bk-ink);
+    font-family: var(--bk-display);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+  .v2--blackout .bk-btn:hover { background: var(--bk-ink); color: var(--bk-black); }
+  .v2--blackout .bk-btn--primary { background: var(--bk-orange); border-color: var(--bk-orange); color: var(--bk-black); }
+  .v2--blackout .bk-btn--primary:hover { background: #f47a3c; border-color: #f47a3c; color: var(--bk-black); }
+  .v2--blackout .bk-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+  /* ------------------------------------------------------------ utility bar */
+  .v2--blackout .bk-util { border-bottom: 1px solid var(--bk-line); font-size: 0.8125rem; }
+  .v2--blackout .bk-util__in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.5rem;
+  }
+  .v2--blackout .v2-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--bk-orange);
+    font-family: var(--bk-display);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .v2--blackout .v2-open__dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--bk-orange); }
+  .v2--blackout .v2-open[data-state='closed'] .v2-open__dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--bk-orange); }
+  .v2--blackout .bk-util__right { display: flex; align-items: center; gap: 1.5rem; color: var(--bk-muted); }
+  .v2--blackout .bk-util__addr { display: none; }
+  .v2--blackout .bk-util__right a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 150ms ease;
+  }
+  .v2--blackout .bk-util__right a:hover { color: var(--bk-ink); }
+  @media (min-width: 48rem) {
+    .v2--blackout .bk-util__addr { display: inline; }
+  }
+
+  /* ----------------------------------------------------------------- header
+     Sticky and transparent over the hero. The negative margin lets the hero
+     run up underneath it. Solid black with a line once the page has moved. */
+  .v2--blackout .bk-header {
+    position: sticky;
+    top: 0;
+    z-index: 700;
+    height: var(--bk-header);
+    margin-bottom: calc(-1 * var(--bk-header));
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    transition: background-color 200ms ease, border-color 200ms ease;
+  }
+  .v2--blackout .bk-header[data-scrolled] { background: var(--bk-black); border-bottom-color: var(--bk-line); }
+  .v2--blackout .bk-header__in {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 100%;
+  }
+  .v2--blackout .bk-header__logo { display: block; flex: none; margin-right: auto; }
+  .v2--blackout .bk-header__logo .v2-logo { width: auto; height: 44px; }
+  .v2--blackout .bk-nav { display: none; }
+  .v2--blackout .bk-header__call { display: none; min-height: 2.75rem; padding: 0.5rem 1.5rem; }
+  /* Orange once the hero's own CALL button has left the screen. */
+  .v2--blackout .bk-header[data-past-hero] .bk-header__call { background: var(--bk-orange); border-color: var(--bk-orange); color: var(--bk-black); }
+  .v2--blackout .bk-header[data-past-hero] .bk-header__call:hover { background: #f47a3c; border-color: #f47a3c; }
+  .v2--blackout .bk-menu-btn,
+  .v2--blackout .bk-menu__close {
+    min-width: 4.5rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1px solid var(--bk-ink);
+    background: transparent;
+    color: var(--bk-ink);
+    font-family: var(--bk-display);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  @media (min-width: 48rem) {
+    .v2--blackout .bk-header__call { display: inline-flex; }
+  }
+  @media (min-width: 64rem) {
+    .v2--blackout .bk-header__logo .v2-logo { height: 60px; }
+    .v2--blackout .bk-menu-btn { display: none; }
+    .v2--blackout .bk-nav { display: block; }
+    .v2--blackout .bk-nav ul { display: flex; gap: clamp(1rem, 2vw, 2rem); }
+    .v2--blackout .bk-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.75rem;
+      color: var(--bk-ink);
+      font-family: var(--bk-display);
+      font-size: 1.0625rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 150ms ease;
+    }
+    .v2--blackout .bk-nav a:hover,
+    .v2--blackout .bk-nav a[aria-current] { color: var(--bk-orange); }
+  }
+
+  /* ------------------------------------------------------------ mobile menu */
+  .v2--blackout .bk-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 850;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 0.75rem var(--bk-gutter) 2rem;
+    overflow-y: auto;
+    background: var(--bk-black);
+  }
+  .v2--blackout .bk-menu[hidden] { display: none; }
+  .v2--blackout .bk-menu__close { align-self: flex-end; }
+  .v2--blackout .bk-menu nav a {
+    display: block;
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--bk-line);
+    color: var(--bk-ink);
+    font-family: var(--bk-display);
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    text-decoration: none;
+  }
+  .v2--blackout .bk-menu__actions { display: grid; gap: 0.75rem; }
+
+  /* ------------------------------------------------------------------- hero */
+  .v2--blackout .bk-hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    min-height: max(560px, min(92svh, 860px));
+    padding-top: calc(var(--bk-header) + 2rem);
+    padding-bottom: clamp(2.5rem, 6vw, 5rem);
+    overflow: hidden;
+  }
+  .v2--blackout .bk-hero__photo {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Keeps the big bows in frame on a phone. */
+    object-position: 60% center;
+  }
+  /* Scrim: dark from the left behind the text, a band at the top behind the
+     menu, and a fade to black along the bottom 20 percent. */
+  .v2--blackout .bk-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(0deg, var(--bk-black) 0%, rgba(11, 12, 13, 0) 20%),
+      linear-gradient(180deg, rgba(11, 12, 13, 0.86) 0, rgba(11, 12, 13, 0.6) 5.5rem, rgba(11, 12, 13, 0) 11rem),
+      linear-gradient(90deg, rgba(11, 12, 13, 0.92) 0%, rgba(11, 12, 13, 0.72) 45%, rgba(11, 12, 13, 0.25) 100%);
+  }
+  /* The headline gets 7em so it sets in three lines. Everything else in the
+     block keeps to 760px. */
+  .v2--blackout .bk-hero__copy > :not(h1) { max-width: 47.5rem; }
+  .v2--blackout .bk-hero h1 {
+    max-width: 7em;
+    margin-top: 0.75rem;
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    line-height: 0.92;
+  }
+  .v2--blackout .bk-hero__lead { max-width: 33.75rem; margin-top: 1.5rem; color: var(--bk-muted); font-size: 1.125rem; }
+  .v2--blackout .bk-hero .bk-actions { margin-top: 2rem; }
+  /* Phone: the text sits at the bottom over a stronger scrim. */
+  @media (max-width: 47.99rem) {
+    .v2--blackout .bk-hero::before {
+      background:
+        linear-gradient(0deg, var(--bk-black) 0%, rgba(11, 12, 13, 0.92) 40%, rgba(11, 12, 13, 0.8) 60%, rgba(11, 12, 13, 0.25) 82%, rgba(11, 12, 13, 0.1) 100%),
+        linear-gradient(180deg, rgba(11, 12, 13, 0.8) 0, rgba(11, 12, 13, 0) 8rem);
+    }
+  }
+
+  /* ------------------------------------------------------------------ seams
+     One hairline between sections. On five of them an arrow gets fired. */
+  .v2--blackout .bk-seam { position: relative; z-index: 2; height: 1px; background: var(--bk-line); }
+  .v2--blackout .bk-seam__track {
+    position: absolute;
+    top: -8px;
+    right: 0;
+    left: 0;
+    height: 17px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .v2--blackout .bk-seam__glow {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: var(--bk-orange);
+    box-shadow: 0 0 8px 1px rgba(228, 96, 36, 0.7);
+    opacity: 0;
+  }
+  .v2--blackout .bk-seam__arrow {
+    position: absolute;
+    top: 0.5px;
+    left: 0;
+    max-width: none;
+    color: var(--bk-orange);
+    opacity: 0;
+    transform: translateX(-170px);
+  }
+  .v2--blackout .bk-seam.is-shot .bk-seam__arrow { animation: bk-shot 900ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+  .v2--blackout .bk-seam.is-shot .bk-seam__glow { animation: bk-glow 400ms ease-out 250ms; }
+  @keyframes bk-shot {
+    from { opacity: 1; transform: translateX(-170px); }
+    90% { opacity: 1; }
+    to { opacity: 0; transform: translateX(100vw); }
+  }
+  @keyframes bk-glow {
+    0% { opacity: 0; }
+    35% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  /* Reduced motion: no flight. A small arrowhead rests at the right end. */
+  .v2--blackout .bk-seam__head { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .v2--blackout .bk-seam__arrow,
+    .v2--blackout .bk-seam__glow { display: none; }
+    .v2--blackout .bk-seam__head {
+      position: absolute;
+      top: 3px;
+      right: var(--bk-gutter);
+      display: block;
+      width: 0;
+      height: 0;
+      border-block: 5.5px solid transparent;
+      border-left: 14px solid var(--bk-orange);
+    }
+  }
+
+  /* ------------------------------------------------------------------ proof */
+  .v2--blackout .bk-proof__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .v2--blackout .bk-proof__row li { padding: clamp(1.75rem, 4vw, 3.5rem) 1rem clamp(1.75rem, 4vw, 3.5rem) 0; }
+  .v2--blackout .bk-proof__row li:nth-child(even) { padding-left: 1rem; border-left: 1px solid var(--bk-line); }
+  .v2--blackout .bk-proof__row li:nth-child(n + 3) { border-top: 1px solid var(--bk-line); }
+  .v2--blackout .bk-proof__big {
+    font-family: var(--bk-display);
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 0.9;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .v2--blackout .bk-proof__label {
+    margin-top: 0.75rem;
+    font-family: var(--bk-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+  .v2--blackout .bk-proof__note { margin-top: 0.25rem; color: var(--bk-muted); font-size: 0.9375rem; }
+  @media (min-width: 56rem) {
+    /* The third column is a touch wider so TOP 100 holds one line. */
+    .v2--blackout .bk-proof__row { grid-template-columns: 1fr 1fr 1.2fr 1fr; }
+    .v2--blackout .bk-proof__row li:nth-child(n) { padding-left: 0; border-top: 0; border-left: 0; }
+    .v2--blackout .bk-proof__row li:nth-child(n + 2) { padding-left: clamp(1rem, 2.2vw, 2rem); border-left: 1px solid var(--bk-line); }
+  }
+
+  /* --------------------------------------------------- welcome, team, mission */
+  .v2--blackout .bk-mission { padding-block: var(--bk-section); }
+  .v2--blackout .bk-mission__grid { display: grid; gap: 3rem; }
+  /* The pledge is the loudest thing in the section. It is his best sentence. */
+  .v2--blackout .bk-pledge {
+    margin-top: 1rem;
+    font-family: var(--bk-display);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: 0.015em;
+    line-height: 1.08;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .v2--blackout .bk-mission__body { display: grid; gap: 2rem; max-width: 40rem; color: var(--bk-muted); }
+  .v2--blackout .bk-mission__welcome { color: var(--bk-ink); font-size: 1.1875rem; }
+  .v2--blackout .bk-mission__body section { padding-top: 2rem; border-top: 1px solid var(--bk-line); }
+  .v2--blackout .bk-mission__body section p { margin-top: 0.75rem; }
+  .v2--blackout .bk-mission__line { padding-top: 2rem; border-top: 1px solid var(--bk-line); }
+  @media (min-width: 64rem) {
+    .v2--blackout .bk-mission__grid { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(3rem, 7vw, 7rem); align-items: start; }
+    .v2--blackout .bk-mission__pledge { position: sticky; top: calc(var(--bk-header) + 2.5rem); }
+  }
+
+  /* ------------------------------------------------------ authorized dealer */
+  .v2--blackout .bk-dealers { padding-block: clamp(3rem, 6vw, 5rem); border-top: 1px solid var(--bk-line); }
+  .v2--blackout .bk-dealers__line { max-width: 44rem; margin-top: 0.75rem; color: var(--bk-muted); }
+  .v2--blackout .v2-brands {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem 1.5rem;
+    align-items: center;
+    margin-top: 2.5rem;
+  }
+  .v2--blackout .v2-brands__item {
+    display: grid;
+    place-items: center start;
+    min-height: 2.25rem;
+    opacity: 0.6;
+    transition: opacity 150ms ease;
+  }
+  .v2--blackout .v2-brands__item:hover { opacity: 1; }
+  /* White marks: a flat mark, filtered to one color. */
+  .v2--blackout .v2-brands__mark { filter: brightness(0) invert(1); }
+  .v2--blackout .v2-brands__word {
+    color: var(--bk-ink);
+    font-family: var(--bk-display);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  @media (min-width: 40rem) {
+    .v2--blackout .v2-brands { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  @media (min-width: 72rem) {
+    .v2--blackout .v2-brands { grid-template-columns: repeat(8, auto); justify-content: space-between; }
+  }
+
+  /* -------------------------------------------------------------- offerings */
+  .v2--blackout .bk-offer { padding-block: var(--bk-section); }
+  .v2--blackout .bk-offer__grid { display: grid; gap: 3.5rem 1.5rem; }
+  @media (min-width: 30rem) {
+    .v2--blackout .bk-offer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 56rem) {
+    .v2--blackout .bk-offer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  /* 420px is the smallest cap among the six tile photos. */
+  .v2--blackout .bk-tile__photo { max-width: 420px; }
+  .v2--blackout .bk-tile__photo img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center 30%;
+    filter: saturate(0.85) contrast(1.05);
+  }
+  @media (min-width: 30rem) {
+    .v2--blackout .bk-tile__photo img { aspect-ratio: 4 / 3; }
+  }
+  .v2--blackout .bk-tile h2 { margin-top: 1.5rem; font-size: 2rem; line-height: 1; }
+  .v2--blackout .bk-tile__line { margin-top: 0.5rem; color: var(--bk-muted); line-height: 1.5; }
+  .v2--blackout .bk-facts { margin-top: 1.25rem; border-bottom: 1px solid var(--bk-line); line-height: 1.35; }
+  .v2--blackout .bk-facts > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.625rem;
+    border-top: 1px solid var(--bk-line);
+  }
+  .v2--blackout .bk-facts dt {
+    flex: 1 1 auto;
+    color: var(--bk-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .v2--blackout .bk-facts dd {
+    flex: 0 1 auto;
+    max-width: 60%;
+    font-size: 0.9375rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  /* -------------------------------------------------------------- hunt band */
+  .v2--blackout .bk-hunt {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    min-height: 560px;
+    padding-block: var(--bk-section);
+    overflow: hidden;
+  }
+  .v2--blackout .bk-hunt__photo {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 70% center;
+  }
+  .v2--blackout .bk-hunt::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(90deg, rgba(11, 12, 13, 0.92) 0%, rgba(11, 12, 13, 0.72) 45%, rgba(11, 12, 13, 0.25) 100%);
+  }
+  .v2--blackout .bk-hunt__copy { max-width: 38rem; }
+  .v2--blackout .bk-hunt h2 { margin-top: 0.75rem; }
+  .v2--blackout .bk-hunt__copy > p:not(.bk-label) { margin-top: 1.25rem; font-size: 1.125rem; }
+  .v2--blackout .bk-hunt .bk-btn { margin-top: 2rem; }
+  @media (max-width: 47.99rem) {
+    .v2--blackout .bk-hunt::before { background: rgba(11, 12, 13, 0.8); }
+  }
+
+  /* ------------------------------------------------------------------ about */
+  .v2--blackout .bk-about { padding-block: var(--bk-section); background: var(--bk-panel); }
+  .v2--blackout .bk-about__grid { display: grid; gap: 1.5rem; }
+  /* 1957 as outlined numerals. Decoration only. */
+  .v2--blackout .bk-about__year {
+    color: transparent;
+    font-family: var(--bk-display);
+    font-size: clamp(6rem, 18vw, 15rem);
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    line-height: 0.8;
+    -webkit-text-stroke: 1px var(--bk-ink);
+  }
+  .v2--blackout .bk-about h2 { margin-top: 0.75rem; font-size: clamp(2.25rem, 4.5vw, 3.75rem); }
+  .v2--blackout .bk-about__copy > p:not(.bk-label) { max-width: 40rem; margin-top: 1.25rem; color: var(--bk-muted); }
+  .v2--blackout .bk-timeline {
+    display: grid;
+    gap: 1.25rem 1.5rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--bk-line);
+    color: var(--bk-muted);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  .v2--blackout .bk-timeline li { display: grid; gap: 0.375rem; align-content: start; }
+  .v2--blackout .bk-timeline__year {
+    color: var(--bk-ink);
+    font-family: var(--bk-display);
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  @media (min-width: 36rem) {
+    .v2--blackout .bk-timeline { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .v2--blackout .bk-about__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  }
+  .v2--blackout .bk-archive { margin-top: clamp(3rem, 7vw, 5.5rem); padding-top: 2rem; border-top: 1px solid var(--bk-line); }
+  .v2--blackout .bk-archive ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  /* Grayscale, and never past 340px, the smallest cap in the row. */
+  .v2--blackout .bk-archive img {
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    object-position: 75% 25%;
+    filter: grayscale(1);
+  }
+  @media (min-width: 56rem) {
+    .v2--blackout .bk-archive ul { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; }
+  }
+
+  /* ----------------------------------------------------------------- events */
+  .v2--blackout .bk-events { padding-block: var(--bk-section); border-top: 1px solid var(--bk-line); }
+  .v2--blackout .bk-events__rows { margin-top: 2.5rem; border-bottom: 1px solid var(--bk-line); }
+  .v2--blackout .bk-events__rows > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 2rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--bk-line);
+  }
+  .v2--blackout .bk-events__rows dt {
+    font-family: var(--bk-display);
+    font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .v2--blackout .bk-events__rows dd { color: var(--bk-muted); }
+  .v2--blackout .bk-events__note { max-width: 40rem; margin-top: 1.5rem; color: var(--bk-muted); }
+
+  /* ------------------------------------------------------------------ visit */
+  .v2--blackout .bk-visit { padding-block: var(--bk-section); background: var(--bk-panel); }
+  .v2--blackout .bk-visit__grid { display: grid; gap: 3.5rem; }
+  @media (min-width: 64rem) {
+    .v2--blackout .bk-visit__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(3rem, 7vw, 7rem); }
+  }
+  .v2--blackout .bk-visit h2 { font-size: clamp(2.25rem, 4.5vw, 3.75rem); }
+  .v2--blackout .bk-visit h3 { font-size: clamp(2.25rem, 4.5vw, 3.75rem); }
+  .v2--blackout .bk-visit .v2-hours { margin-top: 2rem; border-bottom: 1px solid var(--bk-line); }
+  .v2--blackout .bk-visit .v2-hours th,
+  .v2--blackout .bk-visit .v2-hours td { padding-block: 0.6875rem; border-top: 1px solid var(--bk-line); }
+  .v2--blackout .bk-visit .v2-hours th {
+    color: var(--bk-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .v2--blackout .bk-visit .v2-hours tr[data-today] th,
+  .v2--blackout .bk-visit .v2-hours tr[data-today] td { color: var(--bk-orange); font-weight: 700; }
+  .v2--blackout .bk-visit address { margin-top: 2rem; font-style: normal; }
+  .v2--blackout .bk-visit__phone { margin-block: 0.375rem 1.5rem; font-variant-numeric: tabular-nums; }
+  .v2--blackout .bk-visit__formline { margin-block: 0.75rem 2rem; color: var(--bk-muted); }
+
+  .v2--blackout .v2-form { display: grid; gap: 1.25rem; }
+  .v2--blackout .v2-form label {
+    color: var(--bk-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  /* Dark fields. The border is lighter than --bk-line so a field's edge holds
+     3:1 against the panel. */
+  .v2--blackout .v2-form input:not([type='hidden']),
+  .v2--blackout .v2-form textarea {
+    padding: 0.8125rem 0.875rem;
+    border: 1px solid #777b7f;
+    border-radius: 0;
+    background: var(--bk-black);
+    color: var(--bk-ink);
+  }
+  .v2--blackout .v2-form input:focus-visible,
+  .v2--blackout .v2-form textarea:focus-visible { outline: 2px solid var(--bk-orange); outline-offset: 2px; }
+  .v2--blackout .v2-form__button {
+    justify-self: start;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.75rem;
+    border: 1px solid var(--bk-orange);
+    border-radius: 0;
+    background: var(--bk-orange);
+    color: var(--bk-black);
+    font-family: var(--bk-display);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background-color 150ms ease, border-color 150ms ease;
+  }
+  .v2--blackout .v2-form__button:hover { background: #f47a3c; border-color: #f47a3c; }
+  .v2--blackout .v2-form__note { padding-left: 1rem; border-left: 2px solid var(--bk-orange); color: var(--bk-ink); font-weight: 600; }
+
+  /* ----------------------------------------------------------------- footer */
+  .v2--blackout .bk-footer { border-top: 1px solid var(--bk-line); color: var(--bk-muted); font-size: 0.9375rem; }
+  .v2--blackout .bk-footer__top { display: grid; gap: 2.5rem; padding-block: clamp(3rem, 6vw, 5rem) 2.5rem; }
+  @media (min-width: 48rem) {
+    .v2--blackout .bk-footer__top { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; }
+  }
+  .v2--blackout .bk-footer .v2-logo { width: auto; height: 64px; margin-bottom: 1.25rem; }
+  .v2--blackout .bk-footer__tagline {
+    margin-top: 0.25rem;
+    color: var(--bk-ink);
+    font-family: var(--bk-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .v2--blackout .bk-footer nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    font-family: var(--bk-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .v2--blackout .bk-footer a:hover { color: var(--bk-ink); }
+  .v2--blackout .bk-footer address { font-style: normal; }
+  .v2--blackout .bk-footer__contact p { margin-top: 0.375rem; }
+  .v2--blackout .bk-footer__email { overflow-wrap: anywhere; }
+  .v2--blackout .bk-social { display: flex; gap: 0.25rem; margin: 0.75rem 0 0 -0.625rem; }
+  .v2--blackout .bk-social a { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; transition: color 150ms ease; }
+  .v2--blackout .bk-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--bk-line);
+    font-size: 0.875rem;
+  }
+  .v2--blackout .bk-footer__lws { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; text-decoration: none; }
+  .v2--blackout .bk-footer__lws img { width: 150px; height: auto; }
+</style>

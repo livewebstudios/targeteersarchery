@@ -48,3 +48,15 @@ Session date: 2026-11-21. Branch: `demo/home-v2`. Logged as each call was made.
 32. **A 3px tan rule separates the offerings band from the hunt band.** Both are forest photos under a dark wash and they ran together. The olive CALL THE SHOP button on the hunt band also gets a tan border so it reads as a button on a dark photo. Fill and text are as specified (olive, white).
 33. **"Hours" and "Location" sub-headings** in the Visit section and the footer are layout labels taken from the section title ("Hours and Location"), not new copy.
 34. **The register archive photo is cropped to a square in CSS** so the three "Back in the Days" photos line up in one row. No pixels changed. The other two are square already.
+
+## Task 4: Demo 2, BLACKOUT
+
+35. **The header CALL button is an outline while the hero's CALL button is on screen, and turns orange after.** The handoff asks for an orange CALL button in the sticky header and an orange CALL button in the hero, and also for one primary button per viewport. Both are kept: once the hero's buttons scroll away the header button fills orange (black text). From 768px up only. On phones the action bar's orange CALL cell does that job.
+36. **The hero headline is allowed 7em of width, so it sets in three lines** ("NORTH JERSEY'S / PREMIER ARCHERY / PRO SHOP") instead of four. At 760px it broke into four lines and pushed the buttons under the fold on a 1366 by 768 laptop. The label, lead and buttons keep to the 760px block.
+37. **A scrim band sits behind the transparent header** (top 11rem of the hero), in addition to the left scrim and the bottom fade in the handoff. Without it the menu links sat on the light right side of the photo.
+38. **The hunt band's small orange label reads "North American big game".** The handoff asks for a small orange label but gives no words for it. This is Rob's own phrase, lifted from `hunt.body`, not new copy.
+39. **Form field borders are lighter than `--bk-line`.** The handoff asks for "a 1px line border". `--bk-line` on the panel is about 1.3:1, so a field's edge would be invisible. The fields use `#777b7f` (over 3:1 on the panel) on a black fill. Hairlines everywhere else use `--bk-line`.
+40. **Tile grid breakpoints follow the photo caps.** Two columns from 480px and three from 896px, with the wrap sized to three 420px tiles. That keeps every tile photo at or under 420px wide, which is the smallest cap in the set (`coaching-kid.jpg`). The tile photo box is also capped at 420px for the few widths under 480px where one column would run wider.
+41. **"Back in the Days" photos are square crops in CSS, grayscale, capped at 340px.** The counter photo is cropped from the left so the three men stay in frame.
+42. **Proof row: the third column is 1.2fr** so TOP 100 holds one line beside the hairlines.
+43. **Reduced motion state for the seams** is a 14px orange arrowhead at the right end of each of the five seams, inside the page gutter.
