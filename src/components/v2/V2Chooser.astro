@@ -3,14 +3,18 @@
  * The chooser: a neutral page that links to the three demos. It is not a
  * fourth design. Rendered from / and from /v2/.
  */
+import { Image } from 'astro:assets';
 import V2Logo from '~/components/v2/V2Logo.astro';
-import { v2Demos } from '~/data/homeV2';
+import { v2Demos, photos, v2Widths } from '~/data/homeV2';
 
 const lines: Record<number, string> = {
   1: 'Your site the way you had it, cleaned up and sharpened. Your showroom up top, your green and tan, your target cards.',
   2: 'Dark and bold, the way Mathews and Hoyt do it. Big photos, big type, one button at a time.',
   3: 'The family story up front, like an old outfitter. Then and now, three generations.',
 };
+
+/* One photo from each demo's hero. Decorative here: the card text says it all. */
+const shots = { 1: photos.hero1, 2: photos.hero2, 3: photos.then } as const;
 ---
 <div class="chooser">
   <header class="chooser__head">
@@ -26,7 +30,14 @@ const lines: Record<number, string> = {
     {v2Demos.map((d) => (
       <li>
         <a class="chooser__card" href={d.href}>
-          <div class="chooser__photo" aria-hidden="true"></div>
+          <Image
+            class="chooser__photo"
+            src={shots[d.id].src}
+            alt=""
+            widths={v2Widths(shots[d.id].src, 360, 560)}
+            sizes="(min-width: 56rem) 350px, (min-width: 36rem) 560px, calc(100vw - 2rem)"
+            loading={d.id === 1 ? 'eager' : 'lazy'}
+          />
           <p class="chooser__num">{d.id}</p>
           <h2>{d.name}</h2>
           <p class="chooser__line">{lines[d.id]}</p>
@@ -70,7 +81,8 @@ const lines: Record<number, string> = {
   @media (min-width: 56rem) {
     .chooser__cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
-  .chooser__cards li { display: grid; }
+  /* One column: no card wider than 560px, the cap on the oldest photo. */
+  .chooser__cards li { display: grid; max-width: 35rem; }
   .chooser__card {
     display: block;
     padding-bottom: 1.5rem;
@@ -80,7 +92,13 @@ const lines: Record<number, string> = {
     transition: border-color 150ms ease;
   }
   .chooser__card:hover { border-color: #001840; }
-  .chooser__photo { aspect-ratio: 16 / 9; background: #e9edf2; }
+  .chooser__photo {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center 35%;
+    background: #e9edf2;
+  }
   .chooser__num,
   h2,
   .chooser__line { padding-inline: 1.25rem; }
