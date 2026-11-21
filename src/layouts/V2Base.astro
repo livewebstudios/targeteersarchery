@@ -1,0 +1,130 @@
+---
+/**
+ * Layout for the v2 home page demos: the chooser at / and /v2/, and the three
+ * demos under /v2/.
+ *
+ * It carries the head, the pre-launch gate, the skip link, the slots and
+ * the mobile action bar. It carries no look. Each demo
+ * page brings its own fonts, tokens, markup and CSS.
+ *
+ * global.css is deliberately not imported: its glass rules must not reach v2.
+ * tokens.css is, because the gate reads its variables.
+ *
+ * Every v2 route is noindex, out of the sitemap and disallowed in robots.txt.
+ */
+/* The gate's own two faces. They are declared here so the gate looks the way
+   it does on the live site. A browser only fetches a face that visible text
+   uses, so once the gate is down no demo downloads them. */
+import '@fontsource-variable/familjen-grotesk';
+import '@fontsource-variable/instrument-sans';
+import '~/styles/tokens.css';
+import '~/styles/v2-base.css';
+
+import Analytics from '~/components/Analytics.astro';
+import Seo from '~/components/seo/Seo.astro';
+import type { SeoProps } from '~/components/seo/Seo.astro';
+import JsonLd from '~/components/seo/JsonLd.astro';
+import { localBusinessSchema } from '~/components/seo/localBusiness';
+import SiteGate from '~/components/SiteGate.astro';
+import V2ActionBar from '~/components/v2/V2ActionBar.astro';
+
+export interface Props extends Omit<SeoProps, 'noindex'> {
+  /** 0 is the chooser, 1 to 3 the demos. */
+  demo: 0 | 1 | 2 | 3;
+  theme: 'route46' | 'blackout' | 'since1957' | 'chooser';
+}
+
+const { demo, theme, ...seo } = Astro.props;
+
+const themeColor = {
+  route46: '#142A13',
+  blackout: '#0B0C0D',
+  since1957: '#F3EDE0',
+  chooser: '#FFFFFF',
+}[theme];
+
+/* Relative path back to the site root, so icons and the manifest survive a
+   move to a sub-folder host. */
+const depth = Astro.url.pathname.split('/').filter(Boolean).length;
+const root = depth === 0 ? '' : '../'.repeat(depth);
+
+const siteUrl = Astro.site!.href;
+const graph: Record<string, unknown>[] = [
+  localBusinessSchema(siteUrl),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: seo.title,
+    description: seo.description,
+    url: new URL(Astro.url.pathname, Astro.site).href,
+    about: { '@id': 'https://targeteersarchery.com/#store' },
+  },
+];
+
+const hasBar = demo !== 0;
+const bodyClass = ['v2', `v2--${theme}`, hasBar ? 'v2--has-bar' : ''].filter(Boolean).join(' ');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content={themeColor} />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href={`${root}favicon-32.png`} type="image/png" sizes="32x32" />
+    <link rel="icon" href={`${root}icon-192.png`} type="image/png" sizes="192x192" />
+    <link rel="alternate icon" href={`${root}favicon.ico`} sizes="32x32" />
+    <link rel="apple-touch-icon" href={`${root}apple-touch-icon.png`} />
+    <link rel="manifest" href={`${root}site.webmanifest`} />
+
+    <script is:inline>
+      /* .v2-js gates the hidden reveal state. If v2.ts never reports in, the
+         timer shows everything anyway. */
+      document.documentElement.classList.add('v2-js');
+      setTimeout(function () {
+        if (!document.documentElement.hasAttribute('data-v2-ready')) {
+          document.documentElement.classList.add('v2-reveal-all');
+        }
+      }, 2500);
+    </script>
+
+    <Seo {...seo} noindex />
+    <JsonLd data={graph} />
+    <Analytics />
+    {/* Each demo preloads the one face its headline is set in. */}
+    <slot name="head" />
+  </head>
+
+  <body id="top" class={bodyClass}>
+    {/* TEMPORARY pre-launch gate, exactly as Base.astro renders it. */}
+    <SiteGate />
+
+    {/* In its own landmark so the skip link is not loose content. */}
+    <nav aria-label="Skip link"><a class="v2-skip" href="#main">Skip to content</a></nav>
+    <slot name="header" />
+    <main id="main"><slot /></main>
+    <slot name="footer" />
+    {hasBar && <V2ActionBar />}
+
+    <script src="~/scripts/v2.ts"></script>
+  </body>
+</html>
+
+<style is:global>
+  /* The gate was leaning on global.css for a few inherited values. v2 does not
+     load global.css, so they are restated here, scoped to the gate. These are
+     the same values global.css gives it on the live site. */
+  #site-gate {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-synthesis-weight: none;
+  }
+  #site-gate p,
+  #site-gate li,
+  #site-gate dd { text-wrap: pretty; }
+  #site-gate a { text-decoration-thickness: 1px; }
+  #site-gate strong,
+  #site-gate b { font-weight: 600; }
+  #site-gate :focus-visible { box-shadow: none; }
+</style>

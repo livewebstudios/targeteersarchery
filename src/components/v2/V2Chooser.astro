@@ -1,0 +1,129 @@
+---
+/**
+ * The chooser: a neutral page that links to the three demos. It is not a
+ * fourth design. Rendered from / and from /v2/.
+ */
+import { Image } from 'astro:assets';
+import V2Logo from '~/components/v2/V2Logo.astro';
+import { v2Demos, photos, v2Widths } from '~/data/homeV2';
+
+const lines: Record<number, string> = {
+  1: 'Your site the way you had it, cleaned up and sharpened. Your showroom up top, your green and tan, your target cards.',
+  2: 'Dark and bold, the way Mathews and Hoyt do it. Big photos, big type, one button at a time.',
+  3: 'The family story up front, like an old outfitter. Then and now, three generations.',
+};
+
+/* One photo from each demo's hero. Decorative here: the card text says it all. */
+const shots = { 1: photos.hero1, 2: photos.hero2, 3: photos.then } as const;
+---
+<div class="chooser">
+  <header class="chooser__head">
+    <V2Logo on="light" height={93} eager />
+    <h1>Three home pages. Pick one.</h1>
+    <p class="chooser__lead">
+      Same shop, same words, your photos. Three different looks. Tell Jon which one feels like
+      Targeteers and he builds the rest of the site to match.
+    </p>
+  </header>
+
+  <ul class="chooser__cards" role="list">
+    {v2Demos.map((d) => (
+      <li>
+        <a class="chooser__card" href={d.href} target="_blank" rel="noopener">
+          <Image
+            class="chooser__photo"
+            src={shots[d.id].src}
+            alt=""
+            widths={v2Widths(shots[d.id].src, 360, 560)}
+            sizes="(min-width: 56rem) 350px, (min-width: 36rem) 560px, calc(100vw - 2rem)"
+            loading={d.id === 1 ? 'eager' : 'lazy'}
+          />
+          <p class="chooser__num">{d.id}</p>
+          <h2>{d.name}<span class="vh"> (opens in a new tab)</span></h2>
+          <p class="chooser__line">{lines[d.id]}</p>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <p class="chooser__foot">
+    Home pages only for now. Menu items scroll down the page. Nothing here is public.
+  </p>
+</div>
+
+<style>
+  .chooser {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 6vw, 4.5rem) clamp(1rem, 4vw, 2.5rem) 6rem;
+    color: #001840;
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .chooser__head { max-width: 44rem; }
+  .chooser__head :global(.v2-logo) { width: 220px; height: auto; margin-bottom: 2.5rem; }
+  h1 {
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .chooser__lead { margin-top: 1rem; font-size: 1.1875rem; }
+
+  .chooser__cards {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+  }
+  @media (min-width: 56rem) {
+    .chooser__cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  /* One column: no card wider than 560px, the cap on the oldest photo. */
+  .chooser__cards li { display: grid; max-width: 35rem; }
+  .chooser__card {
+    display: block;
+    padding-bottom: 1.5rem;
+    border: 1px solid #c9d0db;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color var(--v2-t-hover, 150ms) var(--v2-ease, ease);
+  }
+  .chooser__card:hover { border-color: #001840; }
+  .chooser__photo {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center 35%;
+    background: #e9edf2;
+  }
+  .chooser__num,
+  h2,
+  .chooser__line { padding-inline: 1.25rem; }
+  .chooser__num {
+    margin-top: 1.25rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    font-variant-numeric: tabular-nums;
+  }
+  .chooser__num::before { content: 'No. '; }
+  h2 {
+    margin-top: 0.25rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+  .chooser__card:hover h2 { text-decoration: underline; text-underline-offset: 0.2em; }
+  .chooser__line { margin-top: 0.5rem; }
+
+  .chooser__foot {
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid #c9d0db;
+    font-size: 0.9375rem;
+  }
+</style>

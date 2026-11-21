@@ -1,0 +1,1185 @@
+---
+/**
+ * Demo 3: SINCE 1957. The family story sells the shop.
+ *
+ * A heritage outfitter's printed catalog: warm paper, navy ink, slab serif
+ * headlines in sentence case, thin rules, italic captions, numbered sections
+ * and a ledger with dotted leaders. The hero is a then and now pair.
+ *
+ * Signature move: the line from 1957. An arrow travels the timeline in About
+ * as the reader scrolls through it.
+ *
+ * All copy comes from src/data/homeV2.ts. Nothing here links to an inner page.
+ */
+import '@fontsource/zilla-slab/400-italic.css';
+import '@fontsource/zilla-slab/600.css';
+import '@fontsource/zilla-slab/700.css';
+import '@fontsource-variable/instrument-sans';
+
+import headlineFont from '@fontsource/zilla-slab/files/zilla-slab-latin-700-normal.woff2?url';
+import { Image } from 'astro:assets';
+import V2Base from '~/layouts/V2Base.astro';
+import V2Logo from '~/components/v2/V2Logo.astro';
+import V2OpenNow from '~/components/v2/V2OpenNow.astro';
+import V2Hours from '~/components/v2/V2Hours.astro';
+import V2Form from '~/components/v2/V2Form.astro';
+import V2Arrow from '~/components/v2/V2Arrow.astro';
+import V2Brands from '~/components/v2/V2Brands.astro';
+import SocialIcon from '~/components/icons/SocialIcon.astro';
+import { business } from '~/data/business';
+import {
+  v2Nav, call, callShort, directions, hero, proof, welcome, team, mission, dealers,
+  offerings, hunt, about, events, visit, footer, photos, v2Widths,
+} from '~/data/homeV2';
+
+const year = new Date().getFullYear();
+const socials = [
+  { network: 'facebook', href: business.socials.facebook },
+  { network: 'instagram', href: business.socials.instagram },
+  { network: 'twitter', href: business.socials.twitter },
+] as const;
+
+const navLeft = v2Nav.slice(0, 3);
+const navRight = v2Nav.slice(3);
+const shield = photos.badges[0];
+/** Section numbers, printed as No. 01, No. 02. */
+const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
+---
+<V2Base
+  demo={3}
+  theme="since1957"
+  title="Targeteers Archery Pro Shop | Demo 3, Since 1957"
+  description={hero.lead}
+>
+  <link slot="head" rel="preload" as="font" type="font/woff2" href={headlineFont} crossorigin />
+
+  <header class="v2-banner" slot="header">
+    {/* One exact navy for the dealer marks: flood the mark's own shape. */}
+    <svg class="s57-defs" width="0" height="0" aria-hidden="true" focusable="false">
+      <filter id="s57-navy" color-interpolation-filters="sRGB">
+        <feFlood result="ink" />
+        <feComposite in="ink" in2="SourceAlpha" operator="in" />
+      </filter>
+    </svg>
+
+    <div class="s57-util">
+      <div class="s57-wrap s57-util__in">
+        <V2OpenNow />
+        <p class="s57-util__right">
+          <a href={business.phoneHref}>{business.phone}</a>
+          <span class="s57-util__addr">{business.address.street}, {business.address.city}, {business.address.region}</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="s57-header" data-v2-header>
+      <div class="s57-header__bar">
+        <div class="s57-wrap s57-header__in">
+          <nav class="s57-nav s57-nav--left" aria-label="Main" data-v2-nav>
+            <ul role="list">
+              {navLeft.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+            </ul>
+          </nav>
+          <a class="s57-header__logo" href="#top"><V2Logo on="light" height={84} eager /></a>
+          <nav class="s57-nav s57-nav--right" aria-label="Main, continued" data-v2-nav>
+            <ul role="list">
+              {navRight.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+            </ul>
+          </nav>
+          <button class="s57-menu-btn" type="button" aria-expanded="false" aria-controls="s57-menu" data-v2-menu-button>MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="s57-menu" id="s57-menu" data-v2-menu hidden>
+      <button class="s57-menu__close" type="button" data-v2-menu-close>CLOSE</button>
+      <nav aria-label="Menu">
+        <ul role="list">
+          {v2Nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+      <div class="s57-menu__actions">
+        <a class="s57-btn s57-btn--primary" href={call.href}>{call.label}</a>
+        <a class="s57-btn s57-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
+      </div>
+    </div>
+  </header>
+
+  {/* ------------------------------------------------------------------ hero */}
+  <section class="s57-hero" aria-labelledby="s57-h1">
+    <div class="s57-wrap s57-hero__grid">
+      <div class="s57-hero__copy">
+        {/* Layout chrome, built from business.founded and the address. */}
+        <p class="s57-est">Est. {business.founded} · {business.address.city}, {business.address.regionName}</p>
+        <p class="s57-eyebrow">{hero.eyebrow}</p>
+        <h1 id="s57-h1">{hero.h1}</h1>
+        <p class="s57-lead">{hero.lead}</p>
+        <div class="s57-actions">
+          <a class="s57-btn s57-btn--primary" href={call.href}>{call.label}</a>
+          <a class="s57-btn s57-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
+        </div>
+      </div>
+
+      {/* The then and now pair. */}
+      <div class="s57-pair">
+        <figure class="s57-pair__now">
+          <Image
+            src={photos.now.src}
+            alt={photos.now.alt}
+            widths={v2Widths(photos.now.src, 340, 640)}
+            sizes="(min-width: 64rem) 640px, calc(92vw - 2rem)"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <figcaption>Now</figcaption>
+        </figure>
+        <figure class="s57-pair__then">
+          <Image
+            src={photos.then.src}
+            alt={photos.then.alt}
+            widths={v2Widths(photos.then.src, 160, 310)}
+            sizes="(min-width: 64rem) 310px, 42vw"
+            loading="eager"
+          />
+          <figcaption>Then</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  {/* ----------------------------------------------------------------- proof */}
+  <!-- CONFIRM: award wording. The old About page says "East Coast Dealer of the Year". The badge says 2007. -->
+  <div class="s57-proof">
+    <div class="s57-wrap s57-proof__in" data-reveal>
+      <ul class="s57-proof__row" role="list">
+        {proof.map((p) => (
+          <li>
+            <p class="s57-proof__big">{p.big}</p>
+            <p class="s57-proof__label">{p.label}</p>
+            <p class="s57-proof__note">{p.note}</p>
+          </li>
+        ))}
+      </ul>
+      <Image class="s57-proof__shield" src={shield.src} alt={shield.alt} width={96} widths={v2Widths(shield.src, 96)} sizes="96px" loading="lazy" />
+    </div>
+  </div>
+
+  {/* -------------------------------------------------- welcome, team, mission */}
+  <section class="s57-spread" aria-labelledby="s57-mission-title">
+    <div class="s57-wrap">
+      <p class="s57-no">{no(1)}</p>
+      <h2 class="s57-kicker" id="s57-mission-title">{mission.title}</h2>
+      <blockquote class="s57-pledge" data-reveal><p>{mission.pledge}</p></blockquote>
+      <div class="s57-spread__cols" data-reveal>
+        <section aria-labelledby="s57-team-title">
+          <h3 id="s57-team-title">{team.title}</h3>
+          <p>{team.body}</p>
+        </section>
+        <div>
+          <p>{welcome.body}</p>
+          <p>{mission.body}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ------------------------------------------------------ authorized dealer */}
+  <section class="s57-dealers" aria-labelledby="s57-dealers-title">
+    <div class="s57-wrap s57-dealers__grid">
+      <div>
+        <p class="s57-no">{no(2)}</p>
+        <h2 id="s57-dealers-title">{dealers.title}</h2>
+        <p class="s57-dealers__line">{dealers.line}</p>
+      </div>
+      <V2Brands mode="mono-dark" maxWidth={130} maxHeight={38} />
+    </div>
+  </section>
+
+  {/* --------------------------------------------------- offerings as a ledger */}
+  <!-- CONFIRM: range distance, 27 or 28 yards. -->
+  <!-- CONFIRM: 2026 lesson prices. -->
+  <!-- CONFIRM: current league schedule. -->
+  <div class="s57-ledger">
+    <div class="s57-wrap">
+      {offerings.map((o, i) => {
+        const photo = photos.offering[o.id];
+        return (
+          <section class="s57-row" id={o.id} aria-labelledby={`s57-${o.id}-title`} data-reveal>
+            <div class="s57-row__head">
+              <p class="s57-no">{no(i + 3)}</p>
+              <h2 id={`s57-${o.id}-title`}>{o.title}</h2>
+              <p class="s57-row__line">{o.line}</p>
+            </div>
+            <figure class="s57-row__photo">
+              <Image
+                src={photo.src}
+                alt={o.imageAlt}
+                widths={v2Widths(photo.src, 360, 400)}
+                sizes="(min-width: 64rem) 340px, (min-width: 28rem) 400px, calc(100vw - 2rem)"
+                loading="lazy"
+              />
+              <figcaption>{o.imageAlt}</figcaption>
+            </figure>
+            <dl class="s57-facts">
+              {o.facts.map((f) => (
+                <div><dt>{f.label}</dt><dd>{f.value}</dd></div>
+              ))}
+            </dl>
+          </section>
+        );
+      })}
+    </div>
+  </div>
+
+  {/* ------------------------------------------------------------- hunt band */}
+  <section class="s57-hunt" aria-labelledby="s57-hunt-title">
+    <Image
+      class="s57-hunt__photo"
+      src={photos.hunt3.src}
+      alt={photos.hunt3.alt}
+      widths={[640, 960, 1280, 1920, 2560, 3200]}
+      sizes="100vw"
+      loading="lazy"
+    />
+    <div class="s57-wrap s57-hunt__in">
+      <div class="s57-hunt__copy" data-reveal>
+        <h2 id="s57-hunt-title">{hunt.title}</h2>
+        <p>{hunt.body}</p>
+        <a class="s57-btn s57-btn--primary" href={callShort.href}>{callShort.label}</a>
+      </div>
+      <p class="s57-hunt__caption">Rob, British Columbia.</p>
+    </div>
+  </section>
+
+  {/* ----------------------------------------------------------------- about */}
+  <section class="s57-about" id="about" aria-labelledby="s57-about-title">
+    <div class="s57-wrap">
+      <div class="s57-about__grid">
+        <div class="s57-about__copy" data-reveal>
+          <p class="s57-no">{no(9)}</p>
+          <p class="s57-eyebrow">{about.eyebrow}</p>
+          <h2 id="s57-about-title">{about.title}</h2>
+          {about.body.map((para) => <p>{para}</p>)}
+        </div>
+        <figure class="s57-about__photo" data-reveal>
+          <Image
+            src={photos.dealerProof.src}
+            alt={photos.dealerProof.alt}
+            widths={v2Widths(photos.dealerProof.src, 360, 480)}
+            sizes="(min-width: 34rem) 480px, calc(100vw - 2rem)"
+            loading="lazy"
+          />
+          <figcaption>Rob with the Hoyt dealer sign.</figcaption>
+        </figure>
+      </div>
+
+      {/* Signature move: the line from 1957. */}
+      <div class="s57-line" data-s57-line>
+        <span class="s57-line__rule" aria-hidden="true"></span>
+        <span class="s57-line__arrow" aria-hidden="true" data-s57-arrow><V2Arrow length={96} /></span>
+        <ol role="list">
+          {about.timeline.map((t) => (
+            <li class="s57-stop" data-s57-stop>
+              <p class="s57-stop__year">{t.year}</p>
+              <p class="s57-stop__line">{t.line}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="s57-archive" data-reveal>
+        <h3>{about.archiveTitle}</h3>
+        <ul role="list">
+          {photos.archive.map((a) => (
+            <li>
+              <Image
+                src={a.src}
+                alt={a.alt}
+                widths={v2Widths(a.src, 170, 320)}
+                sizes="(min-width: 64rem) 320px, 30vw"
+                loading="lazy"
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------------------------------------------------------------- events */}
+  <section class="s57-events" id="events" aria-labelledby="s57-events-title">
+    <div class="s57-wrap s57-events__grid" data-reveal>
+      <div>
+        <p class="s57-no">{no(10)}</p>
+        <h2 id="s57-events-title">{events.title}</h2>
+      </div>
+      <div>
+        <dl class="s57-facts s57-facts--events">
+          {events.items.map((e) => (
+            <div><dt>{e.name}</dt><dd>{e.when}</dd></div>
+          ))}
+        </dl>
+        <p class="s57-events__note">{events.note}</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ----------------------------------------------------------------- visit */}
+  <section class="s57-visit" id="visit" aria-labelledby="s57-visit-title">
+    <div class="s57-wrap s57-visit__grid">
+      <div data-reveal>
+        <p class="s57-no">{no(11)}</p>
+        <h2 id="s57-visit-title">{visit.title}</h2>
+        <V2Hours />
+        <address>
+          {business.address.street}<br />
+          {business.address.city}, {business.address.region} {business.address.postal}
+        </address>
+        <p class="s57-visit__phone"><a href={business.phoneHref}>{business.phone}</a></p>
+        <a class="s57-btn s57-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
+      </div>
+      <div class="s57-visit__form" data-reveal>
+        <h3>{visit.formTitle}</h3>
+        <p class="s57-visit__formline">{visit.formLine}</p>
+        <V2Form />
+      </div>
+    </div>
+  </section>
+
+  {/* ---------------------------------------------------------------- footer */}
+  <footer class="s57-footer" slot="footer">
+    <div class="s57-wrap">
+      <div class="s57-footer__top">
+        <div class="s57-footer__brand">
+          <V2Logo on="light" height={72} />
+          <p>{footer.family}</p>
+          <p class="s57-footer__tagline">{footer.tagline}</p>
+        </div>
+        <nav aria-label="Footer">
+          <ul role="list">
+            {v2Nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          </ul>
+        </nav>
+        <div class="s57-footer__contact">
+          <address>
+            {business.address.street}<br />
+            {business.address.city}, {business.address.region} {business.address.postal}
+          </address>
+          <p><a href={business.phoneHref}>{business.phone}</a></p>
+          <p class="s57-footer__email">{business.email}</p>
+          <ul class="s57-social" role="list">
+            {socials.map((s) => (
+              <li><a href={s.href} target="_blank" rel="noopener"><SocialIcon network={s.network} size={20} /></a></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div class="s57-footer__legal">
+        <p>&copy; {year} {business.name}</p>
+        <a class="s57-footer__lws" href="https://livewebstudios.com" target="_blank" rel="noopener">
+          <img src="../../images/verifiedsecured.png" alt="Verified and Secured by Live Web Studios" width="150" height="37" loading="lazy" decoding="async" />
+          <span>{footer.credit}</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+</V2Base>
+
+<script>
+  /* Signature move: the line from 1957.
+     The arrow's place on the rule is tied to how far the timeline has scrolled
+     through the viewport. No pinning and no scroll hijack: one
+     requestAnimationFrame loop that only runs while the timeline is in view.
+     The position is set by scrubbing a paused Web Animation, so no inline
+     style is ever written. Reduced motion: the arrow rests at Today and every
+     stop is at full strength. */
+  const line = document.querySelector<HTMLElement>('[data-s57-line]');
+  const arrow = line?.querySelector<HTMLElement>('[data-s57-arrow]');
+  const stops = line ? Array.from(line.querySelectorAll<HTMLElement>('[data-s57-stop]')) : [];
+
+  if (line && arrow && stops.length > 0 && 'animate' in arrow) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const vertical = window.matchMedia('(max-width: 47.99rem)');
+    const DURATION = 1000;
+    let anim: Animation | null = null;
+    let marks: number[] = [];
+    let from = 0;
+    let to = 0;
+    let last = -1;
+    let frame = 0;
+
+    /** Measure the stops and build the paused animation the scroll scrubs. */
+    const build = () => {
+      anim?.cancel();
+      const length = arrow.offsetWidth;
+      const half = arrow.offsetHeight / 2;
+      const DOT = 5; // center of a stop's dot, from the stop's own edge
+      if (vertical.matches) {
+        marks = stops.map((s) => s.offsetTop + 12);
+        from = marks[0] + length;
+        to = marks[marks.length - 1];
+        const y = (tip: number) => `translate(${DOT}px, ${tip - length - half}px) rotate(90deg)`;
+        anim = arrow.animate([{ transform: y(from) }, { transform: y(to) }], { duration: DURATION, fill: 'both' });
+      } else {
+        marks = stops.map((s) => s.offsetLeft + DOT);
+        from = marks[0] + length;
+        to = marks[marks.length - 1];
+        const x = (tip: number) => `translate(${tip - length}px, 0)`;
+        anim = arrow.animate([{ transform: x(from) }, { transform: x(to) }], { duration: DURATION, fill: 'both' });
+      }
+      anim.pause();
+      last = -1;
+      line.classList.add('is-live');
+      render();
+    };
+
+    const progress = (): number => {
+      if (reduced.matches) return 1;
+      const vh = window.innerHeight;
+      const top = line.getBoundingClientRect().top;
+      return Math.min(1, Math.max(0, (vh * 0.82 - top) / (vh * 0.47)));
+    };
+
+    function render(): void {
+      if (!anim) return;
+      const p = progress();
+      if (Math.abs(p - last) < 0.001) return;
+      last = p;
+      anim.currentTime = p * DURATION;
+      const tip = from + (to - from) * p;
+      stops.forEach((s, i) => s.classList.toggle('is-passed', tip >= marks[i] - 1));
+    }
+
+    const loop = () => {
+      render();
+      frame = requestAnimationFrame(loop);
+    };
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        const visible = entries[entries.length - 1].isIntersecting;
+        cancelAnimationFrame(frame);
+        if (visible && !reduced.matches) frame = requestAnimationFrame(loop);
+        else render();
+      }, { rootMargin: '10% 0px 10% 0px' }).observe(line);
+    }
+
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(build, 150);
+    });
+    reduced.addEventListener('change', build);
+    document.fonts?.ready.then(build);
+    build();
+  }
+</script>
+
+<style is:global>
+  /* ========================================================================
+     Demo 3: SINCE 1957. Every rule lives under .v2--since1957.
+     Orange is a button fill only: orange on paper is 3.00:1 and never text.
+     ======================================================================== */
+  .v2--since1957 {
+    --s57-paper: #f3ede0;
+    --s57-paper2: #e8dfcc;
+    --s57-navy: #001840;    /* from Rob's logo */
+    --s57-muted: #4a4a44;
+    --s57-rust: #9a3c16;    /* accent text */
+    --s57-orange: #e46024;  /* button fill only */
+    --s57-tan: #fcba66;     /* accents on navy only */
+    --s57-rule: #cfc4ad;
+    --s57-orange-hi: #f07a41; /* hover on the orange button, still navy text */
+    --s57-t-stop: 300ms;      /* a timeline stop coming up as the arrow passes */
+    /* The same colors as channels, for the scrim and hairlines on navy. */
+    --s57-navy-rgb: 0, 24, 64;
+    --s57-paper-rgb: 243, 237, 224;
+    --s57-tan-rgb: 252, 186, 102;
+
+    --s57-slab: 'Zilla Slab', Rockwell, 'Roboto Slab', Georgia, serif;
+    --s57-sans: 'Instrument Sans Variable', 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --s57-gutter: clamp(1rem, 4vw, 2.5rem);
+    --s57-section: clamp(3.5rem, 7vw, 6rem);
+
+    --v2-header-h: 76px;
+    --v2-bar-bg: var(--s57-navy);
+    --v2-bar-fg: var(--s57-tan);
+    --v2-bar-line: rgba(var(--s57-tan-rgb), 0.32);
+
+    background: var(--s57-paper);
+    color: var(--s57-navy);
+    font-family: var(--s57-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+  @media (min-width: 64rem) {
+    .v2--since1957 { --v2-header-h: 84px; }
+  }
+
+  .v2--since1957 .s57-wrap {
+    width: 100%;
+    max-width: calc(75rem + 2 * var(--s57-gutter));
+    margin-inline: auto;
+    padding-inline: var(--s57-gutter);
+  }
+  .v2--since1957 .s57-defs { position: absolute; }
+  /* The dealer marks are flooded with the one navy token. */
+  .v2--since1957 .s57-defs feFlood { flood-color: var(--s57-navy); }
+
+  /* Sentence case throughout. Only the menu and the buttons are capitals. */
+  /* Bare element rules stop at the gate, which shares this <body>. :where()
+     keeps the exclusion from adding an ID to the specificity. */
+  .v2--since1957 :is(h1, h2, h3):where(:not(#site-gate *)) {
+    font-family: var(--s57-slab);
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+  .v2--since1957 h2 { font-size: clamp(1.75rem, 1.3rem + 1.9vw, 2.75rem); }
+  .v2--since1957 h3 { font-size: 1.5rem; font-weight: 600; }
+  .v2--since1957 p:where(:not(#site-gate *)) { text-wrap: pretty; }
+
+  /* Section numbers in rust: No. 01, No. 02. */
+  .v2--since1957 .s57-no {
+    margin-bottom: 0.5rem;
+    color: var(--s57-rust);
+    font-family: var(--s57-slab);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+  .v2--since1957 .s57-eyebrow {
+    color: var(--s57-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .v2--since1957 figcaption {
+    margin-top: 0.5rem;
+    color: var(--s57-muted);
+    font-family: var(--s57-slab);
+    font-size: 1rem;
+    font-style: italic;
+    line-height: 1.35;
+  }
+
+  /* ---------------------------------------------------------------- buttons */
+  .v2--since1957 .s57-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border: 1.5px solid var(--s57-navy);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--s57-navy);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color var(--v2-t-hover) var(--v2-ease), border-color var(--v2-t-hover) var(--v2-ease), color var(--v2-t-hover) var(--v2-ease);
+  }
+  .v2--since1957 .s57-btn:hover { background: var(--s57-navy); color: var(--s57-paper); }
+  .v2--since1957 .s57-btn--primary { background: var(--s57-orange); border-color: var(--s57-orange); color: var(--s57-navy); }
+  .v2--since1957 .s57-btn--primary:hover { background: var(--s57-orange-hi); border-color: var(--s57-orange-hi); color: var(--s57-navy); }
+  .v2--since1957 .s57-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  /* The base focus ring takes the text color. On the navy hunt band a navy
+     ring would vanish, so that button names its ring. */
+  .v2--since1957 .s57-hunt .s57-btn--primary:focus-visible { outline-color: var(--s57-paper); }
+
+  /* ------------------------------------------------------------ utility bar */
+  .v2--since1957 .s57-util { background: var(--s57-navy); color: var(--s57-paper); font-size: 0.8125rem; }
+  .v2--since1957 .s57-util__in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.75rem;
+  }
+  .v2--since1957 .v2-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+  /* 320px: the open line and the phone share one row with nothing to spare. */
+  @media (max-width: 22.4rem) {
+    .v2--since1957 .s57-util__in { gap: 0.5rem; }
+    .v2--since1957 .v2-open { gap: 0.375rem; letter-spacing: 0.04em; }
+  }
+  .v2--since1957 .v2-open__dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--s57-tan); }
+  .v2--since1957 .v2-open[data-state='closed'] .v2-open__dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--s57-tan); }
+  .v2--since1957 .s57-util__right { display: flex; align-items: center; gap: 1.5rem; }
+  .v2--since1957 .s57-util__addr { display: none; }
+  .v2--since1957 .s57-util__right a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .v2--since1957 .s57-util__right a:hover { text-decoration: underline; }
+  @media (min-width: 48rem) {
+    .v2--since1957 .s57-util__addr { display: inline; }
+  }
+
+  /* ----------------------------------------------------------------- header
+     Logo in the middle, three links each side, a double rule underneath. The
+     header box keeps one height in the flow so nothing below it moves. On
+     scroll the bar slides up 32px under the top of the screen and its contents
+     slide down 16px to stay centered in the 84px that is left. Transform only. */
+  .v2--since1957 .s57-header {
+    position: sticky;
+    top: 0;
+    z-index: 700;
+    height: 76px;
+    pointer-events: none;
+  }
+  .v2--since1957 .s57-header__bar {
+    position: relative;
+    height: 76px;
+    background: var(--s57-paper);
+    pointer-events: auto;
+    transition: transform var(--v2-t-header) var(--v2-ease);
+  }
+  /* The double rule: 1px, a 3px gap, 1px. */
+  .v2--since1957 .s57-header__bar::after,
+  .v2--since1957 .s57-footer::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    left: 0;
+    height: 5px;
+    border-block: 1px solid var(--s57-navy);
+  }
+  .v2--since1957 .s57-header__bar::after { bottom: 0; }
+  .v2--since1957 .s57-header__in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: 100%;
+    padding-bottom: 5px;
+    transition: transform var(--v2-t-header) var(--v2-ease);
+  }
+  .v2--since1957 .s57-header__logo { display: block; flex: none; }
+  .v2--since1957 .s57-header__logo .v2-logo { width: auto; height: 52px; transition: transform var(--v2-t-header) var(--v2-ease); }
+  .v2--since1957 .s57-nav { display: none; }
+  .v2--since1957 .s57-menu-btn,
+  .v2--since1957 .s57-menu__close {
+    min-width: 4.5rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1.5px solid var(--s57-navy);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--s57-navy);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+  @media (min-width: 64rem) {
+    .v2--since1957 .s57-header,
+    .v2--since1957 .s57-header__bar { height: 116px; }
+    .v2--since1957 .s57-header[data-scrolled] .s57-header__bar { transform: translateY(-32px); }
+    .v2--since1957 .s57-header[data-scrolled] .s57-header__in { transform: translateY(16px); }
+    .v2--since1957 .s57-header__in { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: clamp(1.5rem, 3vw, 3rem); }
+    .v2--since1957 .s57-header__logo .v2-logo { height: 84px; }
+    /* 84px down to 60px. */
+    .v2--since1957 .s57-header[data-scrolled] .v2-logo { transform: scale(0.714); }
+    .v2--since1957 .s57-menu-btn { display: none; }
+    .v2--since1957 .s57-nav { display: block; }
+    .v2--since1957 .s57-nav ul { display: flex; gap: clamp(1.25rem, 2.4vw, 2.5rem); }
+    .v2--since1957 .s57-nav--left ul { justify-content: flex-end; }
+    .v2--since1957 .s57-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.75rem;
+      border-bottom: 1.5px solid transparent;
+      color: var(--s57-navy);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color var(--v2-t-hover) var(--v2-ease), color var(--v2-t-hover) var(--v2-ease);
+    }
+    .v2--since1957 .s57-nav a:hover,
+    .v2--since1957 .s57-nav a[aria-current] { border-bottom-color: var(--s57-rust); color: var(--s57-rust); }
+  }
+
+  /* ------------------------------------------------------------ mobile menu */
+  .v2--since1957 .s57-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 850;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem var(--s57-gutter) 2rem;
+    overflow-y: auto;
+    background: var(--s57-paper);
+  }
+  .v2--since1957 .s57-menu[hidden] { display: none; }
+  .v2--since1957 .s57-menu__close { align-self: flex-end; }
+  .v2--since1957 .s57-menu nav a {
+    display: block;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--s57-rule);
+    color: var(--s57-navy);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+  }
+  .v2--since1957 .s57-menu__actions { display: grid; gap: 0.75rem; }
+
+  /* ------------------------------------------------------------------- hero */
+  .v2--since1957 .s57-hero { padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3rem, 6vw, 5rem); }
+  .v2--since1957 .s57-hero__grid { display: grid; gap: 3rem; align-items: center; }
+  @media (min-width: 64rem) {
+    .v2--since1957 .s57-hero__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2.5rem, 5vw, 5rem); }
+  }
+  .v2--since1957 .s57-est {
+    color: var(--s57-rust);
+    font-family: var(--s57-slab);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .v2--since1957 .s57-hero .s57-eyebrow { margin-top: 1.5rem; }
+  .v2--since1957 .s57-hero h1 { margin-top: 0.75rem; font-size: clamp(2.25rem, 4.4vw, 4rem); line-height: 1.04; }
+  .v2--since1957 .s57-lead { max-width: 32rem; margin-top: 1.25rem; color: var(--s57-muted); font-size: 1.125rem; }
+  .v2--since1957 .s57-hero .s57-actions { margin-top: 2rem; }
+
+  /* Then and now. The new photo is large. The old one overlaps its lower left
+     corner at 44 percent of the width, on an 8px paper border. */
+  .v2--since1957 .s57-pair { position: relative; max-width: 43.75rem; padding: 0 0 12% 8%; }
+  .v2--since1957 .s57-pair figure { margin: 0; }
+  .v2--since1957 .s57-pair__now img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--s57-rule);
+  }
+  .v2--since1957 .s57-pair__now figcaption { text-align: right; }
+  .v2--since1957 .s57-pair__then {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 44%;
+    padding: 8px 8px 0;
+    background: var(--s57-paper);
+  }
+  .v2--since1957 .s57-pair__then img { width: 100%; border: 1px solid var(--s57-rule); }
+  .v2--since1957 .s57-pair__then figcaption { margin-top: 0.375rem; }
+
+  /* ------------------------------------------------------------------ proof */
+  .v2--since1957 .s57-proof__in {
+    display: grid;
+    align-items: center;
+    border-block: 1px solid var(--s57-navy);
+  }
+  .v2--since1957 .s57-proof__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .v2--since1957 .s57-proof__row li { padding: 1.5rem 1rem 1.5rem 0; }
+  .v2--since1957 .s57-proof__row li:nth-child(even) { padding-left: 1.25rem; border-left: 1px solid var(--s57-rule); }
+  .v2--since1957 .s57-proof__row li:nth-child(n + 3) { border-top: 1px solid var(--s57-rule); }
+  .v2--since1957 .s57-proof__big {
+    font-family: var(--s57-slab);
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .v2--since1957 .s57-proof__label { margin-top: 0.5rem; font-weight: 600; line-height: 1.3; }
+  .v2--since1957 .s57-proof__note { color: var(--s57-muted); font-family: var(--s57-slab); font-size: 1rem; font-style: italic; }
+  .v2--since1957 .s57-proof__shield { display: none; }
+  /* Four across only once Top 100 can hold one line. Two by two before that. */
+  @media (min-width: 56rem) {
+    .v2--since1957 .s57-proof__row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .v2--since1957 .s57-proof__row li:nth-child(n) { padding-left: 0; border-top: 0; border-left: 0; }
+    .v2--since1957 .s57-proof__row li:nth-child(n + 2) { padding-left: clamp(1rem, 2vw, 1.75rem); border-left: 1px solid var(--s57-rule); }
+  }
+  @media (min-width: 64rem) {
+    .v2--since1957 .s57-proof__in { grid-template-columns: minmax(0, 1fr) auto; gap: 2rem; }
+    /* The shield is a JPG on white. Multiply lets the paper show through. */
+    .v2--since1957 .s57-proof__shield { display: block; width: 96px; height: auto; margin-block: 0.75rem; mix-blend-mode: multiply; }
+  }
+
+  /* --------------------------------------------------- welcome, team, mission */
+  .v2--since1957 .s57-spread { padding-block: var(--s57-section); text-align: center; }
+  .v2--since1957 .s57-kicker {
+    color: var(--s57-muted);
+    font-family: var(--s57-sans);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .v2--since1957 .s57-pledge {
+    max-width: 52rem;
+    margin: 1.5rem auto 0;
+    padding-block: clamp(1.5rem, 3vw, 2.5rem);
+    border-block: 1px solid var(--s57-rule);
+    font-family: var(--s57-slab);
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    font-style: italic;
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+  .v2--since1957 .s57-spread__cols {
+    display: grid;
+    gap: 2rem;
+    max-width: 62rem;
+    margin: clamp(2.5rem, 5vw, 4rem) auto 0;
+    text-align: left;
+  }
+  .v2--since1957 .s57-spread__cols h3 { margin-bottom: 0.75rem; }
+  .v2--since1957 .s57-spread__cols p + p { margin-top: 1rem; }
+  @media (min-width: 48rem) {
+    .v2--since1957 .s57-spread__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(2rem, 5vw, 4.5rem); }
+    .v2--since1957 .s57-spread__cols > section { padding-right: clamp(2rem, 5vw, 4.5rem); border-right: 1px solid var(--s57-rule); }
+  }
+
+  /* ------------------------------------------------------ authorized dealer */
+  .v2--since1957 .s57-dealers { padding-block: clamp(3rem, 6vw, 5rem); background: var(--s57-paper2); }
+  .v2--since1957 .s57-dealers__grid { display: grid; gap: 2.5rem; align-items: center; }
+  .v2--since1957 .s57-dealers__line { margin-top: 0.75rem; color: var(--s57-muted); }
+  .v2--since1957 .v2-brands {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem 1.5rem;
+    align-items: center;
+  }
+  .v2--since1957 .v2-brands__item { display: grid; place-items: center; min-height: 2.5rem; opacity: 0.8; }
+  /* Flat marks, flooded with the one navy. */
+  .v2--since1957 .v2-brands__mark { filter: url('#s57-navy'); }
+  .v2--since1957 .v2-brands__word {
+    font-family: var(--s57-slab);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1;
+  }
+  @media (min-width: 36rem) {
+    .v2--since1957 .v2-brands { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .v2--since1957 .s57-dealers__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: clamp(3rem, 6vw, 6rem); }
+  }
+
+  /* --------------------------------------------------- offerings as a ledger */
+  .v2--since1957 .s57-ledger { padding-block: var(--s57-section); }
+  .v2--since1957 .s57-row {
+    display: grid;
+    gap: 1.5rem;
+    padding-block: clamp(2rem, 4vw, 3.25rem);
+    border-top: 1px solid var(--s57-navy);
+  }
+  .v2--since1957 .s57-row:last-child { border-bottom: 1px solid var(--s57-navy); }
+  .v2--since1957 .s57-row h2 { font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.375rem); }
+  .v2--since1957 .s57-row__line { margin-top: 0.75rem; color: var(--s57-muted); }
+  /* 400px keeps every ledger photo inside its cap (the smallest is 420px). */
+  .v2--since1957 .s57-row__photo { max-width: 400px; margin: 0; }
+  .v2--since1957 .s57-row__photo img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: center 30%;
+    border: 1px solid var(--s57-rule);
+  }
+  /* The ledger: label, dotted leader, value. */
+  .v2--since1957 .s57-facts { align-self: center; font-size: 1rem; line-height: 1.4; }
+  .v2--since1957 .s57-facts > div {
+    display: flex;
+    align-items: baseline;
+    padding-block: 0.4375rem;
+  }
+  .v2--since1957 .s57-facts dt { display: flex; flex: 1 1 auto; align-items: baseline; min-width: 5.5rem; }
+  .v2--since1957 .s57-facts dt::after {
+    content: '';
+    flex: 1 1 1.5rem;
+    min-width: 1.5rem;
+    margin-inline: 0.5rem;
+    border-bottom: 1px dotted var(--s57-navy);
+    transform: translateY(-0.2em);
+  }
+  .v2--since1957 .s57-facts dd {
+    flex: 0 1 auto;
+    max-width: 58%;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  /* Tablet: the heading runs across, the photo and the ledger sit side by side. */
+  @media (min-width: 40rem) and (max-width: 63.99rem) {
+    .v2--since1957 .s57-row {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      grid-template-areas: 'head head' 'photo facts';
+      gap: 1.5rem 2.5rem;
+    }
+    .v2--since1957 .s57-row__head { grid-area: head; }
+    .v2--since1957 .s57-row__photo { grid-area: photo; }
+    .v2--since1957 .s57-facts { grid-area: facts; }
+  }
+  @media (min-width: 64rem) {
+    .v2--since1957 .s57-row {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 4fr);
+      grid-template-areas: 'head facts photo';
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+    /* The photo changes sides row by row. */
+    .v2--since1957 .s57-row:nth-child(even) { grid-template-areas: 'photo facts head'; }
+    .v2--since1957 .s57-row__head { grid-area: head; }
+    .v2--since1957 .s57-row__photo { grid-area: photo; }
+    .v2--since1957 .s57-facts { grid-area: facts; }
+  }
+
+  /* -------------------------------------------------------------- hunt band
+     The one cinematic moment on the page. */
+  .v2--since1957 .s57-hunt {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(35rem, 56vw, 47.5rem);
+    padding-block: 3rem 2.5rem;
+    overflow: hidden;
+    color: var(--s57-paper);
+  }
+  .v2--since1957 .s57-hunt__photo {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 38% 40%;
+  }
+  /* Navy scrim from the bottom, held dark behind the whole text block. On
+     narrow screens the text runs taller, so the dark part does too. */
+  .v2--since1957 .s57-hunt::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(0deg, rgba(var(--s57-navy-rgb), 0.94) 0%, rgba(var(--s57-navy-rgb), 0.9) 68%, rgba(var(--s57-navy-rgb), 0.3) 88%, rgba(var(--s57-navy-rgb), 0) 100%);
+  }
+  @media (min-width: 64rem) {
+    .v2--since1957 .s57-hunt::before {
+      background: linear-gradient(0deg, rgba(var(--s57-navy-rgb), 0.93) 0%, rgba(var(--s57-navy-rgb), 0.88) 38%, rgba(var(--s57-navy-rgb), 0.32) 60%, rgba(var(--s57-navy-rgb), 0) 100%);
+    }
+  }
+  .v2--since1957 .s57-hunt__in { display: grid; gap: 2rem; align-items: end; }
+  .v2--since1957 .s57-hunt__copy { max-width: 38rem; }
+  .v2--since1957 .s57-hunt h2 { font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem); }
+  .v2--since1957 .s57-hunt__copy p { margin-top: 1rem; font-size: 1.125rem; }
+  .v2--since1957 .s57-hunt .s57-btn { margin-top: 1.75rem; }
+  .v2--since1957 .s57-hunt__caption { font-family: var(--s57-slab); font-size: 1rem; font-style: italic; }
+  @media (min-width: 48rem) {
+    .v2--since1957 .s57-hunt__in { grid-template-columns: minmax(0, 1fr) auto; }
+  }
+
+  /* ------------------------------------------------------------------ about */
+  .v2--since1957 .s57-about { padding-block: var(--s57-section); }
+  .v2--since1957 .s57-about__grid { display: grid; gap: 2.5rem; align-items: start; }
+  @media (min-width: 64rem) {
+    .v2--since1957 .s57-about__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 30rem); gap: clamp(3rem, 6vw, 6rem); }
+  }
+  .v2--since1957 .s57-about h2 { margin-top: 0.5rem; font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem); }
+  .v2--since1957 .s57-about__copy > p:not(.s57-no):not(.s57-eyebrow) { max-width: 38rem; margin-top: 1.25rem; font-size: 1.125rem; }
+  /* rob-hoyt.jpg: never past 480px. */
+  .v2--since1957 .s57-about__photo { max-width: 480px; margin: 0; }
+  .v2--since1957 .s57-about__photo img { width: 100%; border: 1px solid var(--s57-rule); }
+
+  /* Signature move: the line from 1957. */
+  .v2--since1957 .s57-line { position: relative; margin-top: clamp(3rem, 6vw, 5rem); }
+  .v2--since1957 .s57-line__rule { position: absolute; background: var(--s57-navy); }
+  .v2--since1957 .s57-line__arrow {
+    position: absolute;
+    left: 0;
+    width: 96px;
+    color: var(--s57-navy);
+    --v2-arrow-fletch: var(--s57-rust);
+    transform-origin: 0 50%;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .v2--since1957 .s57-line__arrow svg { width: 100%; max-width: none; height: auto; }
+  .v2--since1957 .s57-line.is-live .s57-line__arrow { visibility: visible; }
+  .v2--since1957 .s57-line ol { display: grid; }
+  .v2--since1957 .s57-stop { position: relative; }
+  .v2--since1957 .s57-stop::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--s57-navy);
+  }
+  .v2--since1957 .s57-stop__year { font-family: var(--s57-slab); font-size: 1.75rem; font-weight: 700; line-height: 1.1; }
+  .v2--since1957 .s57-stop__line { margin-top: 0.375rem; color: var(--s57-muted); line-height: 1.5; }
+  /* Each stop comes up to full strength as the arrow passes it. A waiting
+     stop is dimmed only as far as 4.5:1 allows: the year to 64 percent (5.0:1
+     on paper), the line to 82 percent (4.9:1). The dot, which is not text,
+     goes to 35 percent and grows as it is reached. */
+  .v2--since1957 .s57-stop > * { transition: opacity var(--s57-t-stop) var(--v2-ease); }
+  .v2--since1957 .s57-stop::before { transition: opacity var(--s57-t-stop) var(--v2-ease), transform var(--s57-t-stop) var(--v2-ease); }
+  .v2--since1957 .s57-line.is-live .s57-stop:not(.is-passed) .s57-stop__year { opacity: 0.64; }
+  .v2--since1957 .s57-line.is-live .s57-stop:not(.is-passed) .s57-stop__line { opacity: 0.82; }
+  .v2--since1957 .s57-line.is-live .s57-stop:not(.is-passed)::before { opacity: 0.35; transform: scale(0.6); }
+
+  /* Phone: the rule runs down the left side and the arrow travels down. */
+  .v2--since1957 .s57-line__rule { top: 0; bottom: 0; left: 5px; width: 1px; }
+  .v2--since1957 .s57-line__arrow { top: 0; width: 56px; }
+  .v2--since1957 .s57-line ol { gap: 2rem; }
+  .v2--since1957 .s57-stop { padding-left: 2rem; }
+  .v2--since1957 .s57-stop::before { top: 7px; }
+  @media (min-width: 48rem) {
+    .v2--since1957 .s57-line { padding-top: 2.25rem; }
+    .v2--since1957 .s57-line__rule { top: 12px; right: 0; bottom: auto; left: 0; width: auto; height: 1px; }
+    .v2--since1957 .s57-line__arrow { top: 7.2px; width: 96px; }
+    .v2--since1957 .s57-line ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem; }
+    .v2--since1957 .s57-stop { padding-left: 0; }
+    .v2--since1957 .s57-stop::before { top: calc(-2.25rem + 7px); }
+  }
+
+  .v2--since1957 .s57-archive { margin-top: clamp(3rem, 6vw, 5rem); padding-top: 2rem; border-top: 1px solid var(--s57-rule); }
+  .v2--since1957 .s57-archive ul {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 320px));
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+    margin-top: 1.25rem;
+  }
+  /* Sepia left as it is. Never past 320px. */
+  .v2--since1957 .s57-archive img {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    object-position: center 25%;
+    border: 1px solid var(--s57-rule);
+  }
+
+  /* ----------------------------------------------------------------- events */
+  .v2--since1957 .s57-events { padding-block: var(--s57-section); background: var(--s57-paper2); }
+  .v2--since1957 .s57-events__grid { display: grid; gap: 2rem; }
+  @media (min-width: 64rem) {
+    .v2--since1957 .s57-events__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: clamp(3rem, 6vw, 6rem); }
+  }
+  .v2--since1957 .s57-facts--events { font-size: 1.125rem; }
+  .v2--since1957 .s57-facts--events > div { padding-block: 0.75rem; }
+  .v2--since1957 .s57-facts--events dt { font-family: var(--s57-slab); font-size: 1.375rem; font-weight: 600; }
+  .v2--since1957 .s57-facts--events dd { color: var(--s57-muted); font-family: var(--s57-slab); font-style: italic; font-weight: 400; }
+  .v2--since1957 .s57-events__note { margin-top: 1.5rem; color: var(--s57-muted); }
+
+  /* ------------------------------------------------------------------ visit */
+  .v2--since1957 .s57-visit { padding-block: var(--s57-section); background: var(--s57-navy); color: var(--s57-paper); }
+  .v2--since1957 .s57-visit__grid { display: grid; gap: 3rem; align-items: start; }
+  @media (min-width: 64rem) {
+    .v2--since1957 .s57-visit__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(3rem, 6vw, 6rem); }
+  }
+  .v2--since1957 .s57-visit .s57-no { color: var(--s57-tan); }
+  .v2--since1957 .s57-visit .v2-hours { margin-top: 1.75rem; border-bottom: 1px solid rgba(var(--s57-paper-rgb), 0.28); }
+  .v2--since1957 .s57-visit .v2-hours th,
+  .v2--since1957 .s57-visit .v2-hours td { padding-block: 0.5625rem; border-top: 1px solid rgba(var(--s57-paper-rgb), 0.28); }
+  .v2--since1957 .s57-visit .v2-hours tr[data-today] th,
+  .v2--since1957 .s57-visit .v2-hours tr[data-today] td { color: var(--s57-tan); font-weight: 600; }
+  .v2--since1957 .s57-visit address { margin-top: 1.75rem; font-style: normal; }
+  .v2--since1957 .s57-visit__phone { margin-block: 0 1rem; font-variant-numeric: tabular-nums; }
+  /* A phone number on its own line is a button on a phone. Give it 44px. */
+  .v2--since1957 .s57-visit__phone a,
+  .v2--since1957 .s57-footer__contact p a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  /* On navy the secondary button turns to paper. */
+  .v2--since1957 .s57-visit .s57-btn--secondary { border-color: var(--s57-paper); color: var(--s57-paper); }
+  .v2--since1957 .s57-visit .s57-btn--secondary:hover { background: var(--s57-paper); color: var(--s57-navy); }
+  /* The form sits on one paper panel. Nothing is boxed inside it. */
+  .v2--since1957 .s57-visit__form { padding: clamp(1.5rem, 3vw, 2.5rem); background: var(--s57-paper); color: var(--s57-navy); }
+  .v2--since1957 .s57-visit__formline { margin-block: 0.5rem 1.5rem; color: var(--s57-muted); }
+
+  .v2--since1957 .v2-form { display: grid; gap: 1.125rem; }
+  .v2--since1957 .v2-form label { font-size: 0.875rem; font-weight: 600; }
+  /* Fields are ruled lines on the paper, like a form to fill in by hand. */
+  .v2--since1957 .v2-form input:not([type='hidden']),
+  .v2--since1957 .v2-form textarea {
+    padding: 0.5rem 0;
+    border: 0;
+    border-bottom: 1.5px solid var(--s57-navy);
+    border-radius: 0;
+    background: transparent;
+    color: var(--s57-navy);
+  }
+  .v2--since1957 .v2-form input:focus-visible,
+  .v2--since1957 .v2-form textarea:focus-visible { outline: 2px solid var(--s57-rust); outline-offset: 3px; }
+  .v2--since1957 .v2-form__button {
+    justify-self: start;
+    min-height: 3rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 1.5px solid var(--s57-orange);
+    border-radius: 3px;
+    background: var(--s57-orange);
+    color: var(--s57-navy);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background-color var(--v2-t-hover) var(--v2-ease), border-color var(--v2-t-hover) var(--v2-ease);
+  }
+  .v2--since1957 .v2-form__button:hover { background: var(--s57-orange-hi); border-color: var(--s57-orange-hi); }
+  .v2--since1957 .v2-form__note { color: var(--s57-rust); font-family: var(--s57-slab); font-size: 1.0625rem; font-style: italic; }
+
+  /* ----------------------------------------------------------------- footer */
+  .v2--since1957 .s57-footer { position: relative; background: var(--s57-paper2); font-size: 0.9375rem; }
+  .v2--since1957 .s57-footer::before { top: 0; }
+  .v2--since1957 .s57-footer__top { display: grid; gap: 2.5rem; padding-block: clamp(3rem, 6vw, 4.5rem) 2.5rem; }
+  @media (min-width: 48rem) {
+    .v2--since1957 .s57-footer__top { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; }
+  }
+  .v2--since1957 .s57-footer .v2-logo { width: auto; height: 72px; margin-bottom: 1rem; }
+  .v2--since1957 .s57-footer__tagline { margin-top: 0.25rem; font-family: var(--s57-slab); font-size: 1.25rem; font-style: italic; }
+  .v2--since1957 .s57-footer nav a {
+    display: inline-flex;
+    align-items: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+  }
+  .v2--since1957 .s57-footer nav a:hover { color: var(--s57-rust); }
+  .v2--since1957 .s57-footer address { font-style: normal; }
+  .v2--since1957 .s57-footer__contact p { margin-top: 0; }
+  .v2--since1957 .s57-footer__email { overflow-wrap: anywhere; }
+  .v2--since1957 .s57-social { display: flex; gap: 0.25rem; margin: 0.75rem 0 0 -0.625rem; }
+  .v2--since1957 .s57-social a { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; transition: color var(--v2-t-hover) var(--v2-ease); }
+  .v2--since1957 .s57-social a:hover { color: var(--s57-rust); }
+  .v2--since1957 .s57-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--s57-rule);
+    font-size: 0.875rem;
+  }
+  .v2--since1957 .s57-footer__lws { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; min-height: 2.75rem; text-decoration: none; }
+  .v2--since1957 .s57-footer__lws img { width: 150px; height: auto; }
+  .v2--since1957 .s57-footer__lws:hover span { text-decoration: underline; }
+</style>

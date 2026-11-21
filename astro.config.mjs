@@ -15,7 +15,7 @@ export default defineConfig({
     react(),
     sitemap({
       filter: (page) =>
-        !page.includes('/admin') && !page.includes('/thank-you') && !page.includes('/demos'),
+        !page.includes('/admin') && !page.includes('/thank-you') && !page.includes('/demos') && !page.includes('/v2'),
     }),
   ],
   image: {

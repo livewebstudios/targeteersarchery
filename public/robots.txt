@@ -3,5 +3,6 @@ Allow: /
 Disallow: /admin/
 Disallow: /thank-you/
 Disallow: /demos/
+Disallow: /v2/
 
 Sitemap: https://targeteersarchery.com/sitemap-index.xml
