@@ -1,7 +1,1108 @@
 ---
+/**
+ * Demo 1: ROUTE 46. Rob's old home page, grown up.
+ *
+ * Section for section it is his old site: white header, his six links, the
+ * showroom photo with nothing on it, serif capital headlines in green and tan,
+ * his badges, his three tabbed boxes, a forest band of white target cards, the
+ * hunting band, a dark green footer. What changed is the craft: real contrast,
+ * real spacing, facts on the cards, a page that works on a phone.
+ *
+ * Signature move: the arrows find the targets.
+ *
+ * All copy comes from src/data/homeV2.ts. Nothing here links to an inner page.
+ */
+import '@fontsource/libre-baskerville/400.css';
+import '@fontsource/libre-baskerville/400-italic.css';
+import '@fontsource/libre-baskerville/700.css';
+import '@fontsource-variable/nunito-sans';
+
+import { Image } from 'astro:assets';
 import V2Base from '~/layouts/V2Base.astro';
-import { hero } from '~/data/homeV2';
+import V2Logo from '~/components/v2/V2Logo.astro';
+import V2OpenNow from '~/components/v2/V2OpenNow.astro';
+import V2Hours from '~/components/v2/V2Hours.astro';
+import V2Form from '~/components/v2/V2Form.astro';
+import V2Arrow from '~/components/v2/V2Arrow.astro';
+import V2Brands from '~/components/v2/V2Brands.astro';
+import SocialIcon from '~/components/icons/SocialIcon.astro';
+import { business } from '~/data/business';
+import {
+  v2Nav, call, callShort, directions, hero, proof, welcome, team, mission, dealers,
+  offerings, hunt, about, events, visit, footer, photos, v2Widths,
+} from '~/data/homeV2';
+
+const year = new Date().getFullYear();
+const socials = [
+  { network: 'facebook', href: business.socials.facebook },
+  { network: 'instagram', href: business.socials.instagram },
+  { network: 'twitter', href: business.socials.twitter },
+] as const;
 ---
-<V2Base demo={1} theme="route46" title="Targeteers Archery Pro Shop | Demo 1, ROUTE 46" description={hero.lead}>
-  <h1>{hero.h1}</h1>
+<V2Base
+  demo={1}
+  theme="route46"
+  title="Targeteers Archery Pro Shop | Saddle Brook, NJ | Demo 1, Route 46"
+  description={hero.lead}
+>
+  <Fragment slot="header">
+    <div class="r46-util">
+      <div class="r46-wrap r46-util__in">
+        <p class="r46-util__left">
+          <V2OpenNow />
+          <span class="r46-util__addr">{business.address.street}, {business.address.city}, {business.address.region}</span>
+        </p>
+        <div class="r46-util__right">
+          <a class="r46-util__phone" href={business.phoneHref}>{business.phone}</a>
+          <ul class="r46-social" role="list">
+            {socials.map((s) => (
+              <li><a href={s.href} target="_blank" rel="noopener"><SocialIcon network={s.network} size={18} /></a></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <header class="r46-header" data-v2-header>
+      <div class="r46-header__bar">
+        <div class="r46-wrap r46-header__in">
+          <a class="r46-header__logo" href="#top"><V2Logo on="light" height={72} eager /></a>
+          <nav class="r46-nav" aria-label="Main" data-v2-nav>
+            <ul role="list">
+              {v2Nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+            </ul>
+          </nav>
+          <button class="r46-menu-btn" type="button" aria-expanded="false" aria-controls="r46-menu" data-v2-menu-button>MENU</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="r46-menu" id="r46-menu" data-v2-menu hidden>
+      <button class="r46-menu__close" type="button" data-v2-menu-close>CLOSE</button>
+      <nav aria-label="Menu">
+        <ul role="list">
+          {v2Nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+      <div class="r46-menu__actions">
+        <a class="r46-btn r46-btn--primary" href={call.href}>{call.label}</a>
+        <a class="r46-btn r46-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
+      </div>
+    </div>
+  </Fragment>
+
+  {/* ------------------------------------------------------------------ hero */}
+  <section class="r46-hero" aria-labelledby="r46-h1">
+    <div class="r46-hero__photo">
+      <Image
+        src={photos.hero1.src}
+        alt={photos.hero1.alt}
+        widths={[640, 960, 1280, 1920, 2560, 3200]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+    <div class="r46-hero__copy">
+      <p class="r46-eyebrow">{hero.eyebrow}</p>
+      <h1 id="r46-h1"><span>{hero.h1}</span></h1>
+      <p class="r46-lead">{hero.lead}</p>
+      <div class="r46-actions">
+        <a class="r46-btn r46-btn--primary" href={call.href}>{call.label}</a>
+        <a class="r46-btn r46-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ----------------------------------------------------------------- proof */}
+  <!-- CONFIRM: award wording. The old About page says "East Coast Dealer of the Year". The badge says 2007. -->
+  <div class="r46-proof">
+    <div class="r46-wrap">
+      <ul class="r46-proof__badges" role="list" data-reveal>
+        {photos.badges.map((b) => (
+          <li><Image src={b.src} alt={b.alt} width={104} widths={v2Widths(b.src, 104)} sizes="104px" loading="lazy" /></li>
+        ))}
+      </ul>
+      <ul class="r46-proof__row" role="list" data-reveal>
+        {proof.map((p) => (
+          <li>
+            <p class="r46-proof__big">{p.big}</p>
+            <p class="r46-proof__label">{p.label}</p>
+            <p class="r46-proof__note">{p.note}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  {/* -------------------------------------------------- welcome, team, mission */}
+  <div class="r46-welcome">
+    <div class="r46-wrap">
+      <p class="r46-welcome__body" data-reveal>{welcome.body}</p>
+      <div class="r46-boxes">
+        <section class="r46-box" aria-labelledby="r46-team" data-reveal>
+          <h2 class="r46-box__tab" id="r46-team">{team.title}</h2>
+          <p>{team.body}</p>
+        </section>
+        <section class="r46-box" aria-labelledby="r46-mission" data-reveal>
+          <h2 class="r46-box__tab" id="r46-mission">{mission.title}</h2>
+          <p>{mission.body}</p>
+          <p class="r46-pledge">{mission.pledge}</p>
+        </section>
+        <section class="r46-box" aria-labelledby="r46-dealer" data-reveal>
+          <h2 class="r46-box__tab" id="r46-dealer">{dealers.title}</h2>
+          <p>{dealers.line}</p>
+          <V2Brands mode="color" maxWidth={120} maxHeight={40} />
+        </section>
+      </div>
+    </div>
+  </div>
+
+  {/* ------------------------------------------------------------- offerings */}
+  <!-- CONFIRM: range distance, 27 or 28 yards. -->
+  <!-- CONFIRM: 2026 lesson prices. -->
+  <!-- CONFIRM: current league schedule. -->
+  <div class="r46-offer" data-r46-offer>
+    <Image
+      class="r46-offer__bg"
+      src={photos.forest.src}
+      alt=""
+      widths={[640, 960, 1280, 1920]}
+      sizes="(min-width: 1920px) 1920px, 100vw"
+      quality={60}
+      loading="lazy"
+    />
+    <div class="r46-wrap r46-offer__grid">
+      {offerings.map((o) => (
+        <section class="r46-card" id={o.id} aria-labelledby={`r46-${o.id}-title`}>
+          <div class="r46-card__target">
+            <Image src={photos.target.src} alt="" width={72} height={72} widths={[72, 144]} sizes="72px" loading="lazy" />
+            <span class="r46-shot"><V2Arrow length={92} class="r46-shot__arrow" /></span>
+          </div>
+          <h2 id={`r46-${o.id}-title`}>{o.title}</h2>
+          <p class="r46-card__line">{o.line}</p>
+          <dl class="r46-facts">
+            {o.facts.map((f) => (
+              <div><dt>{f.label}</dt><dd>{f.value}</dd></div>
+            ))}
+          </dl>
+        </section>
+      ))}
+    </div>
+  </div>
+
+  {/* ------------------------------------------------------------- hunt band */}
+  <section class="r46-hunt" aria-labelledby="r46-hunt-title">
+    <Image
+      class="r46-hunt__bg"
+      src={photos.hunt1.src}
+      alt=""
+      widths={[640, 960, 1280, 1920]}
+      sizes="(min-width: 1920px) 1920px, 100vw"
+      quality={60}
+      loading="lazy"
+    />
+    <div class="r46-hunt__copy" data-reveal>
+      <h2 id="r46-hunt-title">{hunt.title}</h2>
+      <p>{hunt.body}</p>
+      <a class="r46-btn r46-btn--primary" href={callShort.href}>{callShort.label}</a>
+    </div>
+  </section>
+
+  {/* ----------------------------------------------------------------- about */}
+  <section class="r46-about" id="about" aria-labelledby="r46-about-title">
+    <div class="r46-wrap">
+      <div class="r46-about__grid">
+        <div class="r46-about__copy" data-reveal>
+          <p class="r46-eyebrow">{about.eyebrow}</p>
+          <h2 id="r46-about-title">{about.title}</h2>
+          {about.body.map((para) => <p>{para}</p>)}
+          <ol class="r46-timeline" role="list">
+            {about.timeline.map((t) => (
+              <li><span class="r46-timeline__year">{t.year}</span><span>{t.line}</span></li>
+            ))}
+          </ol>
+        </div>
+        <div class="r46-about__photo" data-reveal>
+          <Image
+            src={photos.then.src}
+            alt={photos.then.alt}
+            widths={v2Widths(photos.then.src, 360, 560)}
+            sizes="(min-width: 38rem) 560px, calc(100vw - 2rem)"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      <div class="r46-archive" data-reveal>
+        <h3>{about.archiveTitle}</h3>
+        <ul role="list">
+          {photos.archive.map((a) => (
+            <li>
+              <Image
+                src={a.src}
+                alt={a.alt}
+                widths={v2Widths(a.src, 160, 320)}
+                sizes="(min-width: 64rem) 320px, 30vw"
+                loading="lazy"
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------------------------------------------------------------- events */}
+  <section class="r46-events" id="events" aria-labelledby="r46-events-title">
+    <div class="r46-wrap r46-events__in" data-reveal>
+      <h2 id="r46-events-title">{events.title}</h2>
+      <dl class="r46-events__rows">
+        {events.items.map((e) => (
+          <div><dt>{e.name}</dt><dd>{e.when}</dd></div>
+        ))}
+      </dl>
+      <p class="r46-events__note">{events.note}</p>
+    </div>
+  </section>
+
+  {/* ----------------------------------------------------------------- visit */}
+  <section class="r46-visit" id="visit" aria-labelledby="r46-visit-title">
+    <div class="r46-wrap">
+      <h2 id="r46-visit-title">{visit.title}</h2>
+      <div class="r46-visit__grid">
+        <div data-reveal>
+          <h3>Hours</h3>
+          <V2Hours />
+        </div>
+        <div data-reveal>
+          <h3>Location</h3>
+          <address>
+            {business.address.street}<br />
+            {business.address.city}, {business.address.region} {business.address.postal}
+          </address>
+          <p class="r46-visit__phone"><a href={business.phoneHref}>{business.phone}</a></p>
+          <a class="r46-btn r46-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
+        </div>
+        <div data-reveal>
+          <h3>{visit.formTitle}</h3>
+          <p class="r46-visit__formline">{visit.formLine}</p>
+          <V2Form />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------------------------------------------------------------- footer */}
+  <footer class="r46-footer" slot="footer">
+    <div class="r46-wrap r46-footer__cols">
+      <div class="r46-footer__col">
+        <Image class="r46-footer__target" src={photos.target.src} alt="" width={48} height={48} widths={[48, 96]} sizes="48px" loading="lazy" />
+        <V2Logo on="dark" height={64} />
+        <p>{footer.family}</p>
+        <p class="r46-footer__tagline">{footer.tagline}</p>
+      </div>
+      <div class="r46-footer__col">
+        <Image class="r46-footer__target" src={photos.target.src} alt="" width={48} height={48} widths={[48, 96]} sizes="48px" loading="lazy" />
+        <h2>{events.title}</h2>
+        <dl class="r46-footer__events">
+          {events.items.map((e) => (
+            <div><dt>{e.name}</dt><dd>{e.when}</dd></div>
+          ))}
+        </dl>
+      </div>
+      <div class="r46-footer__col">
+        <Image class="r46-footer__target" src={photos.target.src} alt="" width={48} height={48} widths={[48, 96]} sizes="48px" loading="lazy" />
+        <h2>Hours</h2>
+        <V2Hours />
+      </div>
+      <div class="r46-footer__col">
+        <Image class="r46-footer__target" src={photos.target.src} alt="" width={48} height={48} widths={[48, 96]} sizes="48px" loading="lazy" />
+        <h2>Location</h2>
+        <address>
+          {business.address.street}<br />
+          {business.address.city}, {business.address.region} {business.address.postal}
+        </address>
+        <p><a href={business.phoneHref}>{business.phone}</a></p>
+        <p><a href={directions.href} target="_blank" rel="noopener">{directions.label}</a></p>
+      </div>
+    </div>
+
+    <div class="r46-wrap r46-footer__links">
+      <nav aria-label="Footer">
+        <ul role="list">
+          {v2Nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+      <p class="r46-footer__email">{business.email}</p>
+      <ul class="r46-social" role="list">
+        {socials.map((s) => (
+          <li><a href={s.href} target="_blank" rel="noopener"><SocialIcon network={s.network} size={20} /></a></li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="r46-footer__legal">
+      <div class="r46-wrap r46-footer__legal-in">
+        <p>&copy; {year} {business.name}</p>
+        <a class="r46-footer__lws" href="https://livewebstudios.com" target="_blank" rel="noopener">
+          <img src="../../images/verifiedsecured.png" alt="Verified and Secured by Live Web Studios" width="150" height="37" loading="lazy" decoding="async" />
+          <span>{footer.credit}</span>
+        </a>
+      </div>
+    </div>
+  </footer>
 </V2Base>
+
+<script>
+  /* Signature move: the arrows find the targets. This only decides when. The
+     flight, the stagger and the quiver are CSS, switched on by .is-hit. */
+  const band = document.querySelector<HTMLElement>('[data-r46-offer]');
+  const cards = band ? Array.from(band.querySelectorAll<HTMLElement>('.r46-card')) : [];
+  const hit = (el: Element) => el.classList.add('is-hit');
+
+  if (band && 'IntersectionObserver' in window) {
+    if (window.matchMedia('(max-width: 47.99rem)').matches) {
+      // Phone: the cards stack, so each arrow lands as its own card enters.
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            hit(e.target);
+            io.unobserve(e.target);
+          }
+        },
+        { threshold: 0.3 },
+      );
+      cards.forEach((c) => io.observe(c));
+    } else {
+      // 30 percent of the band in view, or as close to it as a short window allows.
+      const threshold = Math.min(0.3, (window.innerHeight * 0.6) / Math.max(band.offsetHeight, 1));
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          cards.forEach(hit);
+          io.disconnect();
+        },
+        { threshold },
+      );
+      io.observe(band);
+    }
+  } else {
+    cards.forEach(hit);
+  }
+</script>
+
+<style is:global>
+  /* ========================================================================
+     Demo 1: ROUTE 46. Every rule lives under .v2--route46.
+     Tokens sampled from Rob's old site. Tan is decoration and dark-ground
+     text only: tan on white is 2.98:1 and never carries text.
+     ======================================================================== */
+  .v2--route46 {
+    --r46-forest: #142a13;   /* utility bar, footer */
+    --r46-deep: #0e1c0c;     /* copyright bar */
+    --r46-olive: #3b5400;    /* subheads, borders, primary button */
+    --r46-tan: #af9164;      /* his headline tan: decoration, dark grounds */
+    --r46-tan-ink: #7a5c2e;  /* tan for text on light */
+    --r46-white: #ffffff;
+    --r46-cream: #f6f1e7;
+    --r46-ink: #262626;
+    --r46-rule: #d9d2c3;
+
+    --r46-serif: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+    --r46-sans: 'Nunito Sans Variable', 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --r46-gutter: clamp(1rem, 4vw, 2.5rem);
+    --r46-section: clamp(3.5rem, 7vw, 6rem);
+
+    --v2-header-h: 72px;
+    --v2-bar-bg: var(--r46-forest);
+    --v2-bar-fg: var(--r46-white);
+    --v2-bar-line: rgba(255, 255, 255, 0.24);
+
+    background: var(--r46-white);
+    color: var(--r46-ink);
+    font-family: var(--r46-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+
+  .v2--route46 .r46-wrap {
+    width: 100%;
+    max-width: 77.5rem;
+    margin-inline: auto;
+    padding-inline: var(--r46-gutter);
+  }
+
+  .v2--route46 h1,
+  .v2--route46 h2,
+  .v2--route46 h3 {
+    font-family: var(--r46-serif);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .v2--route46 h2 { font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2rem); color: var(--r46-olive); }
+  .v2--route46 h3 { font-size: 1.0625rem; color: var(--r46-olive); }
+  .v2--route46 p { text-wrap: pretty; }
+
+  .v2--route46 .r46-eyebrow {
+    color: var(--r46-tan-ink);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ---------------------------------------------------------------- buttons */
+  .v2--route46 .r46-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 2px;
+    font-family: var(--r46-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+  .v2--route46 .r46-btn--primary { background: var(--r46-olive); border-color: var(--r46-olive); color: var(--r46-white); }
+  .v2--route46 .r46-btn--primary:hover { background: var(--r46-forest); border-color: var(--r46-forest); }
+  /* His old button exactly: tan fill, forest text, forest border. */
+  .v2--route46 .r46-btn--secondary { background: var(--r46-tan); border-color: var(--r46-forest); color: var(--r46-forest); }
+  .v2--route46 .r46-btn--secondary:hover { background: #c4aa82; }
+  .v2--route46 .r46-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+
+  /* ------------------------------------------------------------ utility bar */
+  .v2--route46 .r46-util { background: var(--r46-forest); color: var(--r46-white); font-size: 0.8125rem; }
+  .v2--route46 .r46-util__in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.5rem;
+  }
+  .v2--route46 .r46-util__left { display: flex; align-items: center; gap: 1.5rem; min-width: 0; }
+  .v2--route46 .r46-util__addr { display: none; }
+  .v2--route46 .r46-util__right { display: flex; align-items: center; gap: 1rem; }
+  .v2--route46 .r46-util__phone {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .v2--route46 .r46-util__phone:hover { text-decoration: underline; }
+  .v2--route46 .v2-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .v2--route46 .v2-open__dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--r46-tan); }
+  .v2--route46 .v2-open[data-state='closed'] .v2-open__dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--r46-tan); }
+
+  .v2--route46 .r46-social { display: none; align-items: center; gap: 0.25rem; }
+  .v2--route46 .r46-social a {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    transition: color 150ms ease;
+  }
+  .v2--route46 .r46-social a:hover { color: var(--r46-tan); }
+  @media (min-width: 40rem) {
+    .v2--route46 .r46-social { display: flex; }
+  }
+  @media (min-width: 64rem) {
+    .v2--route46 .r46-util__addr { display: inline; }
+  }
+
+  /* ----------------------------------------------------------------- header
+     The header box keeps one height in the page flow, so the bar inside it can
+     shrink on scroll without moving anything below it. */
+  .v2--route46 .r46-header {
+    position: sticky;
+    top: 0;
+    z-index: 700;
+    height: 72px;
+    pointer-events: none;
+  }
+  .v2--route46 .r46-header__bar {
+    height: 72px;
+    background: var(--r46-white);
+    border-bottom: 1px solid var(--r46-rule);
+    pointer-events: auto;
+    transition: height 200ms ease;
+  }
+  .v2--route46 .r46-header__in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: 100%;
+  }
+  .v2--route46 .r46-header__logo { display: block; flex: none; }
+  .v2--route46 .r46-header__logo .v2-logo {
+    width: auto;
+    height: 52px;
+    transform-origin: left center;
+    transition: transform 200ms ease;
+  }
+  .v2--route46 .r46-nav { display: none; }
+  .v2--route46 .r46-menu-btn {
+    min-width: 4.5rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 2px solid var(--r46-forest);
+    border-radius: 2px;
+    background: var(--r46-white);
+    color: var(--r46-forest);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  @media (min-width: 64rem) {
+    .v2--route46 .r46-header,
+    .v2--route46 .r46-header__bar { height: 96px; }
+    .v2--route46 .r46-header[data-scrolled] .r46-header__bar { height: 72px; }
+    .v2--route46 .r46-header__logo .v2-logo { height: 72px; }
+    .v2--route46 .r46-header[data-scrolled] .v2-logo { transform: scale(0.75); }
+    .v2--route46 .r46-menu-btn { display: none; }
+    .v2--route46 .r46-nav { display: block; }
+    .v2--route46 .r46-nav ul { display: flex; gap: clamp(1rem, 2.2vw, 2rem); }
+    .v2--route46 .r46-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.75rem;
+      border-bottom: 2px solid transparent;
+      color: var(--r46-forest);
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color 150ms ease;
+    }
+    .v2--route46 .r46-nav a:hover,
+    .v2--route46 .r46-nav a[aria-current] { border-bottom-color: var(--r46-tan-ink); }
+  }
+
+  /* ------------------------------------------------------------ mobile menu */
+  .v2--route46 .r46-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 850;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem var(--r46-gutter) 2rem;
+    overflow-y: auto;
+    background: var(--r46-white);
+  }
+  .v2--route46 .r46-menu[hidden] { display: none; }
+  .v2--route46 .r46-menu__close {
+    align-self: flex-end;
+    min-width: 4.5rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 2px solid var(--r46-forest);
+    border-radius: 2px;
+    background: var(--r46-white);
+    color: var(--r46-forest);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .v2--route46 .r46-menu nav a {
+    display: block;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--r46-rule);
+    color: var(--r46-olive);
+    font-family: var(--r46-serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+  .v2--route46 .r46-menu__actions { display: grid; gap: 0.75rem; }
+
+  /* ------------------------------------------------------------------- hero */
+  .v2--route46 .r46-hero__photo {
+    position: relative;
+    z-index: 1;
+    /* The one shadow on the page: soft, under the photo, as he had it. */
+    box-shadow: 0 14px 28px -14px rgba(20, 42, 19, 0.45);
+  }
+  .v2--route46 .r46-hero__photo img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    /* The drop ceiling leaves the frame. */
+    object-position: center 72%;
+  }
+  @media (min-width: 48rem) {
+    .v2--route46 .r46-hero__photo img { aspect-ratio: 21 / 9; max-height: 640px; }
+  }
+  .v2--route46 .r46-hero__copy {
+    max-width: calc(55rem + 2 * var(--r46-gutter));
+    margin-inline: auto;
+    padding: clamp(2.5rem, 5vw, 4rem) var(--r46-gutter) 0;
+    text-align: center;
+  }
+  .v2--route46 .r46-hero h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    color: var(--r46-olive);
+    font-size: clamp(1.75rem, 3.6vw, 3rem);
+    line-height: 1.2;
+  }
+  /* His two dashes either side of the headline, done properly. */
+  @media (min-width: 64rem) {
+    .v2--route46 .r46-hero h1 span { max-width: 12.5em; }
+    .v2--route46 .r46-hero h1::before,
+    .v2--route46 .r46-hero h1::after {
+      content: '';
+      flex: none;
+      width: 3rem;
+      height: 2px;
+      background: var(--r46-tan);
+    }
+  }
+  .v2--route46 .r46-lead { max-width: 40rem; margin: 1.25rem auto 0; font-size: 1.1875rem; line-height: 1.6; }
+  .v2--route46 .r46-hero .r46-actions { margin-top: 2rem; }
+
+  /* ------------------------------------------------------------------ proof */
+  .v2--route46 .r46-proof { padding-block: clamp(3rem, 6vw, 4.5rem) 0; }
+  .v2--route46 .r46-proof__badges {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.5rem, 8vw, 5rem);
+  }
+  .v2--route46 .r46-proof__badges img { width: 104px; }
+  .v2--route46 .r46-proof__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 2.5rem;
+    border-block: 1px solid var(--r46-rule);
+    text-align: center;
+  }
+  .v2--route46 .r46-proof__row li { padding: 1.5rem 0.75rem; }
+  .v2--route46 .r46-proof__row li:nth-child(even) { border-left: 1px solid var(--r46-rule); }
+  .v2--route46 .r46-proof__row li:nth-child(n + 3) { border-top: 1px solid var(--r46-rule); }
+  .v2--route46 .r46-proof__big {
+    color: var(--r46-olive);
+    font-family: var(--r46-serif);
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+    font-weight: 700;
+    font-variant-numeric: lining-nums tabular-nums;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+  .v2--route46 .r46-proof__label {
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+  .v2--route46 .r46-proof__note { margin-top: 0.125rem; color: var(--r46-tan-ink); font-size: 0.9375rem; line-height: 1.4; }
+  @media (min-width: 48rem) {
+    .v2--route46 .r46-proof__row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .v2--route46 .r46-proof__row li:nth-child(n) { border-top: 0; border-left: 0; }
+    .v2--route46 .r46-proof__row li + li { border-left: 1px solid var(--r46-rule); }
+  }
+
+  /* --------------------------------------------------- welcome, team, mission */
+  .v2--route46 .r46-welcome { padding-block: var(--r46-section); }
+  .v2--route46 .r46-welcome__body { max-width: 45rem; margin-inline: auto; font-size: 1.1875rem; line-height: 1.7; text-align: center; }
+  .v2--route46 .r46-boxes { display: grid; gap: 2.75rem 1.5rem; margin-top: clamp(3rem, 6vw, 4.5rem); }
+  @media (min-width: 64rem) {
+    .v2--route46 .r46-boxes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  /* His tabbed box: an olive border with the title sitting on the top edge. */
+  .v2--route46 .r46-box {
+    position: relative;
+    padding: 2.25rem 1.5rem 1.75rem;
+    border: 1px solid var(--r46-olive);
+  }
+  .v2--route46 .r46-box__tab {
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    max-width: calc(100% - 2rem);
+    padding-inline: 0.75rem;
+    transform: translateY(-50%);
+    background: var(--r46-white);
+    font-size: 1.0625rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .v2--route46 .r46-pledge {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--r46-rule);
+    color: var(--r46-olive);
+    font-family: var(--r46-serif);
+    font-size: 1.0625rem;
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .v2--route46 .v2-brands {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1rem;
+    margin-top: 1.5rem;
+  }
+  .v2--route46 .v2-brands__item { display: grid; place-items: center; min-height: 2.5rem; }
+
+  /* -------------------------------------------------------------- offerings */
+  .v2--route46 .r46-offer {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: calc(var(--r46-section) + 36px) var(--r46-section);
+    background: var(--r46-forest);
+  }
+  /* Never wider than the 1920px source. Past that the forest green takes over. */
+  .v2--route46 .r46-offer__bg,
+  .v2--route46 .r46-hunt__bg {
+    position: absolute;
+    inset: 0;
+    left: 50%;
+    z-index: -2;
+    width: 100%;
+    max-width: 1920px;
+    height: 100%;
+    transform: translateX(-50%);
+    object-fit: cover;
+  }
+  .v2--route46 .r46-offer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(20, 42, 19, 0.78);
+  }
+  .v2--route46 .r46-offer__grid { display: grid; gap: calc(2rem + 36px) 1.5rem; }
+  @media (min-width: 48rem) {
+    .v2--route46 .r46-offer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .v2--route46 .r46-offer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  .v2--route46 .r46-card {
+    position: relative;
+    padding: calc(36px + 1.25rem) 1.5rem 1.5rem;
+    background: var(--r46-white);
+    scroll-margin-top: calc(var(--v2-header-h) + 1rem + 36px);
+  }
+  /* The target sits half over the card's top edge. */
+  .v2--route46 .r46-card__target {
+    position: absolute;
+    top: -36px;
+    left: 50%;
+    width: 72px;
+    height: 72px;
+    margin-left: -36px;
+  }
+  .v2--route46 .r46-card h2 { font-size: 1.25rem; text-align: center; }
+  .v2--route46 .r46-card__line { margin-top: 0.5rem; text-align: center; line-height: 1.5; }
+  .v2--route46 .r46-facts { margin-top: 1.25rem; font-size: 0.9375rem; line-height: 1.4; }
+  .v2--route46 .r46-facts > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.5625rem;
+    border-top: 1px solid var(--r46-rule);
+  }
+  .v2--route46 .r46-facts dt { flex: 1 1 auto; }
+  .v2--route46 .r46-facts dd {
+    flex: 0 1 auto;
+    max-width: 62%;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  /* Signature move: the arrows find the targets.
+     The outer span sets the angle the arrow sticks in at, with its point on
+     the bullseye. The arrow inside flies along that line, then quivers. */
+  .v2--route46 .r46-shot {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    width: 92px;
+    margin-top: -4.6px;
+    color: var(--r46-forest);
+    --v2-arrow-fletch: var(--r46-tan);
+    transform: rotate(-18deg);
+    transform-origin: 100% 50%;
+    pointer-events: none;
+  }
+  .v2--route46 .r46-shot__arrow { max-width: none; transform-origin: 100% 50%; }
+  .v2-js .v2--route46 .r46-shot__arrow { opacity: 0; transform: translateX(-140px); }
+  .v2-js .v2--route46 .r46-card.is-hit .r46-shot__arrow {
+    animation:
+      r46-fly 500ms cubic-bezier(0.16, 0.8, 0.3, 1) var(--r46-delay, 0ms) forwards,
+      r46-quiver 300ms ease-in-out calc(var(--r46-delay, 0ms) + 500ms);
+  }
+  .v2--route46 .r46-card:nth-child(2) { --r46-delay: 180ms; }
+  .v2--route46 .r46-card:nth-child(3) { --r46-delay: 360ms; }
+  .v2--route46 .r46-card:nth-child(4) { --r46-delay: 540ms; }
+  .v2--route46 .r46-card:nth-child(5) { --r46-delay: 720ms; }
+  .v2--route46 .r46-card:nth-child(6) { --r46-delay: 900ms; }
+  /* On a phone each arrow lands when its own card enters. No queue. */
+  @media (max-width: 47.99rem) {
+    .v2--route46 .r46-card:nth-child(n) { --r46-delay: 0ms; }
+  }
+  @keyframes r46-fly {
+    from { opacity: 0; transform: translateX(-140px); }
+    20% { opacity: 1; }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes r46-quiver {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    50% { transform: rotate(-3deg); }
+    75% { transform: rotate(1.5deg); }
+  }
+  /* Reduced motion, or a script that never ran: every arrow already home. */
+  .v2-reveal-all .v2--route46 .r46-shot__arrow { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .v2-js .v2--route46 .r46-shot__arrow,
+    .v2-js .v2--route46 .r46-card.is-hit .r46-shot__arrow { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* -------------------------------------------------------------- hunt band */
+  .v2--route46 .r46-hunt {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    min-height: 440px;
+    padding: var(--r46-section) var(--r46-gutter);
+    overflow: hidden;
+    /* Two forest bands meet here. One tan rule keeps them apart. */
+    border-top: 3px solid var(--r46-tan);
+    background: var(--r46-deep);
+    color: var(--r46-white);
+    text-align: center;
+  }
+  .v2--route46 .r46-hunt::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(14, 28, 12, 0.62);
+  }
+  .v2--route46 .r46-hunt__copy { max-width: 44rem; }
+  .v2--route46 .r46-hunt h2 { color: var(--r46-white); font-size: clamp(1.625rem, 1.2rem + 2vw, 2.5rem); }
+  .v2--route46 .r46-hunt p { margin-top: 1rem; font-size: 1.125rem; }
+  .v2--route46 .r46-hunt .r46-btn { margin-top: 1.75rem; }
+  /* Olive on a dark photo needs an edge to read as a button. */
+  .v2--route46 .r46-hunt .r46-btn--primary { border-color: var(--r46-tan); }
+  .v2--route46 .r46-hunt .r46-btn--primary:hover { background: var(--r46-forest); border-color: var(--r46-tan); }
+
+  /* ------------------------------------------------------------------ about */
+  .v2--route46 .r46-about { padding-block: var(--r46-section); background: var(--r46-cream); }
+  .v2--route46 .r46-about__grid { display: grid; gap: 2.5rem; align-items: start; }
+  @media (min-width: 64rem) {
+    .v2--route46 .r46-about__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 35rem); gap: 4rem; }
+  }
+  .v2--route46 .r46-about h2 { margin-top: 0.5rem; }
+  .v2--route46 .r46-about__copy > p:not(.r46-eyebrow) { max-width: 38rem; margin-top: 1rem; }
+  .v2--route46 .r46-timeline {
+    display: grid;
+    gap: 1rem 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--r46-rule);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  .v2--route46 .r46-timeline li { display: grid; gap: 0.125rem; }
+  .v2--route46 .r46-timeline__year {
+    color: var(--r46-olive);
+    font-family: var(--r46-serif);
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  @media (min-width: 36rem) {
+    .v2--route46 .r46-timeline { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  /* counter-three-men.jpg: never past 560px. */
+  .v2--route46 .r46-about__photo img { width: 100%; max-width: 560px; border: 1px solid var(--r46-rule); }
+  .v2--route46 .r46-archive { margin-top: clamp(3rem, 6vw, 4.5rem); padding-top: 2rem; border-top: 1px solid var(--r46-rule); }
+  .v2--route46 .r46-archive ul {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 320px));
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+    margin-top: 1.25rem;
+  }
+  /* Archive photos: never past 320px. */
+  .v2--route46 .r46-archive img {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    object-position: center 25%;
+    border: 1px solid var(--r46-rule);
+  }
+
+  /* ----------------------------------------------------------------- events */
+  .v2--route46 .r46-events { padding-block: var(--r46-section); }
+  .v2--route46 .r46-events__in { max-width: 55rem; }
+  .v2--route46 .r46-events__rows { margin-top: 1.5rem; border-bottom: 1px solid var(--r46-rule); }
+  .v2--route46 .r46-events__rows > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1.5rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--r46-rule);
+  }
+  .v2--route46 .r46-events__rows dt { font-family: var(--r46-serif); font-size: 1.125rem; font-weight: 700; }
+  .v2--route46 .r46-events__rows dd { color: var(--r46-tan-ink); font-weight: 700; }
+  .v2--route46 .r46-events__note { margin-top: 1.25rem; }
+
+  /* ------------------------------------------------------------------ visit */
+  .v2--route46 .r46-visit { padding-block: var(--r46-section); background: var(--r46-cream); }
+  .v2--route46 .r46-visit__grid { display: grid; gap: 2.5rem; margin-top: 2rem; }
+  @media (min-width: 64rem) {
+    .v2--route46 .r46-visit__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.2fr); gap: 3.5rem; }
+  }
+  .v2--route46 .r46-visit h3 { margin-bottom: 0.875rem; padding-bottom: 0.625rem; border-bottom: 1px solid var(--r46-olive); }
+  .v2--route46 .r46-visit address { font-style: normal; }
+  .v2--route46 .r46-visit__phone { margin-block: 0.5rem 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .v2--route46 .r46-visit__formline { margin-bottom: 1.25rem; }
+  .v2--route46 .r46-visit .v2-hours th,
+  .v2--route46 .r46-visit .v2-hours td { padding-block: 0.5rem; border-bottom: 1px solid var(--r46-rule); }
+  .v2--route46 .r46-visit .v2-hours tr[data-today] th,
+  .v2--route46 .r46-visit .v2-hours tr[data-today] td { color: var(--r46-olive); font-weight: 700; }
+  .v2--route46 .r46-visit .v2-hours tr[data-today] th::before {
+    content: '';
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+    background: var(--r46-olive);
+  }
+
+  .v2--route46 .v2-form { display: grid; gap: 1rem; }
+  .v2--route46 .v2-form label { font-size: 0.875rem; font-weight: 700; letter-spacing: 0.04em; }
+  .v2--route46 .v2-form input:not([type='hidden']),
+  .v2--route46 .v2-form textarea {
+    padding: 0.75rem 0.875rem;
+    border: 1px solid #6f6a5f;
+    border-radius: 2px;
+    background: var(--r46-white);
+    color: var(--r46-ink);
+  }
+  .v2--route46 .v2-form input:focus-visible,
+  .v2--route46 .v2-form textarea:focus-visible { outline: 2px solid var(--r46-olive); outline-offset: 2px; }
+  .v2--route46 .v2-form__button {
+    justify-self: start;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--r46-olive);
+    border-radius: 2px;
+    background: var(--r46-olive);
+    color: var(--r46-white);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: background-color 150ms ease, border-color 150ms ease;
+  }
+  .v2--route46 .v2-form__button:hover { background: var(--r46-forest); border-color: var(--r46-forest); }
+  .v2--route46 .v2-form__note { padding: 0.75rem 1rem; border-left: 3px solid var(--r46-olive); background: var(--r46-white); font-weight: 700; }
+
+  /* ----------------------------------------------------------------- footer */
+  .v2--route46 .r46-footer { background: var(--r46-forest); color: var(--r46-white); font-size: 0.9375rem; }
+  .v2--route46 .r46-footer a { text-underline-offset: 0.2em; }
+  .v2--route46 .r46-footer__cols { display: grid; gap: 2.5rem; padding-block: clamp(3rem, 6vw, 4.5rem) 2.5rem; }
+  @media (min-width: 40rem) {
+    .v2--route46 .r46-footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .v2--route46 .r46-footer__cols { grid-template-columns: 1.15fr 1fr 1.1fr 1fr; gap: 3rem; }
+  }
+  /* His four small targets, one marking each column. */
+  .v2--route46 .r46-footer__target { width: 48px; height: 48px; margin-bottom: 1.25rem; }
+  .v2--route46 .r46-footer h2 { margin-bottom: 0.875rem; color: var(--r46-tan); font-size: 1rem; }
+  .v2--route46 .r46-footer .v2-logo { width: auto; height: 64px; margin-bottom: 1rem; }
+  .v2--route46 .r46-footer__tagline { margin-top: 0.25rem; color: var(--r46-tan); font-family: var(--r46-serif); font-style: italic; }
+  .v2--route46 .r46-footer address { font-style: normal; }
+  .v2--route46 .r46-footer__col p + p,
+  .v2--route46 .r46-footer__col address + p { margin-top: 0.5rem; }
+  .v2--route46 .r46-footer__col a { font-weight: 700; }
+  .v2--route46 .r46-footer__events > div + div { margin-top: 0.75rem; }
+  .v2--route46 .r46-footer__events dt { font-weight: 700; }
+  .v2--route46 .r46-footer .v2-hours th,
+  .v2--route46 .r46-footer .v2-hours td { padding-block: 0.1875rem; }
+  .v2--route46 .r46-footer .v2-hours tr[data-today] th,
+  .v2--route46 .r46-footer .v2-hours tr[data-today] td { color: var(--r46-tan); font-weight: 700; }
+
+  .v2--route46 .r46-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .v2--route46 .r46-footer__links nav ul { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
+  .v2--route46 .r46-footer__links nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+  }
+  .v2--route46 .r46-footer__links nav a:hover { text-decoration: underline; }
+  .v2--route46 .r46-footer__email { overflow-wrap: anywhere; }
+  .v2--route46 .r46-footer .r46-social { display: flex; }
+
+  .v2--route46 .r46-footer__legal { background: var(--r46-deep); font-size: 0.875rem; }
+  .v2--route46 .r46-footer__legal-in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-block: 1.25rem;
+  }
+  .v2--route46 .r46-footer__lws { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; text-decoration: none; }
+  .v2--route46 .r46-footer__lws img { width: 150px; height: auto; }
+  .v2--route46 .r46-footer__lws:hover span { text-decoration: underline; }
+</style>

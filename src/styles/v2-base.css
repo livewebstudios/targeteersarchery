@@ -12,8 +12,6 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  /* Anchored jumps clear the sticky header. Each demo sets --v2-header-h. */
-  scroll-padding-top: calc(var(--v2-header-h, 5rem) + 1rem);
   /* tokens.css is loaded for the gate and declares a dark scheme. The demos
      are light unless a demo says otherwise. */
   color-scheme: light;
@@ -35,6 +33,13 @@ button { cursor: pointer; }
 ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
 
 a { color: inherit; }
+
+/* Anchored jumps clear the sticky header. Each demo sets --v2-header-h. */
+.v2 [id] { scroll-margin-top: calc(var(--v2-header-h, 5rem) + 1rem); }
+
+/* The page behind an open mobile menu does not scroll. */
+.v2-menu-open,
+.v2-menu-open body { overflow: hidden; }
 
 /* Long words (the email address) may break on a phone. */
 a[href^='mailto:'] { overflow-wrap: anywhere; }

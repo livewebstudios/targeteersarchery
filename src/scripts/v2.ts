@@ -3,6 +3,7 @@
  *
  *   reveal        [data-reveal] gets .is-in once, when it scrolls into view
  *   header state  [data-v2-header] gets data-scrolled after 24px of scroll
+ *   current link  [data-v2-nav] links get aria-current for the section on screen
  *   mobile menu   [data-v2-menu-button] opens [data-v2-menu], focus trapped
  *   open now      [data-v2-open] reads the hours JSON, answers in Eastern time
  *   today's row   [data-v2-hours] rows get data-today for the current day
@@ -42,6 +43,49 @@ function headerState(): void {
   const update = () => {
     ticking = false;
     header.toggleAttribute('data-scrolled', window.scrollY > 24);
+  };
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    },
+    { passive: true },
+  );
+  update();
+}
+
+/* --------------------------------------------------------- current section */
+/** Marks the menu link for the section on screen with aria-current. */
+function currentSection(): void {
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('[data-v2-nav] a[href^="#"]'),
+  );
+  if (links.length === 0) return;
+  const targets = links
+    .map((a) => ({ a, el: document.getElementById(a.hash.slice(1)) }))
+    .filter((t): t is { a: HTMLAnchorElement; el: HTMLElement } => !!t.el && t.el !== document.body);
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    // The section whose top most recently crossed the upper third of the screen.
+    const line = window.innerHeight * 0.35;
+    let active: HTMLAnchorElement | null = null;
+    let best = -Infinity;
+    for (const t of targets) {
+      const top = t.el.getBoundingClientRect().top;
+      if (top <= line && top > best) {
+        best = top;
+        active = t.a;
+      }
+    }
+    for (const a of links) {
+      const on = active ? a === active : a.hash === '#top';
+      if (on) a.setAttribute('aria-current', 'location');
+      else a.removeAttribute('aria-current');
+    }
   };
   window.addEventListener(
     'scroll',
@@ -217,6 +261,7 @@ function formGuard(): void {
 
 reveal();
 headerState();
+currentSection();
 mobileMenu();
 openNow();
 formGuard();
