@@ -1,12 +1,16 @@
 ---
 /**
  * Rob's logo, always an <img>, never recolored, redrawn, stretched or cropped.
- * Two files exist: the transparent one for light backgrounds and the one with
- * a white keyline for dark backgrounds.
+ *
+ * Two files exist. logoRGB.png is the real one: true transparency, white
+ * keyline. logo.png is meant for light backgrounds but is NOT transparent: a
+ * grey and white checkerboard is baked into its pixels, so it cannot sit on
+ * any background. Until a clean light file exists, both values of `on` render
+ * logoRGB.png. On white the keyline disappears; on paper it reads as a thin
+ * sticker edge. The prop stays so the swap is one line when a file arrives.
  */
 import { Image } from 'astro:assets';
-import logoLight from '~/assets/brand/logo.png';
-import logoDark from '~/assets/brand/logoRGB.png';
+import logoKeyline from '~/assets/brand/logoRGB.png';
 
 interface Props {
   /** The background the logo sits on. */
@@ -19,13 +23,13 @@ interface Props {
 }
 const { on, height, class: klass, eager = false } = Astro.props;
 
-const src = on === 'dark' ? logoDark : logoLight;
-/* Never wider than 396px: half the source width keeps it sharp on retina. */
+const src = logoKeyline;
+/* Never wider than 396px. */
 const width = Math.min(396, Math.round((height * src.width) / src.height));
 const h = Math.round((width * src.height) / src.width);
 ---
 <Image
-  class:list={['v2-logo', klass]}
+  class:list={['v2-logo', `v2-logo--on-${on}`, klass]}
   src={src}
   alt="Targeteers Archery Pro Shop"
   width={width}

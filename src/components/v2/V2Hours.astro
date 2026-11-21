@@ -1,0 +1,31 @@
+---
+/**
+ * The hours table, straight from business.ts. Day left, hours right, tabular
+ * numerals. v2.ts marks today's row (data-today) in the shop's time zone.
+ */
+import { hours, formatTime } from '~/data/business';
+
+interface Props { class?: string; }
+const { class: klass } = Astro.props;
+---
+<!-- CONFIRM: Thursday closing time. The database said 7 pm, the 2025 live footer said 5 pm. -->
+<table class:list={['v2-hours', klass]} data-v2-hours>
+  <caption class="vh">Shop hours</caption>
+  <tbody>
+    {hours.map((h) => (
+      <tr data-day={h.day}>
+        <th scope="row">
+          {h.label}
+          <span class="vh" data-today-flag hidden> (today)</span>
+        </th>
+        <td>{h.closed ? 'Closed' : `${formatTime(h.open!)} to ${formatTime(h.close!)}`}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+<style is:global>
+  .v2-hours { width: 100%; border-collapse: collapse; }
+  .v2-hours th { text-align: left; font-weight: inherit; }
+  .v2-hours td { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+</style>

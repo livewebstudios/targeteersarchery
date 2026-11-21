@@ -1,0 +1,24 @@
+---
+/**
+ * Open or closed right now, in the shop's own time zone. The hours go into a
+ * data attribute and v2.ts works out the answer in America/New_York, so the
+ * line is right for a visitor anywhere. Without scripting it falls back to a
+ * plain pointer at the hours table.
+ */
+import { hours } from '~/data/business';
+
+interface Props { class?: string; }
+const { class: klass } = Astro.props;
+
+const rows = hours.map((h) => ({
+  day: h.day,
+  short: h.label.slice(0, 3).toUpperCase(),
+  closed: !!h.closed,
+  open: h.open,
+  close: h.close,
+}));
+---
+<span class:list={['v2-open', klass]} data-v2-open data-hours={JSON.stringify(rows)}>
+  <span class="v2-open__dot" aria-hidden="true"></span>
+  <span data-v2-open-text>See hours below</span>
+</span>

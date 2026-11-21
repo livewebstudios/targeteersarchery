@@ -9,7 +9,33 @@
  * Phone, address, hours, socials, directions, brands, Formspree and GA4 come
  * from business.ts. Nothing here duplicates them.
  */
+import type { ImageMetadata } from 'astro';
 import { business } from './business';
+
+/* Rob's own photos, in their upgraded versions (see ../assets/v2-photos/README.md). */
+import showroom02 from '~/assets/v2/showroom-02.jpg';
+import wallOfBowsHero from '~/assets/v2/wall-of-bows-hero.jpg';
+import counterThreeMen from '~/assets/v2/counter-three-men.jpg';
+import bows03 from '~/assets/v2/bows-03.jpg';
+import bows01 from '~/assets/v2/bows-01.jpg';
+import rangeWide from '~/assets/v2/range-wide.jpg';
+import robAtTheBench from '~/assets/v2/rob-at-the-bench.jpg';
+import coachingKid from '~/assets/v2/coaching-kid.jpg';
+import adultWide from '~/assets/v2/adult-wide.jpg';
+import campWide from '~/assets/v2/camp-wide.jpg';
+import yukon from '~/assets/v2/yukon.jpg';
+import britishColumbia from '~/assets/v2/british-columbia.jpg';
+import archiveOutdoorRange from '~/assets/v2/archive-outdoor-range.jpg';
+import archiveGroupTarget from '~/assets/v2/archive-group-target.jpg';
+import counterAtTheRegister from '~/assets/v2/counter-at-the-register.jpg';
+import robHoyt from '~/assets/v2/rob-hoyt.jpg';
+/* Not upgraded. Both sit under a dark wash in Demo 1 only. */
+import forestWide from '~/assets/hunting/forest-wide.jpg';
+import bigWoods from '~/assets/hunting/big-woods.jpg';
+import target from '~/assets/brand/target.png';
+import badgeDealer2007 from '~/assets/awards/dealer-of-the-year-2007.jpg';
+import badgeHoytTop50 from '~/assets/awards/hoyt-top-50.jpg';
+import badgeFamilyOwned from '~/assets/awards/family-owned-badge.jpg';
 
 export type Fact = { label: string; value: string };
 export type Action = { label: string; href: string };
@@ -209,3 +235,108 @@ export const v2Demos = [
   { id: 2, name: 'BLACKOUT', href: '/v2/2-blackout/' },
   { id: 3, name: 'SINCE 1957', href: '/v2/3-since-1957/' },
 ] as const;
+
+/* ------------------------------------------------------------------ photos */
+
+/**
+ * A photo, its alt text and the widest it may ever be displayed, in CSS px.
+ * The cap comes from the handoff's display table: the cleaned up files hold no
+ * new detail, so they stay small. `cap: 0` means the file can run full width.
+ */
+export interface Photo {
+  src: ImageMetadata;
+  alt: string;
+  cap: number;
+}
+
+/**
+ * srcset widths for a photo shown at the given CSS widths: each width at 1x
+ * and 2x, never past the source file.
+ */
+export function v2Widths(src: ImageMetadata, ...display: number[]): number[] {
+  const wanted = display.flatMap((w) => [w, w * 2]).map((w) => Math.min(Math.round(w), src.width));
+  return [...new Set(wanted)].sort((a, b) => a - b);
+}
+
+export const photos = {
+  /** Demo 1 hero. The hero from his old site. */
+  hero1: {
+    src: showroom02,
+    alt: 'The Targeteers showroom: racks of camouflage clothing, display cases and an Easton sign under track lighting',
+    cap: 0,
+  },
+  /** Demo 2 hero, 16:9. */
+  hero2: {
+    src: wallOfBowsHero,
+    alt: 'A long row of compound bows hanging on the showroom wall',
+    cap: 0,
+  },
+  /** Demo 3 hero pair, and About in all three. */
+  then: {
+    src: counterThreeMen,
+    alt: 'Three men behind the shop counter in an old sepia photograph',
+    cap: 560,
+  },
+  now: {
+    src: bows03,
+    alt: 'Compound bows on a rack in the showroom today, a deer mount on the wall beside them',
+    cap: 1200,
+  },
+  /** One per offering. The alt text is the offering's own imageAlt. */
+  offering: {
+    showroom: { src: bows01, cap: 1200 },
+    range: { src: rangeWide, cap: 0 },
+    services: { src: robAtTheBench, cap: 480 },
+    lessons: { src: coachingKid, cap: 420 },
+    leagues: { src: adultWide, cap: 760 },
+    kids: { src: campWide, cap: 900 },
+  } satisfies Record<OfferingId, { src: ImageMetadata; cap: number }>,
+  /** Demo 1 hunt band. Decorative, under a dark wash. */
+  hunt1: { src: forestWide, alt: '', cap: 0 },
+  /** Demo 2 hunt band. */
+  hunt2: {
+    src: yukon,
+    alt: 'A hunter in camouflage glassing a wide valley at sunset in the Yukon',
+    cap: 0,
+  },
+  /** Demo 3 hunt band. */
+  hunt3: {
+    src: britishColumbia,
+    alt: 'A hunter on horseback in the snow below a mountain in British Columbia',
+    cap: 0,
+  },
+  /** Demo 1 offerings band backdrop. Decorative, under a dark wash. */
+  forest: { src: bigWoods, alt: '', cap: 0 },
+  /** "Back in the Days" strip. */
+  archive: [
+    {
+      src: archiveOutdoorRange,
+      alt: 'An archer at full draw outdoors in an old black and white photograph',
+      cap: 340,
+    },
+    {
+      src: archiveGroupTarget,
+      alt: 'A group gathered around a target in an old photograph, one man pointing at the center',
+      cap: 340,
+    },
+    {
+      src: counterAtTheRegister,
+      alt: 'A woman at the register behind the shop counter in an old photograph',
+      cap: 400,
+    },
+  ] as Photo[],
+  /** Demo 3 About. */
+  dealerProof: {
+    src: robHoyt,
+    alt: 'Rob holding a Hoyt Archery Premier Dealer sign in front of the Targeteers logo',
+    cap: 520,
+  },
+  /** Demo 1 cards and footer. Decorative. */
+  target: { src: target, alt: '', cap: 256 },
+  /** Demo 1 only, 104px wide. Not upgraded: 110px is the cap. */
+  badges: [
+    { src: badgeDealer2007, alt: 'Archery Business 2007 Dealer of the Year badge', cap: 110 },
+    { src: badgeHoytTop50, alt: 'Top 50 Hoyt Dealer badge', cap: 110 },
+    { src: badgeFamilyOwned, alt: 'Family owned and operated since 1957 badge', cap: 110 },
+  ] as Photo[],
+} as const;

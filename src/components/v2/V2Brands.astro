@@ -1,0 +1,67 @@
+---
+/**
+ * The eight dealer brands from business.ts (the first entry is Targeteers
+ * itself and is skipped). No links. alt is the brand name.
+ *
+ *   color       every mark as supplied
+ *   mono-dark   one dark color, set by the demo with a CSS filter
+ *   mono-light  one light color, set by the demo with a CSS filter
+ *
+ * Three marks do not survive a one-color filter and print as a caps wordmark
+ * in the mono modes instead: Hoyt (a chrome 3D badge), TenPoint (sits on a
+ * black plate) and Easton (its boxed E turns into a blank block).
+ *
+ * Structure only. Each demo styles the row.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { brands } from '~/data/business';
+
+interface Props {
+  mode: 'color' | 'mono-dark' | 'mono-light';
+  /** The box each mark is fitted into, in px. */
+  maxWidth: number;
+  maxHeight: number;
+  class?: string;
+}
+const { mode, maxWidth, maxHeight, class: klass } = Astro.props;
+
+const files = import.meta.glob<{ default: ImageMetadata }>('~/assets/brands/*.{svg,png}', {
+  eager: true,
+});
+const fileFor = (slug: string): ImageMetadata | undefined =>
+  Object.entries(files).find(([path]) => path.split('/').pop()?.replace(/\.[^.]+$/, '') === slug)?.[1]
+    .default;
+
+const WORDMARK_IN_MONO = new Set(['hoyt', 'tenpoint', 'easton']);
+/* The wordmark is the short trade name, not the long form used for alt text. */
+const WORD: Record<string, string> = { hoyt: 'Hoyt', tenpoint: 'TenPoint', easton: 'Easton' };
+
+const items = brands.slice(1).map((b) => {
+  const src = fileFor(b.slug);
+  const asWord = !src || (mode !== 'color' && WORDMARK_IN_MONO.has(b.slug));
+  if (asWord || !src) return { ...b, word: WORD[b.slug] ?? b.name, src: undefined, w: 0, h: 0 };
+  const scale = Math.min(maxWidth / src.width, maxHeight / src.height);
+  return { ...b, word: '', src, w: Math.round(src.width * scale), h: Math.round(src.height * scale) };
+});
+---
+<ul class:list={['v2-brands', `v2-brands--${mode}`, klass]} role="list">
+  {items.map((b) => (
+    <li class="v2-brands__item" data-brand={b.slug}>
+      {b.src ? (
+        <Image
+          class="v2-brands__mark"
+          src={b.src}
+          alt={b.name}
+          width={b.w}
+          height={b.h}
+          widths={b.src.format === 'svg' ? undefined : [b.w, Math.min(b.w * 2, b.src.width)]}
+          sizes={b.src.format === 'svg' ? undefined : `${b.w}px`}
+          loading="lazy"
+        />
+      ) : (
+        <span class="v2-brands__word">{b.word}</span>
+      )}
+    </li>
+  ))}
+</ul>
