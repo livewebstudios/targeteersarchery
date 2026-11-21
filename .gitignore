@@ -27,3 +27,6 @@ qa/
 
 # Session handoff notes are local only
 /26_*_handoff.md
+
+# windows folder config
+desktop.ini

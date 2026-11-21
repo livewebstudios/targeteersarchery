@@ -1,0 +1,20 @@
+# Targeteers v2 home demos: open questions and judgment calls
+
+Session date: 2026-11-21. Branch: `demo/home-v2`. Logged as each call was made.
+
+## Task 1: pre-flight, v1 removal, routes
+
+1. **Pre-flight state matched the handoff.** `main` at `d607c19` with exactly 11 modified tracked files, no untracked files. `git restore .` discarded them. Baseline `npm run build` passed (45 pages) before any change.
+2. **`src/data/scenes.ts` stays.** It is on the delete list, but `src/layouts/Base.astro` and `src/components/Backdrop.astro` both import it, and every inner page is built on `Base.astro`. Deleting it breaks the build.
+3. **`src/assets/demo-scenes/` stays.** `scenes.ts` imports all eight files, so the folder has to stay with it. Nothing in v2 imports either one. Both go in the promote step, when the Trailhead skin comes out.
+4. **`src/data/home.ts` stays.** `src/components/FactList.astro` and `src/components/TaskIcon.astro` import types from it. Both components are orphans now (only the deleted v1 pages and the old home page used them), but the handoff says existing components are not to be edited, and `astro check` fails if their import cannot resolve. Nothing in v2 imports `home.ts`.
+5. **Deleted as listed:** `src/pages/demos/` (4 files), `src/components/demo/` (4 files), `src/layouts/DemoBase.astro`, `src/styles/demo.css`, and the Trailhead content of `src/pages/index.astro` (replaced by the chooser).
+6. **`desktop.ini` added to `.gitignore`.** It was not there.
+7. **Gate check passed, with two fixes inside `V2Base.astro`.** The gate was leaning on `global.css` for inherited body values (font size, line height, font synthesis, link underline thickness) and on `Base.astro` for its two typefaces. Both are restated in `V2Base.astro`: a few rules scoped under `#site-gate`, plus the gate's two `@font-face` sets (Familjen Grotesk and Instrument Sans). `SiteGate.astro` is untouched. Result: screenshots of the gate on `/about/` (old layout) against `/`, `/v2/` and `/v2/1-route-46/` differ by 0 pixels at 1440 and at 390.
+8. **The gate's fonts are declared on every v2 page but not downloaded by the demos.** A browser only fetches a face that visible text uses, and the gate is `display: none` once it is down. So "each demo loads only its own fonts" still holds on the network. Checked in task 6.
+9. **Reveal start state hangs off a `.v2-js` class** set by a tiny inline script in the head (same pattern `DemoBase.astro` used), with a 2.5s failsafe. A visitor with scripting off, or a script that fails, sees the whole page.
+10. **Open-now wording for the one case the handoff does not show.** Closed now but opening later the same day reads `CLOSED · OPENS TODAY 12 PM`. The two given formats (`OPEN NOW · UNTIL 7 PM`, `CLOSED · OPENS TUE 12 PM`) are as written.
+11. **Demo CSS is global and namespaced, not Astro-scoped.** Each demo page carries one `<style is:global>` block with every selector under its own body class (`.v2--route46`, `.v2--blackout`, `.v2--since1957`). Astro still ships it only on that page. Reason: each demo has to style the insides of the shared kit (hours table, form, brand row), which Astro's scoped styles cannot reach without a `:global()` on every line.
+12. **Asset paths.** Icons, the manifest and the `verifiedsecured.png` badge use relative paths. Photos go through `astro:assets`, which emits `/_astro/...` on its own and cannot be made relative without a `base` setting. Page links between the four v2 routes use the root paths given in the handoff deck (`/v2/1-route-46/`).
+13. **`/` stays in the sitemap on this branch.** The handoff asked for one filter clause (`/v2`). `/` is now the noindex chooser, so the sitemap lists one noindex URL. Harmless on a preview branch that never merges. Not changed.
+14. **Local ports.** 4321 and 4322 were already in use by other client projects' dev servers on this Mac. Left alone. This session used 4325 (dev) and 4390 (preview). `scripts/qa-screens-v2.mjs` reads `QA_BASE`, default `http://localhost:4390`.
