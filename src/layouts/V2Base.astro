@@ -3,8 +3,8 @@
  * Layout for the v2 home page demos: the chooser at / and /v2/, and the three
  * demos under /v2/.
  *
- * It carries the head, the pre-launch gate, the skip link, the slots, the
- * review switcher and the mobile action bar. It carries no look. Each demo
+ * It carries the head, the pre-launch gate, the skip link, the slots and
+ * the mobile action bar. It carries no look. Each demo
  * page brings its own fonts, tokens, markup and CSS.
  *
  * global.css is deliberately not imported: its glass rules must not reach v2.
@@ -27,7 +27,6 @@ import JsonLd from '~/components/seo/JsonLd.astro';
 import { localBusinessSchema } from '~/components/seo/localBusiness';
 import SiteGate from '~/components/SiteGate.astro';
 import V2ActionBar from '~/components/v2/V2ActionBar.astro';
-import V2Switcher from '~/components/v2/V2Switcher.astro';
 
 export interface Props extends Omit<SeoProps, 'noindex'> {
   /** 0 is the chooser, 1 to 3 the demos. */
@@ -107,8 +106,6 @@ const bodyClass = ['v2', `v2--${theme}`, hasBar ? 'v2--has-bar' : ''].filter(Boo
     <main id="main"><slot /></main>
     <slot name="footer" />
     {hasBar && <V2ActionBar />}
-    {/* Review aid. Comes out before launch. */}
-    <V2Switcher current={demo} />
 
     <script src="~/scripts/v2.ts"></script>
   </body>

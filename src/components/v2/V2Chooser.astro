@@ -29,7 +29,7 @@ const shots = { 1: photos.hero1, 2: photos.hero2, 3: photos.then } as const;
   <ul class="chooser__cards" role="list">
     {v2Demos.map((d) => (
       <li>
-        <a class="chooser__card" href={d.href}>
+        <a class="chooser__card" href={d.href} target="_blank" rel="noopener">
           <Image
             class="chooser__photo"
             src={shots[d.id].src}
@@ -39,7 +39,7 @@ const shots = { 1: photos.hero1, 2: photos.hero2, 3: photos.then } as const;
             loading={d.id === 1 ? 'eager' : 'lazy'}
           />
           <p class="chooser__num">{d.id}</p>
-          <h2>{d.name}</h2>
+          <h2>{d.name}<span class="vh"> (opens in a new tab)</span></h2>
           <p class="chooser__line">{lines[d.id]}</p>
         </a>
       </li>

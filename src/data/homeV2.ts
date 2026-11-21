@@ -229,7 +229,7 @@ export const footer = {
   credit: 'Built by Live Web Studios',
 };
 
-/** The three demos, for the switcher and the chooser. */
+/** The three demos, for the chooser. */
 export const v2Demos = [
   { id: 1, name: 'ROUTE 46', href: '/v2/1-route-46/' },
   { id: 2, name: 'BLACKOUT', href: '/v2/2-blackout/' },

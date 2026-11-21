@@ -198,7 +198,7 @@ async function loadAll(page) {
   check('open now: right for Eastern time on a faked clock (5 cases x 3 demos)', bad.length === 0, bad.join(' | '));
 }
 
-/* ------------------------------------------------- menu, form, switcher */
+/* ------------------------------------------------- menu, form, chooser */
 {
   const bad = [];
   for (const [name, route] of DEMOS) {
@@ -256,20 +256,24 @@ async function loadAll(page) {
 }
 {
   const bad = [];
-  const want = ['/v2/', '/v2/1-route-46/', '/v2/2-blackout/', '/v2/3-since-1957/'];
-  for (const [name, route] of ALL) {
+  const want = ['/v2/1-route-46/', '/v2/2-blackout/', '/v2/3-since-1957/'];
+  for (const route of ['/', '/v2/']) {
     const page = await open(route);
-    const links = await page.$$eval('.v2-switcher a', (els) => els.map((a) => new URL(a.href).pathname));
-    const current = await page.$$eval('.v2-switcher a[aria-current="page"]', (els) => els.map((a) => new URL(a.href).pathname));
-    if (links.join() !== want.join()) bad.push(`${name}: ${links.join(',')}`);
-    if (current.length !== 1 || (route !== '/' && current[0] !== route)) bad.push(`${name}: current is ${current.join(',')}`);
+    const links = await page.$$eval('.chooser__card', (els) => els.map((a) => ({ path: new URL(a.href).pathname, target: a.target, rel: a.rel })));
+    if (links.map((l) => l.path).join() !== want.join()) bad.push(`${route}: ${links.map((l) => l.path).join(',')}`);
+    for (const l of links) if (l.target !== '_blank' || !l.rel.includes('noopener')) bad.push(`${route}: ${l.path} does not open in a new tab`);
     for (const target of want) {
       const res = await page.evaluate(async (u) => (await fetch(u)).status, target);
-      if (res !== 200) bad.push(`${name}: ${target} gave ${res}`);
+      if (res !== 200) bad.push(`${route}: ${target} gave ${res}`);
     }
     await page.done();
   }
-  check('switcher: reaches all four pages from all four pages', bad.length === 0, bad.join(' | '));
+  for (const [name, route] of ALL) {
+    const page = await open(route);
+    if (await page.$('.v2-switcher')) bad.push(`${name}: the review switcher is still on the page`);
+    await page.done();
+  }
+  check('chooser: reaches all three demos in a new tab, no switcher', bad.length === 0, bad.join(' | '));
 }
 
 /* --------------------------------------- horizontal scroll and photo caps */
@@ -379,8 +383,8 @@ async function loadAll(page) {
           };
         }).filter((i) => i.y >= 0 && i.y + i.h <= window.innerHeight));
       // Hide the glyphs, keep the layout, and photograph what sits behind them.
-      // The review switcher and the action bar float over the page. They are not its ground.
-      await page.addStyleTag({ content: `${textSel.split(',').map((s) => s.trim()).join(',')}{color:transparent!important;-webkit-text-stroke:0!important}.v2-switcher,.v2-actionbar{display:none!important}` });
+      // The action bar floats over the page. It is not its ground.
+      await page.addStyleTag({ content: `${textSel.split(',').map((s) => s.trim()).join(',')}{color:transparent!important;-webkit-text-stroke:0!important}.v2-actionbar{display:none!important}` });
       await sleep(250);
       const { data, info } = await sharp(await page.screenshot()).removeAlpha().raw().toBuffer({ resolveWithObject: true });
       for (const it of items) {

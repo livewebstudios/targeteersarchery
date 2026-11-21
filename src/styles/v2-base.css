@@ -127,5 +127,5 @@ a[href^='mailto:'] { overflow-wrap: anywhere; }
 }
 
 @media print {
-  .v2-switcher, .v2-actionbar { display: none !important; }
+  .v2-actionbar { display: none !important; }
 }
