@@ -16,6 +16,7 @@ import '@fontsource/zilla-slab/600.css';
 import '@fontsource/zilla-slab/700.css';
 import '@fontsource-variable/instrument-sans';
 
+import headlineFont from '@fontsource/zilla-slab/files/zilla-slab-latin-700-normal.woff2?url';
 import { Image } from 'astro:assets';
 import V2Base from '~/layouts/V2Base.astro';
 import V2Logo from '~/components/v2/V2Logo.astro';
@@ -47,14 +48,16 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
 <V2Base
   demo={3}
   theme="since1957"
-  title="Targeteers Archery Pro Shop | Saddle Brook, NJ | Demo 3, Since 1957"
+  title="Targeteers Archery Pro Shop | Demo 3, Since 1957"
   description={hero.lead}
 >
-  <Fragment slot="header">
+  <link slot="head" rel="preload" as="font" type="font/woff2" href={headlineFont} crossorigin />
+
+  <header class="v2-banner" slot="header">
     {/* One exact navy for the dealer marks: flood the mark's own shape. */}
     <svg class="s57-defs" width="0" height="0" aria-hidden="true" focusable="false">
       <filter id="s57-navy" color-interpolation-filters="sRGB">
-        <feFlood flood-color="#001840" result="ink" />
+        <feFlood result="ink" />
         <feComposite in="ink" in2="SourceAlpha" operator="in" />
       </filter>
     </svg>
@@ -69,7 +72,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
       </div>
     </div>
 
-    <header class="s57-header" data-v2-header>
+    <div class="s57-header" data-v2-header>
       <div class="s57-header__bar">
         <div class="s57-wrap s57-header__in">
           <nav class="s57-nav s57-nav--left" aria-label="Main" data-v2-nav>
@@ -86,7 +89,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
           <button class="s57-menu-btn" type="button" aria-expanded="false" aria-controls="s57-menu" data-v2-menu-button>MENU</button>
         </div>
       </div>
-    </header>
+    </div>
 
     <div class="s57-menu" id="s57-menu" data-v2-menu hidden>
       <button class="s57-menu__close" type="button" data-v2-menu-close>CLOSE</button>
@@ -100,7 +103,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
         <a class="s57-btn s57-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
       </div>
     </div>
-  </Fragment>
+  </header>
 
   {/* ------------------------------------------------------------------ hero */}
   <section class="s57-hero" aria-labelledby="s57-h1">
@@ -486,6 +489,12 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     --s57-orange: #e46024;  /* button fill only */
     --s57-tan: #fcba66;     /* accents on navy only */
     --s57-rule: #cfc4ad;
+    --s57-orange-hi: #f07a41; /* hover on the orange button, still navy text */
+    --s57-t-stop: 300ms;      /* a timeline stop coming up as the arrow passes */
+    /* The same colors as channels, for the scrim and hairlines on navy. */
+    --s57-navy-rgb: 0, 24, 64;
+    --s57-paper-rgb: 243, 237, 224;
+    --s57-tan-rgb: 252, 186, 102;
 
     --s57-slab: 'Zilla Slab', Rockwell, 'Roboto Slab', Georgia, serif;
     --s57-sans: 'Instrument Sans Variable', 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
@@ -495,7 +504,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     --v2-header-h: 76px;
     --v2-bar-bg: var(--s57-navy);
     --v2-bar-fg: var(--s57-tan);
-    --v2-bar-line: rgba(252, 186, 102, 0.32);
+    --v2-bar-line: rgba(var(--s57-tan-rgb), 0.32);
 
     background: var(--s57-paper);
     color: var(--s57-navy);
@@ -514,11 +523,13 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     padding-inline: var(--s57-gutter);
   }
   .v2--since1957 .s57-defs { position: absolute; }
+  /* The dealer marks are flooded with the one navy token. */
+  .v2--since1957 .s57-defs feFlood { flood-color: var(--s57-navy); }
 
   /* Sentence case throughout. Only the menu and the buttons are capitals. */
-  .v2--since1957 h1,
-  .v2--since1957 h2,
-  .v2--since1957 h3 {
+  /* Bare element rules stop at the gate, which shares this <body>. :where()
+     keeps the exclusion from adding an ID to the specificity. */
+  .v2--since1957 :is(h1, h2, h3):where(:not(#site-gate *)) {
     font-family: var(--s57-slab);
     font-weight: 700;
     letter-spacing: -0.005em;
@@ -527,7 +538,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
   }
   .v2--since1957 h2 { font-size: clamp(1.75rem, 1.3rem + 1.9vw, 2.75rem); }
   .v2--since1957 h3 { font-size: 1.5rem; font-weight: 600; }
-  .v2--since1957 p { text-wrap: pretty; }
+  .v2--since1957 p:where(:not(#site-gate *)) { text-wrap: pretty; }
 
   /* Section numbers in rust: No. 01, No. 02. */
   .v2--since1957 .s57-no {
@@ -573,12 +584,15 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     text-align: center;
     text-decoration: none;
     text-transform: uppercase;
-    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+    transition: background-color var(--v2-t-hover) var(--v2-ease), border-color var(--v2-t-hover) var(--v2-ease), color var(--v2-t-hover) var(--v2-ease);
   }
   .v2--since1957 .s57-btn:hover { background: var(--s57-navy); color: var(--s57-paper); }
   .v2--since1957 .s57-btn--primary { background: var(--s57-orange); border-color: var(--s57-orange); color: var(--s57-navy); }
-  .v2--since1957 .s57-btn--primary:hover { background: #f07a41; border-color: #f07a41; color: var(--s57-navy); }
+  .v2--since1957 .s57-btn--primary:hover { background: var(--s57-orange-hi); border-color: var(--s57-orange-hi); color: var(--s57-navy); }
   .v2--since1957 .s57-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  /* The base focus ring takes the text color. On the navy hunt band a navy
+     ring would vanish, so that button names its ring. */
+  .v2--since1957 .s57-hunt .s57-btn--primary:focus-visible { outline-color: var(--s57-paper); }
 
   /* ------------------------------------------------------------ utility bar */
   .v2--since1957 .s57-util { background: var(--s57-navy); color: var(--s57-paper); font-size: 0.8125rem; }
@@ -587,7 +601,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    min-height: 2.5rem;
+    min-height: 2.75rem;
   }
   .v2--since1957 .v2-open {
     display: inline-flex;
@@ -597,6 +611,11 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     letter-spacing: 0.1em;
     white-space: nowrap;
   }
+  /* 320px: the open line and the phone share one row with nothing to spare. */
+  @media (max-width: 22.4rem) {
+    .v2--since1957 .s57-util__in { gap: 0.5rem; }
+    .v2--since1957 .v2-open { gap: 0.375rem; letter-spacing: 0.04em; }
+  }
   .v2--since1957 .v2-open__dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--s57-tan); }
   .v2--since1957 .v2-open[data-state='closed'] .v2-open__dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--s57-tan); }
   .v2--since1957 .s57-util__right { display: flex; align-items: center; gap: 1.5rem; }
@@ -604,7 +623,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
   .v2--since1957 .s57-util__right a {
     display: inline-flex;
     align-items: center;
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     text-decoration: none;
@@ -617,8 +636,9 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
 
   /* ----------------------------------------------------------------- header
      Logo in the middle, three links each side, a double rule underneath. The
-     header box keeps one height in the flow so the bar can shrink on scroll
-     without moving the page. */
+     header box keeps one height in the flow so nothing below it moves. On
+     scroll the bar slides up 32px under the top of the screen and its contents
+     slide down 16px to stay centered in the 84px that is left. Transform only. */
   .v2--since1957 .s57-header {
     position: sticky;
     top: 0;
@@ -631,7 +651,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     height: 76px;
     background: var(--s57-paper);
     pointer-events: auto;
-    transition: height 200ms ease;
+    transition: transform var(--v2-t-header) var(--v2-ease);
   }
   /* The double rule: 1px, a 3px gap, 1px. */
   .v2--since1957 .s57-header__bar::after,
@@ -651,9 +671,10 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     gap: 1.5rem;
     height: 100%;
     padding-bottom: 5px;
+    transition: transform var(--v2-t-header) var(--v2-ease);
   }
   .v2--since1957 .s57-header__logo { display: block; flex: none; }
-  .v2--since1957 .s57-header__logo .v2-logo { width: auto; height: 52px; transition: transform 200ms ease; }
+  .v2--since1957 .s57-header__logo .v2-logo { width: auto; height: 52px; transition: transform var(--v2-t-header) var(--v2-ease); }
   .v2--since1957 .s57-nav { display: none; }
   .v2--since1957 .s57-menu-btn,
   .v2--since1957 .s57-menu__close {
@@ -671,7 +692,8 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
   @media (min-width: 64rem) {
     .v2--since1957 .s57-header,
     .v2--since1957 .s57-header__bar { height: 116px; }
-    .v2--since1957 .s57-header[data-scrolled] .s57-header__bar { height: 84px; }
+    .v2--since1957 .s57-header[data-scrolled] .s57-header__bar { transform: translateY(-32px); }
+    .v2--since1957 .s57-header[data-scrolled] .s57-header__in { transform: translateY(16px); }
     .v2--since1957 .s57-header__in { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: clamp(1.5rem, 3vw, 3rem); }
     .v2--since1957 .s57-header__logo .v2-logo { height: 84px; }
     /* 84px down to 60px. */
@@ -691,7 +713,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
       letter-spacing: 0.12em;
       text-decoration: none;
       white-space: nowrap;
-      transition: border-color 150ms ease, color 150ms ease;
+      transition: border-color var(--v2-t-hover) var(--v2-ease), color var(--v2-t-hover) var(--v2-ease);
     }
     .v2--since1957 .s57-nav a:hover,
     .v2--since1957 .s57-nav a[aria-current] { border-bottom-color: var(--s57-rust); color: var(--s57-rust); }
@@ -779,11 +801,13 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
+    white-space: nowrap;
   }
   .v2--since1957 .s57-proof__label { margin-top: 0.5rem; font-weight: 600; line-height: 1.3; }
   .v2--since1957 .s57-proof__note { color: var(--s57-muted); font-family: var(--s57-slab); font-size: 1rem; font-style: italic; }
   .v2--since1957 .s57-proof__shield { display: none; }
-  @media (min-width: 48rem) {
+  /* Four across only once Top 100 can hold one line. Two by two before that. */
+  @media (min-width: 56rem) {
     .v2--since1957 .s57-proof__row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .v2--since1957 .s57-proof__row li:nth-child(n) { padding-left: 0; border-top: 0; border-left: 0; }
     .v2--since1957 .s57-proof__row li:nth-child(n + 2) { padding-left: clamp(1rem, 2vw, 1.75rem); border-left: 1px solid var(--s57-rule); }
@@ -899,6 +923,17 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     font-variant-numeric: tabular-nums;
     text-align: right;
   }
+  /* Tablet: the heading runs across, the photo and the ledger sit side by side. */
+  @media (min-width: 40rem) and (max-width: 63.99rem) {
+    .v2--since1957 .s57-row {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      grid-template-areas: 'head head' 'photo facts';
+      gap: 1.5rem 2.5rem;
+    }
+    .v2--since1957 .s57-row__head { grid-area: head; }
+    .v2--since1957 .s57-row__photo { grid-area: photo; }
+    .v2--since1957 .s57-facts { grid-area: facts; }
+  }
   @media (min-width: 64rem) {
     .v2--since1957 .s57-row {
       grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 4fr);
@@ -941,11 +976,11 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(0deg, rgba(0, 24, 64, 0.94) 0%, rgba(0, 24, 64, 0.9) 68%, rgba(0, 24, 64, 0.3) 88%, rgba(0, 24, 64, 0) 100%);
+    background: linear-gradient(0deg, rgba(var(--s57-navy-rgb), 0.94) 0%, rgba(var(--s57-navy-rgb), 0.9) 68%, rgba(var(--s57-navy-rgb), 0.3) 88%, rgba(var(--s57-navy-rgb), 0) 100%);
   }
   @media (min-width: 64rem) {
     .v2--since1957 .s57-hunt::before {
-      background: linear-gradient(0deg, rgba(0, 24, 64, 0.93) 0%, rgba(0, 24, 64, 0.88) 38%, rgba(0, 24, 64, 0.32) 60%, rgba(0, 24, 64, 0) 100%);
+      background: linear-gradient(0deg, rgba(var(--s57-navy-rgb), 0.93) 0%, rgba(var(--s57-navy-rgb), 0.88) 38%, rgba(var(--s57-navy-rgb), 0.32) 60%, rgba(var(--s57-navy-rgb), 0) 100%);
     }
   }
   .v2--since1957 .s57-hunt__in { display: grid; gap: 2rem; align-items: end; }
@@ -998,11 +1033,15 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
   }
   .v2--since1957 .s57-stop__year { font-family: var(--s57-slab); font-size: 1.75rem; font-weight: 700; line-height: 1.1; }
   .v2--since1957 .s57-stop__line { margin-top: 0.375rem; color: var(--s57-muted); line-height: 1.5; }
-  /* Each stop comes up to full strength as the arrow passes it. */
-  .v2--since1957 .s57-stop > *,
-  .v2--since1957 .s57-stop::before { transition: opacity 300ms ease; }
-  .v2--since1957 .s57-line.is-live .s57-stop:not(.is-passed) > *,
-  .v2--since1957 .s57-line.is-live .s57-stop:not(.is-passed)::before { opacity: 0.35; }
+  /* Each stop comes up to full strength as the arrow passes it. A waiting
+     stop is dimmed only as far as 4.5:1 allows: the year to 64 percent (5.0:1
+     on paper), the line to 82 percent (4.9:1). The dot, which is not text,
+     goes to 35 percent and grows as it is reached. */
+  .v2--since1957 .s57-stop > * { transition: opacity var(--s57-t-stop) var(--v2-ease); }
+  .v2--since1957 .s57-stop::before { transition: opacity var(--s57-t-stop) var(--v2-ease), transform var(--s57-t-stop) var(--v2-ease); }
+  .v2--since1957 .s57-line.is-live .s57-stop:not(.is-passed) .s57-stop__year { opacity: 0.64; }
+  .v2--since1957 .s57-line.is-live .s57-stop:not(.is-passed) .s57-stop__line { opacity: 0.82; }
+  .v2--since1957 .s57-line.is-live .s57-stop:not(.is-passed)::before { opacity: 0.35; transform: scale(0.6); }
 
   /* Phone: the rule runs down the left side and the arrow travels down. */
   .v2--since1957 .s57-line__rule { top: 0; bottom: 0; left: 5px; width: 1px; }
@@ -1055,13 +1094,16 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     .v2--since1957 .s57-visit__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(3rem, 6vw, 6rem); }
   }
   .v2--since1957 .s57-visit .s57-no { color: var(--s57-tan); }
-  .v2--since1957 .s57-visit .v2-hours { margin-top: 1.75rem; border-bottom: 1px solid rgba(243, 237, 224, 0.28); }
+  .v2--since1957 .s57-visit .v2-hours { margin-top: 1.75rem; border-bottom: 1px solid rgba(var(--s57-paper-rgb), 0.28); }
   .v2--since1957 .s57-visit .v2-hours th,
-  .v2--since1957 .s57-visit .v2-hours td { padding-block: 0.5625rem; border-top: 1px solid rgba(243, 237, 224, 0.28); }
+  .v2--since1957 .s57-visit .v2-hours td { padding-block: 0.5625rem; border-top: 1px solid rgba(var(--s57-paper-rgb), 0.28); }
   .v2--since1957 .s57-visit .v2-hours tr[data-today] th,
   .v2--since1957 .s57-visit .v2-hours tr[data-today] td { color: var(--s57-tan); font-weight: 600; }
   .v2--since1957 .s57-visit address { margin-top: 1.75rem; font-style: normal; }
-  .v2--since1957 .s57-visit__phone { margin-block: 0.375rem 1.5rem; font-variant-numeric: tabular-nums; }
+  .v2--since1957 .s57-visit__phone { margin-block: 0 1rem; font-variant-numeric: tabular-nums; }
+  /* A phone number on its own line is a button on a phone. Give it 44px. */
+  .v2--since1957 .s57-visit__phone a,
+  .v2--since1957 .s57-footer__contact p a { display: inline-flex; align-items: center; min-height: 2.75rem; }
   /* On navy the secondary button turns to paper. */
   .v2--since1957 .s57-visit .s57-btn--secondary { border-color: var(--s57-paper); color: var(--s57-paper); }
   .v2--since1957 .s57-visit .s57-btn--secondary:hover { background: var(--s57-paper); color: var(--s57-navy); }
@@ -1096,9 +1138,9 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    transition: background-color 150ms ease, border-color 150ms ease;
+    transition: background-color var(--v2-t-hover) var(--v2-ease), border-color var(--v2-t-hover) var(--v2-ease);
   }
-  .v2--since1957 .v2-form__button:hover { background: #f07a41; border-color: #f07a41; }
+  .v2--since1957 .v2-form__button:hover { background: var(--s57-orange-hi); border-color: var(--s57-orange-hi); }
   .v2--since1957 .v2-form__note { color: var(--s57-rust); font-family: var(--s57-slab); font-size: 1.0625rem; font-style: italic; }
 
   /* ----------------------------------------------------------------- footer */
@@ -1113,7 +1155,8 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
   .v2--since1957 .s57-footer nav a {
     display: inline-flex;
     align-items: center;
-    min-height: 2.5rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.12em;
@@ -1121,10 +1164,10 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
   }
   .v2--since1957 .s57-footer nav a:hover { color: var(--s57-rust); }
   .v2--since1957 .s57-footer address { font-style: normal; }
-  .v2--since1957 .s57-footer__contact p { margin-top: 0.375rem; }
+  .v2--since1957 .s57-footer__contact p { margin-top: 0; }
   .v2--since1957 .s57-footer__email { overflow-wrap: anywhere; }
   .v2--since1957 .s57-social { display: flex; gap: 0.25rem; margin: 0.75rem 0 0 -0.625rem; }
-  .v2--since1957 .s57-social a { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; transition: color 150ms ease; }
+  .v2--since1957 .s57-social a { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; transition: color var(--v2-t-hover) var(--v2-ease); }
   .v2--since1957 .s57-social a:hover { color: var(--s57-rust); }
   .v2--since1957 .s57-footer__legal {
     display: flex;
@@ -1136,7 +1179,7 @@ const no = (n: number) => `No. ${String(n).padStart(2, '0')}`;
     border-top: 1px solid var(--s57-rule);
     font-size: 0.875rem;
   }
-  .v2--since1957 .s57-footer__lws { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; text-decoration: none; }
+  .v2--since1957 .s57-footer__lws { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; min-height: 2.75rem; text-decoration: none; }
   .v2--since1957 .s57-footer__lws img { width: 150px; height: auto; }
   .v2--since1957 .s57-footer__lws:hover span { text-decoration: underline; }
 </style>

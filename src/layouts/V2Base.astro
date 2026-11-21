@@ -93,6 +93,8 @@ const bodyClass = ['v2', `v2--${theme}`, hasBar ? 'v2--has-bar' : ''].filter(Boo
     <Seo {...seo} noindex />
     <JsonLd data={graph} />
     <Analytics />
+    {/* Each demo preloads the one face its headline is set in. */}
+    <slot name="head" />
   </head>
 
   <body id="top" class={bodyClass}>

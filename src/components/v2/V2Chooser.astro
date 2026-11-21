@@ -89,7 +89,7 @@ const shots = { 1: photos.hero1, 2: photos.hero2, 3: photos.then } as const;
     border: 1px solid #c9d0db;
     color: inherit;
     text-decoration: none;
-    transition: border-color 150ms ease;
+    transition: border-color var(--v2-t-hover, 150ms) var(--v2-ease, ease);
   }
   .chooser__card:hover { border-color: #001840; }
   .chooser__photo {

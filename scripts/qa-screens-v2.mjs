@@ -49,13 +49,14 @@ const browser = await puppeteer.launch({
   args: ['--hide-scrollbars', '--force-color-profile=srgb', '--font-render-hinting=none'],
 });
 
+// Past the pre-launch gate, the same way a visitor with the password is.
+await browser.setCookie({ name: 'tgt_gate', value: 'open', domain: new URL(BASE).hostname, path: '/' });
+
 async function open(width, reduced) {
   const page = await browser.newPage();
   await page.emulateMediaFeatures([
     { name: 'prefers-reduced-motion', value: reduced ? 'reduce' : 'no-preference' },
   ]);
-  // Past the pre-launch gate, the same way a visitor with the password is.
-  await page.setCookie({ name: 'tgt_gate', value: 'open', url: BASE });
   await page.setViewport({ width, height: 900, deviceScaleFactor: 1 });
   return page;
 }

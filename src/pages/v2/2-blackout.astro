@@ -15,6 +15,7 @@ import '@fontsource/barlow-condensed/700.css';
 import '@fontsource/barlow-condensed/800.css';
 import '@fontsource-variable/instrument-sans';
 
+import headlineFont from '@fontsource/barlow-condensed/files/barlow-condensed-latin-800-normal.woff2?url';
 import { Image } from 'astro:assets';
 import V2Base from '~/layouts/V2Base.astro';
 import V2Logo from '~/components/v2/V2Logo.astro';
@@ -43,10 +44,12 @@ const archive = [...photos.archive, photos.then];
 <V2Base
   demo={2}
   theme="blackout"
-  title="Targeteers Archery Pro Shop | Saddle Brook, NJ | Demo 2, Blackout"
+  title="Targeteers Archery Pro Shop | Demo 2, Blackout"
   description={hero.lead}
 >
-  <Fragment slot="header">
+  <link slot="head" rel="preload" as="font" type="font/woff2" href={headlineFont} crossorigin />
+
+  <header class="v2-banner" slot="header">
     <div class="bk-util">
       <div class="bk-wrap bk-util__in">
         <V2OpenNow />
@@ -57,7 +60,7 @@ const archive = [...photos.archive, photos.then];
       </div>
     </div>
 
-    <header class="bk-header" data-v2-header>
+    <div class="bk-header" data-v2-header>
       <div class="bk-wrap bk-header__in">
         <a class="bk-header__logo" href="#top"><V2Logo on="dark" height={60} eager /></a>
         <nav class="bk-nav" aria-label="Main" data-v2-nav>
@@ -68,7 +71,7 @@ const archive = [...photos.archive, photos.then];
         <a class="bk-btn bk-header__call" href={call.href}>CALL</a>
         <button class="bk-menu-btn" type="button" aria-expanded="false" aria-controls="bk-menu" data-v2-menu-button>MENU</button>
       </div>
-    </header>
+    </div>
 
     <div class="bk-menu" id="bk-menu" data-v2-menu hidden>
       <button class="bk-menu__close" type="button" data-v2-menu-close>CLOSE</button>
@@ -82,7 +85,7 @@ const archive = [...photos.archive, photos.then];
         <a class="bk-btn bk-btn--secondary" href={directions.href} target="_blank" rel="noopener">{directions.label}</a>
       </div>
     </div>
-  </Fragment>
+  </header>
 
   {/* ------------------------------------------------------------------ hero */}
   <section class="bk-hero" aria-labelledby="bk-h1">
@@ -377,6 +380,11 @@ const archive = [...photos.archive, photos.then];
     --bk-ink: #f4f2ec;
     --bk-muted: #a8aba6;
     --bk-orange: #e46024;   /* from Rob's logo */
+    --bk-orange-hi: #f47a3c; /* hover on orange fills, still black text */
+    --bk-field: #777b7f;     /* form field edge, over 3:1 on the panel */
+    /* The same colors as channels, for scrims and the seam glow. */
+    --bk-black-rgb: 11, 12, 13;
+    --bk-orange-rgb: 228, 96, 36;
 
     --bk-display: 'Barlow Condensed', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
     --bk-body: 'Instrument Sans Variable', 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
@@ -409,9 +417,9 @@ const archive = [...photos.archive, photos.then];
     padding-inline: var(--bk-gutter);
   }
 
-  .v2--blackout h1,
-  .v2--blackout h2,
-  .v2--blackout h3 {
+  /* Bare element rules stop at the gate, which shares this <body>. :where()
+     keeps the exclusion from adding an ID to the specificity. */
+  .v2--blackout :is(h1, h2, h3):where(:not(#site-gate *)) {
     font-family: var(--bk-display);
     font-weight: 800;
     letter-spacing: 0.01em;
@@ -420,7 +428,7 @@ const archive = [...photos.archive, photos.then];
     text-wrap: balance;
   }
   .v2--blackout h2 { font-size: clamp(2.5rem, 6vw, 5rem); }
-  .v2--blackout p { text-wrap: pretty; }
+  .v2--blackout p:where(:not(#site-gate *)) { text-wrap: pretty; }
 
   /* The small label that sits over every banner. */
   .v2--blackout .bk-label {
@@ -452,12 +460,17 @@ const archive = [...photos.archive, photos.then];
     text-align: center;
     text-decoration: none;
     text-transform: uppercase;
-    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+    transition: background-color var(--v2-t-hover) var(--v2-ease), border-color var(--v2-t-hover) var(--v2-ease), color var(--v2-t-hover) var(--v2-ease);
   }
   .v2--blackout .bk-btn:hover { background: var(--bk-ink); color: var(--bk-black); }
   .v2--blackout .bk-btn--primary { background: var(--bk-orange); border-color: var(--bk-orange); color: var(--bk-black); }
-  .v2--blackout .bk-btn--primary:hover { background: #f47a3c; border-color: #f47a3c; color: var(--bk-black); }
+  .v2--blackout .bk-btn--primary:hover { background: var(--bk-orange-hi); border-color: var(--bk-orange-hi); color: var(--bk-black); }
   .v2--blackout .bk-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  /* The base focus ring takes the text color. Black-on-orange on a black page
+     would get a black ring, so filled buttons name their ring. */
+  .v2--blackout .bk-btn--primary:focus-visible,
+  .v2--blackout .bk-header__call:focus-visible,
+  .v2--blackout .v2-form__button:focus-visible { outline-color: var(--bk-ink); }
 
   /* ------------------------------------------------------------ utility bar */
   .v2--blackout .bk-util { border-bottom: 1px solid var(--bk-line); font-size: 0.8125rem; }
@@ -466,7 +479,7 @@ const archive = [...photos.archive, photos.then];
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    min-height: 2.5rem;
+    min-height: 2.75rem;
   }
   .v2--blackout .v2-open {
     display: inline-flex;
@@ -487,11 +500,11 @@ const archive = [...photos.archive, photos.then];
   .v2--blackout .bk-util__right a {
     display: inline-flex;
     align-items: center;
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     font-variant-numeric: tabular-nums;
     text-decoration: none;
     white-space: nowrap;
-    transition: color 150ms ease;
+    transition: color var(--v2-t-hover) var(--v2-ease);
   }
   .v2--blackout .bk-util__right a:hover { color: var(--bk-ink); }
   @media (min-width: 48rem) {
@@ -509,7 +522,7 @@ const archive = [...photos.archive, photos.then];
     margin-bottom: calc(-1 * var(--bk-header));
     border-bottom: 1px solid transparent;
     background: transparent;
-    transition: background-color 200ms ease, border-color 200ms ease;
+    transition: background-color var(--v2-t-header) var(--v2-ease), border-color var(--v2-t-header) var(--v2-ease);
   }
   .v2--blackout .bk-header[data-scrolled] { background: var(--bk-black); border-bottom-color: var(--bk-line); }
   .v2--blackout .bk-header__in {
@@ -524,7 +537,7 @@ const archive = [...photos.archive, photos.then];
   .v2--blackout .bk-header__call { display: none; min-height: 2.75rem; padding: 0.5rem 1.5rem; }
   /* Orange once the hero's own CALL button has left the screen. */
   .v2--blackout .bk-header[data-past-hero] .bk-header__call { background: var(--bk-orange); border-color: var(--bk-orange); color: var(--bk-black); }
-  .v2--blackout .bk-header[data-past-hero] .bk-header__call:hover { background: #f47a3c; border-color: #f47a3c; }
+  .v2--blackout .bk-header[data-past-hero] .bk-header__call:hover { background: var(--bk-orange-hi); border-color: var(--bk-orange-hi); }
   .v2--blackout .bk-menu-btn,
   .v2--blackout .bk-menu__close {
     min-width: 4.5rem;
@@ -557,7 +570,7 @@ const archive = [...photos.archive, photos.then];
       letter-spacing: 0.1em;
       text-decoration: none;
       white-space: nowrap;
-      transition: color 150ms ease;
+      transition: color var(--v2-t-hover) var(--v2-ease);
     }
     .v2--blackout .bk-nav a:hover,
     .v2--blackout .bk-nav a[aria-current] { color: var(--bk-orange); }
@@ -612,17 +625,34 @@ const archive = [...photos.archive, photos.then];
     /* Keeps the big bows in frame on a phone. */
     object-position: 60% center;
   }
-  /* Scrim: dark from the left behind the text, a band at the top behind the
-     menu, and a fade to black along the bottom 20 percent. */
+  /* Scrim, three parts over the whole photo: dark from the left, a band at the
+     top behind the menu, and a fade to black along the bottom 20 percent. */
   .v2--blackout .bk-hero::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(0deg, var(--bk-black) 0%, rgba(11, 12, 13, 0) 20%),
-      linear-gradient(180deg, rgba(11, 12, 13, 0.86) 0, rgba(11, 12, 13, 0.6) 5.5rem, rgba(11, 12, 13, 0) 11rem),
-      linear-gradient(90deg, rgba(11, 12, 13, 0.92) 0%, rgba(11, 12, 13, 0.72) 45%, rgba(11, 12, 13, 0.25) 100%);
+      linear-gradient(0deg, var(--bk-black) 0%, rgba(var(--bk-black-rgb), 0) 20%),
+      linear-gradient(180deg, rgba(var(--bk-black-rgb), 0.9) 0, rgba(var(--bk-black-rgb), 0.7) 5.5rem, rgba(var(--bk-black-rgb), 0) 11rem),
+      linear-gradient(90deg, rgba(var(--bk-black-rgb), 0.92) 0%, rgba(var(--bk-black-rgb), 0.72) 45%, rgba(var(--bk-black-rgb), 0.25) 100%);
+  }
+  /* A fourth part travels with the text itself, so the orange label and the
+     muted lead hold 4.5:1 over the brightest pixel at any screen size. It runs
+     from the left edge to just past the headline, then fades out. */
+  .v2--blackout .bk-hero__copy,
+  .v2--blackout .bk-hunt__copy { position: relative; width: fit-content; max-width: 100%; }
+  .v2--blackout .bk-hero__copy::before,
+  .v2--blackout .bk-hunt__copy::before {
+    content: '';
+    position: absolute;
+    inset: -4rem -16rem -6rem -100vw;
+    z-index: -1;
+    background: linear-gradient(90deg, rgba(var(--bk-black-rgb), 0.95) 0%, rgba(var(--bk-black-rgb), 0.94) calc(100% - 16rem), rgba(var(--bk-black-rgb), 0) 100%);
+    /* A mask reads alpha only: black here means "show", it is not a color. */
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 4rem, #000 calc(100% - 2rem), transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 4rem, #000 calc(100% - 2rem), transparent 100%);
+    pointer-events: none;
   }
   /* The headline gets 7em so it sets in three lines. Everything else in the
      block keeps to 760px. */
@@ -635,13 +665,15 @@ const archive = [...photos.archive, photos.then];
   }
   .v2--blackout .bk-hero__lead { max-width: 33.75rem; margin-top: 1.5rem; color: var(--bk-muted); font-size: 1.125rem; }
   .v2--blackout .bk-hero .bk-actions { margin-top: 2rem; }
-  /* Phone: the text sits at the bottom over a stronger scrim. */
+  /* Phone: the text sits at the bottom over a stronger bottom scrim, and the
+     photo shows above it. */
   @media (max-width: 47.99rem) {
     .v2--blackout .bk-hero::before {
       background:
-        linear-gradient(0deg, var(--bk-black) 0%, rgba(11, 12, 13, 0.92) 40%, rgba(11, 12, 13, 0.8) 60%, rgba(11, 12, 13, 0.25) 82%, rgba(11, 12, 13, 0.1) 100%),
-        linear-gradient(180deg, rgba(11, 12, 13, 0.8) 0, rgba(11, 12, 13, 0) 8rem);
+        linear-gradient(0deg, var(--bk-black) 0%, rgba(var(--bk-black-rgb), 0.3) 70%, rgba(var(--bk-black-rgb), 0.1) 100%),
+        linear-gradient(180deg, rgba(var(--bk-black-rgb), 0.9) 0, rgba(var(--bk-black-rgb), 0) 8rem);
     }
+    .v2--blackout .bk-hero__copy::before { right: -100vw; background: rgba(var(--bk-black-rgb), 0.94); }
   }
 
   /* ------------------------------------------------------------------ seams
@@ -663,7 +695,7 @@ const archive = [...photos.archive, photos.then];
     left: 0;
     height: 1px;
     background: var(--bk-orange);
-    box-shadow: 0 0 8px 1px rgba(228, 96, 36, 0.7);
+    box-shadow: 0 0 8px 1px rgba(var(--bk-orange-rgb), 0.7);
     opacity: 0;
   }
   .v2--blackout .bk-seam__arrow {
@@ -717,6 +749,11 @@ const archive = [...photos.archive, photos.then];
     line-height: 0.9;
     text-transform: uppercase;
     white-space: nowrap;
+  }
+  /* Phones: two across, so the numerals come down until TOP 100 fits its cell. */
+  @media (max-width: 55.99rem) {
+    .v2--blackout .bk-proof__big { font-size: clamp(2.25rem, 11.5vw, 3rem); }
+    .v2--blackout .bk-proof__row li { padding-right: 0.5rem; }
   }
   .v2--blackout .bk-proof__label {
     margin-top: 0.75rem;
@@ -774,7 +811,7 @@ const archive = [...photos.archive, photos.then];
     place-items: center start;
     min-height: 2.25rem;
     opacity: 0.6;
-    transition: opacity 150ms ease;
+    transition: opacity var(--v2-t-hover) var(--v2-ease);
   }
   .v2--blackout .v2-brands__item:hover { opacity: 1; }
   /* White marks: a flat mark, filtered to one color. */
@@ -867,14 +904,18 @@ const archive = [...photos.archive, photos.then];
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(90deg, rgba(11, 12, 13, 0.92) 0%, rgba(11, 12, 13, 0.72) 45%, rgba(11, 12, 13, 0.25) 100%);
+    background: linear-gradient(90deg, rgba(var(--bk-black-rgb), 0.92) 0%, rgba(var(--bk-black-rgb), 0.72) 45%, rgba(var(--bk-black-rgb), 0.25) 100%);
   }
   .v2--blackout .bk-hunt__copy { max-width: 38rem; }
+  .v2--blackout .bk-hunt__copy::before { inset: -5rem -14rem -5rem -100vw; }
   .v2--blackout .bk-hunt h2 { margin-top: 0.75rem; }
   .v2--blackout .bk-hunt__copy > p:not(.bk-label) { margin-top: 1.25rem; font-size: 1.125rem; }
   .v2--blackout .bk-hunt .bk-btn { margin-top: 2rem; }
+  /* Phone: the sunset shows above and below a dark band behind the text. */
   @media (max-width: 47.99rem) {
-    .v2--blackout .bk-hunt::before { background: rgba(11, 12, 13, 0.8); }
+    .v2--blackout .bk-hunt { padding-block: 8rem 6rem; }
+    .v2--blackout .bk-hunt::before { background: rgba(var(--bk-black-rgb), 0.35); }
+    .v2--blackout .bk-hunt__copy::before { right: -100vw; background: rgba(var(--bk-black-rgb), 0.94); }
   }
 
   /* ------------------------------------------------------------------ about */
@@ -981,7 +1022,10 @@ const archive = [...photos.archive, photos.then];
   .v2--blackout .bk-visit .v2-hours tr[data-today] th,
   .v2--blackout .bk-visit .v2-hours tr[data-today] td { color: var(--bk-orange); font-weight: 700; }
   .v2--blackout .bk-visit address { margin-top: 2rem; font-style: normal; }
-  .v2--blackout .bk-visit__phone { margin-block: 0.375rem 1.5rem; font-variant-numeric: tabular-nums; }
+  .v2--blackout .bk-visit__phone { margin-block: 0 1rem; font-variant-numeric: tabular-nums; }
+  /* A phone number on its own line is a button on a phone. Give it 44px. */
+  .v2--blackout .bk-visit__phone a,
+  .v2--blackout .bk-footer__contact p a { display: inline-flex; align-items: center; min-height: 2.75rem; }
   .v2--blackout .bk-visit__formline { margin-block: 0.75rem 2rem; color: var(--bk-muted); }
 
   .v2--blackout .v2-form { display: grid; gap: 1.25rem; }
@@ -997,7 +1041,7 @@ const archive = [...photos.archive, photos.then];
   .v2--blackout .v2-form input:not([type='hidden']),
   .v2--blackout .v2-form textarea {
     padding: 0.8125rem 0.875rem;
-    border: 1px solid #777b7f;
+    border: 1px solid var(--bk-field);
     border-radius: 0;
     background: var(--bk-black);
     color: var(--bk-ink);
@@ -1017,9 +1061,9 @@ const archive = [...photos.archive, photos.then];
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: background-color 150ms ease, border-color 150ms ease;
+    transition: background-color var(--v2-t-hover) var(--v2-ease), border-color var(--v2-t-hover) var(--v2-ease);
   }
-  .v2--blackout .v2-form__button:hover { background: #f47a3c; border-color: #f47a3c; }
+  .v2--blackout .v2-form__button:hover { background: var(--bk-orange-hi); border-color: var(--bk-orange-hi); }
   .v2--blackout .v2-form__note { padding-left: 1rem; border-left: 2px solid var(--bk-orange); color: var(--bk-ink); font-weight: 600; }
 
   /* ----------------------------------------------------------------- footer */
@@ -1041,20 +1085,21 @@ const archive = [...photos.archive, photos.then];
   .v2--blackout .bk-footer nav a {
     display: inline-flex;
     align-items: center;
-    min-height: 2.5rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     font-family: var(--bk-display);
     font-size: 1.0625rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-decoration: none;
-    transition: color 150ms ease;
+    transition: color var(--v2-t-hover) var(--v2-ease);
   }
   .v2--blackout .bk-footer a:hover { color: var(--bk-ink); }
   .v2--blackout .bk-footer address { font-style: normal; }
-  .v2--blackout .bk-footer__contact p { margin-top: 0.375rem; }
+  .v2--blackout .bk-footer__contact p { margin-top: 0; }
   .v2--blackout .bk-footer__email { overflow-wrap: anywhere; }
   .v2--blackout .bk-social { display: flex; gap: 0.25rem; margin: 0.75rem 0 0 -0.625rem; }
-  .v2--blackout .bk-social a { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; transition: color 150ms ease; }
+  .v2--blackout .bk-social a { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; transition: color var(--v2-t-hover) var(--v2-ease); }
   .v2--blackout .bk-footer__legal {
     display: flex;
     flex-wrap: wrap;
@@ -1065,6 +1110,6 @@ const archive = [...photos.archive, photos.then];
     border-top: 1px solid var(--bk-line);
     font-size: 0.875rem;
   }
-  .v2--blackout .bk-footer__lws { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; text-decoration: none; }
+  .v2--blackout .bk-footer__lws { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; min-height: 2.75rem; text-decoration: none; }
   .v2--blackout .bk-footer__lws img { width: 150px; height: auto; }
 </style>

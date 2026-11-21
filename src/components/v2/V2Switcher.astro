@@ -47,8 +47,8 @@ const { current } = Astro.props;
   a {
     display: grid;
     place-items: center;
-    min-width: 2.5rem;
-    min-height: 2.5rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     padding: 0 0.75rem;
     border-radius: 999px;
     color: #fff;
@@ -59,7 +59,7 @@ const { current } = Astro.props;
     text-decoration: none;
     text-transform: uppercase;
     white-space: nowrap;
-    transition: background-color 150ms ease, color 150ms ease;
+    transition: background-color var(--v2-t-hover, 150ms) var(--v2-ease, ease), color var(--v2-t-hover, 150ms) var(--v2-ease, ease);
   }
   a:hover { background: rgba(255, 255, 255, 0.16); }
   a[aria-current='page'] { background: #fff; color: #111; }
