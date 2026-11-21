@@ -1,0 +1,30 @@
+---
+/**
+ * One arrow, drawn once. Shaft and point take currentColor. The fletching
+ * takes --v2-arrow-fletch and falls back to currentColor. Decorative: every
+ * use is hidden from assistive tech.
+ */
+interface Props {
+  /** Length in px. The arrow is ten times as long as it is tall. */
+  length?: number;
+  class?: string;
+}
+const { length = 160, class: klass } = Astro.props;
+---
+<svg
+  class:list={['v2-arrow', klass]}
+  width={length}
+  height={length / 10}
+  viewBox="0 0 160 16"
+  aria-hidden="true"
+  focusable="false"
+>
+  <g fill="var(--v2-arrow-fletch, currentColor)">
+    <path d="M6 7.4 0 1.5h15l7 5.9Z" />
+    <path d="M6 8.6 0 14.5h15l7-5.9Z" />
+  </g>
+  <g fill="currentColor">
+    <rect x="3" y="7.25" width="141" height="1.5" />
+    <path d="M160 8 141 2.2 145.5 8 141 13.8Z" />
+  </g>
+</svg>

@@ -1,0 +1,74 @@
+---
+/**
+ * REVIEW AID ONLY. A fixed pill, bottom left, that moves between the chooser
+ * and the three v2 home page demos. It comes out before launch, together with
+ * the /v2/ routes.
+ */
+import { v2Demos } from '~/data/homeV2';
+
+interface Props {
+  /** 0 is the chooser. */
+  current: 0 | 1 | 2 | 3;
+}
+const { current } = Astro.props;
+---
+<nav class="v2-switcher" aria-label="Home page demos">
+  <ul role="list">
+    <li>
+      <a href="/v2/" aria-current={current === 0 ? 'page' : undefined}>ALL 3</a>
+    </li>
+    {v2Demos.map((d) => (
+      <li>
+        <a href={d.href} aria-current={current === d.id ? 'page' : undefined} aria-label={`Demo ${d.id}, ${d.name}`}>
+          {d.id}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  /* Neutral on purpose. It belongs to the review, not to any demo. */
+  .v2-switcher {
+    position: fixed;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 810; /* above the page and the action bar, below the gate */
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: rgba(17, 17, 17, 0.9);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  ul {
+    display: flex;
+    gap: 0.125rem;
+    margin: 0;
+  }
+  a {
+    display: grid;
+    place-items: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background-color var(--v2-t-hover, 150ms) var(--v2-ease, ease), color var(--v2-t-hover, 150ms) var(--v2-ease, ease);
+  }
+  a:hover { background: rgba(255, 255, 255, 0.16); }
+  a[aria-current='page'] { background: #fff; color: #111; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+  /* Under 768px it sits above the mobile action bar, never on it. */
+  @media (max-width: 47.99rem) {
+    :global(.v2--has-bar) .v2-switcher {
+      bottom: calc(var(--v2-bar-h, 3.5rem) + env(safe-area-inset-bottom, 0px) + 0.5rem);
+    }
+  }
+</style>

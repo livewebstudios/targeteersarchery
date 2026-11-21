@@ -1,0 +1,57 @@
+---
+/**
+ * Under 768px: a bar fixed to the bottom with the three things a phone
+ * visitor wants. Structure only. Each demo colors it with custom properties:
+ *
+ *   --v2-bar-bg, --v2-bar-fg, --v2-bar-line      the bar and its cells
+ *   --v2-bar-call-bg, --v2-bar-call-fg           the CALL cell, if it differs
+ */
+import { business } from '~/data/business';
+---
+<nav class="v2-actionbar" aria-label="Call, directions and hours">
+  <a class="v2-actionbar__cell v2-actionbar__cell--call" href={business.phoneHref}>CALL</a>
+  <a class="v2-actionbar__cell" href={business.directionsUrl} target="_blank" rel="noopener">DIRECTIONS</a>
+  <a class="v2-actionbar__cell" href="#visit">HOURS</a>
+</nav>
+
+<style is:global>
+  :root { --v2-bar-h: 3.5rem; }
+
+  .v2-actionbar { display: none; }
+
+  @media (max-width: 47.99rem) {
+    .v2-actionbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 800;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: var(--v2-bar-bg, Canvas);
+      color: var(--v2-bar-fg, CanvasText);
+      border-top: 1px solid var(--v2-bar-line, currentColor);
+    }
+    .v2-actionbar__cell {
+      display: grid;
+      place-items: center;
+      min-height: var(--v2-bar-h);
+      color: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      line-height: 1;
+      text-decoration: none;
+    }
+    .v2-actionbar__cell + .v2-actionbar__cell { border-left: 1px solid var(--v2-bar-line, currentColor); }
+    .v2-actionbar__cell--call {
+      background: var(--v2-bar-call-bg, transparent);
+      color: var(--v2-bar-call-fg, inherit);
+    }
+    .v2-actionbar__cell:focus-visible { outline-offset: -4px; }
+
+    /* The bar never covers the footer. */
+    body.v2--has-bar { padding-bottom: calc(var(--v2-bar-h) + env(safe-area-inset-bottom, 0px)); }
+  }
+</style>
