@@ -32,9 +32,12 @@ export interface Props extends Omit<SeoProps, 'noindex'> {
   /** 0 is the chooser, 1 to 3 the demos. */
   demo: 0 | 1 | 2 | 3;
   theme: 'route46' | 'blackout' | 'since1957' | 'chooser';
+  /** The domain root: the login page shows on every visit and a right
+      password goes on to the chooser at /v2/. */
+  landing?: boolean;
 }
 
-const { demo, theme, ...seo } = Astro.props;
+const { demo, theme, landing = false, ...seo } = Astro.props;
 
 const themeColor = {
   route46: '#142A13',
@@ -98,7 +101,7 @@ const bodyClass = ['v2', `v2--${theme}`, hasBar ? 'v2--has-bar' : ''].filter(Boo
 
   <body id="top" class={bodyClass}>
     {/* TEMPORARY pre-launch gate, exactly as Base.astro renders it. */}
-    <SiteGate />
+    <SiteGate landing={landing} next="v2/" />
 
     {/* In its own landmark so the skip link is not loose content. */}
     <nav aria-label="Skip link"><a class="v2-skip" href="#main">Skip to content</a></nav>

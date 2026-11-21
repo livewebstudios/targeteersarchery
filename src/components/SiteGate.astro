@@ -7,6 +7,10 @@
  * Typing the admin password drops a cookie (`tgt_gate`) and the gate stays
  * down for a week on that browser.
  *
+ * With `landing`, the gate shows on every visit, cookie or not, and a right
+ * password sends the browser to `next` instead of lifting the gate. The domain
+ * root uses this so it always opens on the login page.
+ *
  * This is a curtain, not a lock. The page HTML is still in the source and the
  * password lives in the client bundle, so treat it as "keeps visitors out",
  * not as security. Delete this component, its import and its one line in
@@ -15,6 +19,14 @@
 import { Image } from 'astro:assets';
 import logoRGB from '~/assets/brand/logoRGB.png';
 import { business, addressLine, hours, hoursLabel } from '~/data/business';
+
+interface Props {
+  /** Always show the gate here, even on an unlocked browser. */
+  landing?: boolean;
+  /** Where a right password goes when `landing` is set. Relative path. */
+  next?: string;
+}
+const { landing = false, next } = Astro.props;
 
 const isoToday = ((new Date().getDay() + 6) % 7) + 1;
 
@@ -35,12 +47,13 @@ for (const h of hours) {
 }
 ---
 
-<script is:inline>
+<script is:inline data-gate-landing={landing ? '' : undefined}>
   /* Runs before the gate paints, so an unlocked browser never sees a flash of
      it. Re-runs after every view transition, which resets <html>'s classes. */
   (function () {
+    var landing = document.currentScript && document.currentScript.hasAttribute('data-gate-landing');
     function applyGate() {
-      var open = document.cookie.indexOf('tgt_gate=open') > -1;
+      var open = !landing && document.cookie.indexOf('tgt_gate=open') > -1;
       document.documentElement.classList.toggle('gate-off', open);
     }
     applyGate();
@@ -86,7 +99,7 @@ for (const h of hours) {
 
     {/* Deliberately not a <form>. Astro's ClientRouter intercepts form
         submissions and swaps the page out from under the handler. */}
-    <div class="gate__form" data-gate-form>
+    <div class="gate__form" data-gate-form data-gate-next={landing && next ? next : undefined}>
       <label class="gate__label" for="gate-pass">Admin</label>
       <div class="gate__row">
         <input
@@ -375,6 +388,10 @@ for (const h of hours) {
 
         var secure = location.protocol === 'https:' ? '; secure' : '';
         document.cookie = 'tgt_gate=open; path=/; max-age=604800; samesite=lax' + secure;
+        if (box.dataset.gateNext) {
+          location.assign(box.dataset.gateNext);
+          return;
+        }
         document.documentElement.classList.add('gate-off');
       }
 

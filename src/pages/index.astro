@@ -1,12 +1,13 @@
 ---
 /**
- * The v2 chooser. On this branch / and /v2/ render the same component, so the
- * Trailhead home page cannot be reached.
+ * The domain root is the login page. The gate shows on every visit here, even
+ * on an unlocked browser, and the right password goes on to the chooser at
+ * /v2/. The chooser sits under the gate only so the page is never empty.
  */
 import V2Base from '~/layouts/V2Base.astro';
 import V2Chooser from '~/components/v2/V2Chooser.astro';
 ---
-<V2Base demo={0} theme="chooser" title="Three home pages. Pick one. | Targeteers Archery" description="Three home page designs for Targeteers Archery Pro Shop. A private review page.">
+<V2Base demo={0} theme="chooser" landing title="Three home pages. Pick one. | Targeteers Archery" description="Three home page designs for Targeteers Archery Pro Shop. A private review page.">
   <V2Chooser />
 </V2Base>
 

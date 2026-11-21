@@ -116,6 +116,34 @@ async function loadAll(page) {
   check('gate: a private window shows only the gate on all 5 routes', bad.length === 0, bad.join(' | '));
 }
 {
+  // The domain root is the login page on every visit, even on an unlocked
+  // browser. The right password goes on to the chooser at /v2/. Every other
+  // route keeps the week-long cookie.
+  const bad = [];
+  const src = readFileSync(path.resolve('src/components/SiteGate.astro'), 'utf8');
+  const pass = Buffer.from(src.match(/=== '([A-Za-z0-9+/=]+)'/)[1], 'base64').toString();
+  const shown = (page) => page.evaluate(() =>
+    [...document.body.children].filter((el) => getComputedStyle(el).display !== 'none').map((el) => el.id || el.tagName).join());
+  const page = await open('/', { gate: true });
+  if ((await shown(page)) !== 'site-gate') bad.push(`root with the cookie shows ${await shown(page)}`);
+  await page.type('#gate-pass', 'wrong');
+  await page.click('[data-gate-enter]');
+  if (await page.$eval('#gate-error', (el) => el.hidden)) bad.push('a wrong password shows no error');
+  await page.type('#gate-pass', pass);
+  await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle0' }), page.click('[data-gate-enter]')]);
+  const at = new URL(page.url()).pathname;
+  if (at !== '/v2/') bad.push(`the right password went to ${at}`);
+  const after = await shown(page);
+  if (after.includes('site-gate') || !(await page.$('.chooser__card'))) bad.push(`after the password /v2/ shows ${after}`);
+  await page.done();
+  for (const route of ['/v2/', '/v2/1-route-46/', '/about/']) {
+    const p2 = await open(route, { gate: true });
+    if ((await shown(p2)).includes('site-gate')) bad.push(`${route} with the cookie still shows the gate`);
+    await p2.done();
+  }
+  check('root: login page on every visit, the password goes on to the chooser', bad.length === 0, bad.join(' | '));
+}
+{
   // Hard rule 1: the gate renders exactly as it does today. /about/ is still on
   // the old layout, so it is the reference. Zero differing pixels allowed.
   const diffs = [];
@@ -257,7 +285,7 @@ async function loadAll(page) {
 {
   const bad = [];
   const want = ['/v2/1-route-46/', '/v2/2-blackout/', '/v2/3-since-1957/'];
-  for (const route of ['/', '/v2/']) {
+  for (const route of ['/v2/']) {
     const page = await open(route);
     const links = await page.$$eval('.chooser__card', (els) => els.map((a) => ({ path: new URL(a.href).pathname, target: a.target, rel: a.rel })));
     if (links.map((l) => l.path).join() !== want.join()) bad.push(`${route}: ${links.map((l) => l.path).join(',')}`);
